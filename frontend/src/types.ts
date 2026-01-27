@@ -1,4 +1,6 @@
-// Types pour les données du CV
+// Types pour les données du CV avec sections dynamiques
+
+// === Types de base pour les items ===
 
 export interface PersonalInfo {
   name: string;
@@ -10,7 +12,7 @@ export interface PersonalInfo {
   github_url: string;
 }
 
-export interface Education {
+export interface EducationItem {
   school: string;
   degree: string;
   dates: string;
@@ -18,77 +20,182 @@ export interface Education {
   description: string;
 }
 
-export interface Experience {
+export interface ExperienceItem {
   title: string;
   company: string;
   dates: string;
   highlights: string[];
 }
 
-export interface Project {
+export interface ProjectItem {
   name: string;
   year: string;
   highlights: string[];
 }
 
-export interface Skills {
+export interface SkillsItem {
   languages: string;
   tools: string;
 }
 
-export interface Leadership {
+export interface LeadershipItem {
   role: string;
   place: string;
   dates: string;
   highlights: string[];
 }
 
-export interface SectionFlags {
-  show_education: boolean;
-  show_experiences: boolean;
-  show_projects: boolean;
-  show_skills: boolean;
-  show_leadership: boolean;
-  show_languages: boolean;
+export interface CustomItem {
+  title: string;
+  subtitle?: string;
+  dates?: string;
+  highlights: string[];
 }
+
+// === Types de sections ===
+
+export type SectionType =
+  | 'education'
+  | 'experiences'
+  | 'projects'
+  | 'skills'
+  | 'leadership'
+  | 'languages'
+  | 'custom';
+
+export type SectionItems =
+  | EducationItem[]
+  | ExperienceItem[]
+  | ProjectItem[]
+  | SkillsItem
+  | LeadershipItem[]
+  | string  // pour languages
+  | CustomItem[];
+
+export interface CVSection {
+  id: string;
+  type: SectionType;
+  title: string;
+  isVisible: boolean;
+  items: SectionItems;
+}
+
+// === Structure principale du CV ===
 
 export interface ResumeData {
   personal: PersonalInfo;
-  education: Education[];
-  experiences: Experience[];
-  projects: Project[];
-  skills: Skills;
-  leadership: Leadership[];
-  languages_spoken: string;
-  flags: SectionFlags;
+  sections: CVSection[];
 }
+
+// === Helpers pour créer des sections vides ===
+
+export const createEmptyEducation = (): EducationItem => ({
+  school: '',
+  degree: '',
+  dates: '',
+  subtitle: '',
+  description: '',
+});
+
+export const createEmptyExperience = (): ExperienceItem => ({
+  title: '',
+  company: '',
+  dates: '',
+  highlights: [],
+});
+
+export const createEmptyProject = (): ProjectItem => ({
+  name: '',
+  year: '',
+  highlights: [],
+});
+
+export const createEmptySkills = (): SkillsItem => ({
+  languages: '',
+  tools: '',
+});
+
+export const createEmptyLeadership = (): LeadershipItem => ({
+  role: '',
+  place: '',
+  dates: '',
+  highlights: [],
+});
+
+export const createEmptyCustomItem = (): CustomItem => ({
+  title: '',
+  subtitle: '',
+  dates: '',
+  highlights: [],
+});
+
+// Générateur d'ID unique
+export const generateId = (): string => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
+// Créer une nouvelle section
+export const createSection = (type: SectionType, title: string): CVSection => {
+  const id = generateId();
+  let items: SectionItems;
+
+  switch (type) {
+    case 'education':
+      items = [];
+      break;
+    case 'experiences':
+      items = [];
+      break;
+    case 'projects':
+      items = [];
+      break;
+    case 'skills':
+      items = createEmptySkills();
+      break;
+    case 'leadership':
+      items = [];
+      break;
+    case 'languages':
+      items = '';
+      break;
+    case 'custom':
+      items = [];
+      break;
+    default:
+      items = [];
+  }
+
+  return { id, type, title, isVisible: true, items };
+};
 
 // Données par défaut vides
 export const emptyResumeData: ResumeData = {
   personal: {
-    name: "",
-    title: "",
-    location: "",
-    email: "",
-    phone: "",
-    github: "",
-    github_url: "",
+    name: '',
+    title: '',
+    location: '',
+    email: '',
+    phone: '',
+    github: '',
+    github_url: '',
   },
-  education: [],
-  experiences: [],
-  projects: [],
-  skills: {
-    languages: "",
-    tools: "",
-  },
-  leadership: [],
-  languages_spoken: "",
-  flags: {
-    show_education: true,
-    show_experiences: true,
-    show_projects: true,
-    show_skills: true,
-    show_leadership: true,
-    show_languages: true,
-  },
+  sections: [
+    createSection('education', 'Education'),
+    createSection('experiences', 'Experiences'),
+    createSection('projects', 'Projects'),
+    createSection('skills', 'Technical Skills'),
+    createSection('leadership', 'Leadership & Community Involvement'),
+    createSection('languages', 'Languages'),
+  ],
+};
+
+// Titres par défaut pour chaque type de section
+export const defaultSectionTitles: Record<SectionType, string> = {
+  education: 'Education',
+  experiences: 'Experiences',
+  projects: 'Projects',
+  skills: 'Technical Skills',
+  leadership: 'Leadership & Community Involvement',
+  languages: 'Languages',
+  custom: 'Custom Section',
 };
