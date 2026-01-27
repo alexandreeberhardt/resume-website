@@ -1,0 +1,3 @@
+[submodule "curriculum-vitae"]
+	path = curriculum-vitae
+	url = git@github.com:alexandreeberhardt/curriculum-vitae.git
