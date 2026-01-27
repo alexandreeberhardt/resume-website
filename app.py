@@ -1,16 +1,16 @@
 """
 Backend FastAPI pour la génération de CV.
 Expose un endpoint POST /generate qui reçoit les données et retourne le PDF.
+Support des sections dynamiques et réorganisables.
 """
-import os
 import tempfile
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
 
@@ -30,7 +30,7 @@ class PersonalInfo(BaseModel):
     github_url: str = ""
 
 
-class Education(BaseModel):
+class EducationItem(BaseModel):
     school: str = ""
     degree: str = ""
     dates: str = ""
@@ -38,14 +38,14 @@ class Education(BaseModel):
     description: Optional[str] = ""
 
 
-class Experience(BaseModel):
+class ExperienceItem(BaseModel):
     title: str = ""
     company: str = ""
     dates: str = ""
     highlights: List[str] = []
 
 
-class Project(BaseModel):
+class ProjectItem(BaseModel):
     name: str = ""
     year: Union[str, int] = ""
     highlights: List[str] = []
@@ -56,38 +56,48 @@ class Project(BaseModel):
         return str(v) if v is not None else ""
 
 
-class Skills(BaseModel):
+class SkillsItem(BaseModel):
     languages: str = ""
     tools: str = ""
 
 
-class Leadership(BaseModel):
+class LeadershipItem(BaseModel):
     role: str = ""
     place: Optional[str] = ""
     dates: str = ""
     highlights: List[str] = []
 
 
-class SectionFlags(BaseModel):
-    """Flags pour activer/désactiver chaque section du CV."""
-    show_education: bool = True
-    show_experiences: bool = True
-    show_projects: bool = True
-    show_skills: bool = True
-    show_leadership: bool = True
-    show_languages: bool = True
+class CustomItem(BaseModel):
+    title: str = ""
+    subtitle: Optional[str] = ""
+    dates: Optional[str] = ""
+    highlights: List[str] = []
+
+
+# Types de sections supportés
+SectionType = Literal['education', 'experiences', 'projects', 'skills', 'leadership', 'languages', 'custom']
+
+
+class CVSection(BaseModel):
+    """Section du CV avec type, titre et contenu."""
+    id: str
+    type: SectionType
+    title: str
+    isVisible: bool = True
+    items: Any  # Le type dépend du type de section
+
+    @field_validator('items', mode='before')
+    @classmethod
+    def validate_items(cls, v, info):
+        # Les items peuvent être une liste, un dict (skills), ou une string (languages)
+        return v
 
 
 class ResumeData(BaseModel):
-    """Données complètes du CV."""
+    """Données complètes du CV avec sections dynamiques."""
     personal: PersonalInfo
-    education: List[Education] = []
-    experiences: List[Experience] = []
-    projects: List[Project] = []
-    skills: Skills
-    leadership: List[Leadership] = []
-    languages_spoken: str = ""
-    flags: SectionFlags = SectionFlags()
+    sections: List[CVSection] = []
 
 
 # === Application FastAPI ===
@@ -95,7 +105,7 @@ class ResumeData(BaseModel):
 app = FastAPI(
     title="CV Generator API",
     description="API pour générer des CV en PDF à partir de données JSON",
-    version="1.0.0"
+    version="2.0.0"
 )
 
 # Configuration CORS pour permettre les requêtes du frontend
@@ -115,14 +125,51 @@ TEMPLATE_NAME = "template.tex"
 STATIC_DIR = TEMPLATE_DIR / "static"
 
 
+def convert_section_items(section: CVSection) -> Dict[str, Any]:
+    """Convertit une section en dictionnaire pour le rendu LaTeX.
+
+    Note: On utilise 'content' au lieu de 'items' pour éviter le conflit
+    avec la méthode dict.items() dans Jinja2.
+    """
+    section_dict = {
+        "id": section.id,
+        "type": section.type,
+        "title": section.title,
+        "isVisible": section.isVisible,
+    }
+
+    # Traiter les items selon le type de section
+    if section.type == "skills":
+        # Skills est un dictionnaire
+        if isinstance(section.items, dict):
+            section_dict["content"] = section.items
+        elif hasattr(section.items, 'model_dump'):
+            section_dict["content"] = section.items.model_dump()
+        else:
+            section_dict["content"] = {"languages": "", "tools": ""}
+    elif section.type == "languages":
+        # Languages est une string
+        section_dict["content"] = str(section.items) if section.items else ""
+    else:
+        # Les autres types sont des listes
+        if isinstance(section.items, list):
+            section_dict["content"] = [
+                item.model_dump() if hasattr(item, 'model_dump') else item
+                for item in section.items
+            ]
+        else:
+            section_dict["content"] = []
+
+    return section_dict
+
+
 @app.post("/generate")
 async def generate_cv(data: ResumeData):
     """
     Génère un CV PDF à partir des données fournies.
 
     Args:
-        data: Données du CV incluant les informations personnelles,
-              éducation, expériences, projets, compétences, etc.
+        data: Données du CV avec sections dynamiques.
 
     Returns:
         FileResponse: Le fichier PDF généré.
@@ -140,19 +187,7 @@ async def generate_cv(data: ResumeData):
         # Préparer les données pour le rendu
         render_data: Dict[str, Any] = {
             "personal": data.personal.model_dump(),
-            "education": [e.model_dump() for e in data.education],
-            "experiences": [e.model_dump() for e in data.experiences],
-            "projects": [p.model_dump() for p in data.projects],
-            "skills": data.skills.model_dump(),
-            "leadership": [l.model_dump() for l in data.leadership],
-            "languages_spoken": data.languages_spoken,
-            # Flags pour les sections conditionnelles
-            "show_education": data.flags.show_education,
-            "show_experiences": data.flags.show_experiences,
-            "show_projects": data.flags.show_projects,
-            "show_skills": data.flags.show_skills,
-            "show_leadership": data.flags.show_leadership,
-            "show_languages": data.flags.show_languages,
+            "sections": [convert_section_items(s) for s in data.sections],
         }
 
         # Rendre le template LaTeX
@@ -177,7 +212,6 @@ async def generate_cv(data: ResumeData):
             path=str(pdf_file),
             filename="cv.pdf",
             media_type="application/pdf",
-            # Note: Le fichier temporaire sera nettoyé après l'envoi
             background=None
         )
 
@@ -185,8 +219,6 @@ async def generate_cv(data: ResumeData):
         raise HTTPException(status_code=500, detail=f"Erreur de compilation LaTeX: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {e}")
-    # Note: Le dossier temporaire n'est pas supprimé immédiatement
-    # car FileResponse en a besoin. En production, utiliser un cleanup périodique.
 
 
 @app.get("/default-data")
@@ -194,6 +226,7 @@ async def get_default_data():
     """
     Retourne les données par défaut du CV (depuis data.yml).
     Utile pour pré-remplir le formulaire frontend.
+    Le frontend convertira l'ancien format vers le nouveau format avec sections.
     """
     import yaml
 
@@ -204,23 +237,13 @@ async def get_default_data():
     with open(yaml_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
-    # Ajouter les flags par défaut
-    data["flags"] = {
-        "show_education": True,
-        "show_experiences": True,
-        "show_projects": True,
-        "show_skills": True,
-        "show_leadership": True,
-        "show_languages": True,
-    }
-
     return data
 
 
 @app.get("/api/health")
 async def health():
     """Endpoint de santé pour le monitoring."""
-    return {"status": "ok", "message": "CV Generator API"}
+    return {"status": "ok", "message": "CV Generator API v2"}
 
 
 # Servir le frontend statique en production
@@ -231,14 +254,11 @@ if STATIC_DIR.exists():
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         """Route catch-all pour servir le SPA React."""
-        # Fichier demandé
         file_path = STATIC_DIR / full_path
 
-        # Si le fichier existe, le servir
         if file_path.is_file():
             return FileResponse(file_path)
 
-        # Sinon, servir index.html (SPA routing)
         return FileResponse(STATIC_DIR / "index.html")
 
 
