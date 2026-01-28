@@ -130,7 +130,14 @@ app.add_middleware(
 TEMPLATE_DIR = Path(__file__).parent
 TEMPLATES_FOLDER = TEMPLATE_DIR / "templates"
 DEFAULT_TEMPLATE = "harvard"
-VALID_TEMPLATES = {"harvard", "europass", "mckinsey", "aurianne"}
+VALID_TEMPLATES = {
+    "harvard", "harvard_compact", "harvard_large",
+    "europass", "europass_compact", "europass_large",
+    "mckinsey", "mckinsey_compact", "mckinsey_large",
+    "aurianne", "aurianne_compact", "aurianne_large",
+    "stephane", "stephane_compact", "stephane_large",
+    "michel", "michel_compact", "michel_large",
+}
 
 # Dossier des fichiers statiques (frontend buildé)
 STATIC_DIR = TEMPLATE_DIR / "static"
