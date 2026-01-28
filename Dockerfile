@@ -34,7 +34,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-latex-extra \
     texlive-fonts-recommended \
     texlive-fonts-extra \
+    texlive-latex-recommended \
     latexmk \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Installation de uv pour la gestion des dépendances Python
