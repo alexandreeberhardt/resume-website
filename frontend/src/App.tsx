@@ -23,7 +23,6 @@ import {
   FileText,
   Sparkles,
   Layout,
-  ChevronDown,
   ArrowRight,
   FileUp,
 } from 'lucide-react';
@@ -53,7 +52,23 @@ function App() {
   const [showLanding, setShowLanding] = useState(true);
   const [hasImported, setHasImported] = useState(false);
   const [editorStep, setEditorStep] = useState(0); // 0 = personal info, 1+ = sections
+  const [importStep, setImportStep] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const importMessages = [
+    "Analyse du PDF...",
+    "Extraction du texte...",
+    "Identification des sections...",
+    "Structuration des donnees...",
+    "Finalisation...",
+  ];
+
+  const templatePreviews: { id: TemplateId; name: string; img: string }[] = [
+    { id: 'harvard', name: 'Harvard', img: '/exemples/Luffy_Harvard.png' },
+    { id: 'aurianne', name: 'Aurianne', img: '/exemples/Homer_Auriane.png' },
+    { id: 'michel', name: 'Michel', img: '/exemples/Luke_Michel.png' },
+    { id: 'stephane', name: 'Stephane', img: '/exemples/Luke_Stephane.png' },
+  ];
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -66,6 +81,18 @@ function App() {
     // Start with empty data
     setInitialLoading(false);
   }, []);
+
+  // Cycle through import messages
+  useEffect(() => {
+    if (!importLoading) {
+      setImportStep(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setImportStep((prev) => Math.min(prev + 1, importMessages.length - 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [importLoading, importMessages.length]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -225,7 +252,7 @@ function App() {
         <section className="pt-32 pb-20 px-6">
           <div className="max-w-4xl mx-auto text-center">
 
-            <h1 className="text-6xl font-bold text-primary-900 mb-6 text-balance">
+            <h1 className="text-5xl font-bold text-primary-900 mb-6 text-balance">
               Creez un CV professionnel en quelques minutes
             </h1>
 
@@ -256,7 +283,7 @@ function App() {
                 {importLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Import en cours...
+                    {importMessages[importStep]}
                   </>
                 ) : (
                   <>
@@ -424,29 +451,6 @@ function App() {
               <span className="hidden sm:inline">Importer</span>
             </button>
 
-            <div className="relative">
-              <select
-                value={data.template_id}
-                onChange={(e) =>
-                  setData((prev) => ({
-                    ...prev,
-                    template_id: e.target.value as TemplateId,
-                  }))
-                }
-                className="appearance-none h-10 pl-4 pr-10 bg-surface-0 border border-primary-200
-                           rounded-xl text-sm font-medium text-primary-700
-                           hover:border-primary-300 focus:outline-none focus:border-primary-400
-                           focus:ring-2 focus:ring-primary-100 cursor-pointer transition-all"
-              >
-                {AVAILABLE_TEMPLATES.map((template) => (
-                  <option key={template.id} value={template.id}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 pointer-events-none" />
-            </div>
-
             <button
               onClick={() => setShowAddModal(true)}
               className="btn-secondary"
@@ -498,7 +502,9 @@ function App() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-6 py-8 flex gap-8">
+        {/* Left: Form */}
+        <main className="flex-1 space-y-6 min-w-0">
         {/* Import suggestion card - only if not imported and at step 0 */}
         {!hasImported && editorStep === 0 && (
           <div className="card p-6 border-2 border-dashed border-primary-200 bg-primary-50/30 animate-fade-in">
@@ -520,11 +526,16 @@ function App() {
                 className="btn-brand"
               >
                 {importLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {importMessages[importStep]}
+                  </>
                 ) : (
-                  <Upload className="w-4 h-4" />
+                  <>
+                    <Upload className="w-4 h-4" />
+                    Importer un PDF
+                  </>
                 )}
-                Importer un PDF
               </button>
             </div>
           </div>
@@ -680,7 +691,39 @@ function App() {
             </button>
           </div>
         )}
-      </main>
+        </main>
+
+        {/* Right: Template Selector */}
+        <aside className="w-64 flex-shrink-0 hidden lg:block">
+          <div className="sticky top-24">
+            <h3 className="text-xl font-semibold text-primary-900 mb-4">Templates</h3>
+            <div className="space-y-3">
+              {templatePreviews.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setData((prev) => ({ ...prev, template_id: template.id }))}
+                  className={`w-full text-left rounded-xl overflow-hidden border-2 transition-all ${
+                    data.template_id === template.id || data.template_id.startsWith(template.id)
+                      ? 'border-brand ring-2 ring-brand/20'
+                      : 'border-primary-200 hover:border-primary-300'
+                  }`}
+                >
+                  <div className="aspect-[3/4] bg-primary-50">
+                    <img
+                      src={template.img}
+                      alt={template.name}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="p-2 bg-surface-0">
+                    <p className="text-xs font-medium text-primary-900">{template.name}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </div>
 
       {showAddModal && (
         <AddSectionModal
