@@ -4,10 +4,14 @@ Expose un endpoint POST /generate qui reçoit les données et retourne le PDF.
 Support des sections dynamiques et réorganisables.
 """
 import os
+import sys
 import tempfile
 import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Union
+
+# Ajouter le répertoire courant au path pour les imports
+sys.path.insert(0, str(Path(__file__).parent))
 
 from dotenv import load_dotenv
 
