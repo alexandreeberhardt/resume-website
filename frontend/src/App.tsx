@@ -73,10 +73,10 @@ function App() {
 
   const templatePreviews: { id: TemplateId; name: string; imgBase: string }[] = [
     { id: 'harvard', name: 'Harvard', imgBase: '/exemples/Luffy_Harvard' },
-    { id: 'aurianne', name: 'Aurianne', imgBase: '/exemples/Homer_Aurianne' },
+    { id: 'double', name: 'Double', imgBase: '/exemples/Alexandre_Double' },
     { id: 'michel', name: 'Michel', imgBase: '/exemples/Luke_Michel' },
     { id: 'stephane', name: 'Stephane', imgBase: '/exemples/Luke_Stephane' },
-    { id: 'double', name: 'Double', imgBase: '/exemples/Alexandre_Double' },
+    { id: 'aurianne', name: 'Aurianne', imgBase: '/exemples/Homer_Aurianne' },
   ];
 
   const getTemplateImage = (imgBase: string, size: string) => {
@@ -379,7 +379,7 @@ function App() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { img: '/exemples/Luffy_Harvard.png', name: 'Harvard', id: 'harvard' },
-                { img: '/exemples/Homer_Aurianne.png', name: 'Aurianne', id: 'aurianne' },
+                { img: '/exemples/Alexandre_Double.png', name: 'Double', id: 'double' },
                 { img: '/exemples/Luke_Michel.png', name: 'Michel', id: 'michel' },
                 { img: '/exemples/Luke_Stephane.png', name: 'Stephane', id: 'stephane' },
               ].map((template) => (
