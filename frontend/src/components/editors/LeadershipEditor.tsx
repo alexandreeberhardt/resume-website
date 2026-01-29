@@ -1,4 +1,4 @@
-import { Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X, Users } from 'lucide-react';
 import { LeadershipItem, createEmptyLeadership } from '../../types';
 
 interface LeadershipEditorProps {
@@ -42,72 +42,89 @@ export default function LeadershipEditor({ items, onChange }: LeadershipEditorPr
   return (
     <div className="space-y-4">
       {items.map((lead, index) => (
-        <div key={index} className="border border-gray-200 rounded-lg p-4 relative">
+        <div
+          key={index}
+          className="relative bg-primary-50/50 border border-primary-100 rounded-xl p-5"
+        >
           <button
             onClick={() => removeItem(index)}
-            className="absolute top-3 right-3 p-1 text-gray-400 hover:text-red-500 transition-colors"
+            className="absolute top-4 right-4 p-1.5 text-primary-400 hover:text-error-500
+                       hover:bg-error-50 rounded-lg transition-colors"
+            title="Supprimer cet engagement"
           >
             <Trash2 className="w-4 h-4" />
           </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5 pr-10">
+            <div className="form-group">
+              <label className="label">Role</label>
               <input
                 type="text"
                 value={lead.role}
                 onChange={(e) => updateItem(index, 'role', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="President, Benevole..."
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Lieu / Organisation</label>
+            <div className="form-group">
+              <label className="label">Lieu / Organisation</label>
               <input
                 type="text"
                 value={lead.place}
                 onChange={(e) => updateItem(index, 'place', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Nom de l'association"
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Dates</label>
+            <div className="form-group">
+              <label className="label">Dates</label>
               <input
                 type="text"
                 value={lead.dates}
                 onChange={(e) => updateItem(index, 'dates', e.target.value)}
-                placeholder="Ex: 2022 - 2024"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="2022 - 2024"
+                className="input"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">Points clés</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="label mb-0">Points cles</label>
               <button
                 onClick={() => addHighlight(index)}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm font-medium text-primary-600 hover:text-primary-800
+                           flex items-center gap-1 transition-colors"
               >
-                + Ajouter
+                <Plus className="w-4 h-4" />
+                Ajouter
               </button>
             </div>
             <div className="space-y-2">
               {lead.highlights.map((hl, hlIndex) => (
-                <div key={hlIndex} className="flex items-center gap-2">
+                <div key={hlIndex} className="flex items-center gap-2 group">
+                  <div className="w-1.5 h-1.5 bg-primary-300 rounded-full flex-shrink-0" />
                   <input
                     type="text"
                     value={hl}
                     onChange={(e) => updateHighlight(index, hlIndex, e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Decrivez une realisation ou responsabilite..."
+                    className="input flex-1"
                   />
                   <button
                     onClick={() => removeHighlight(index, hlIndex)}
-                    className="p-1 text-gray-400 hover:text-red-500"
+                    className="p-1.5 text-primary-300 hover:text-error-500 opacity-0 group-hover:opacity-100
+                               transition-all"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
+              {lead.highlights.length === 0 && (
+                <p className="text-sm text-primary-400 italic py-2">
+                  Ajoutez des points pour decrire vos responsabilites
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -115,9 +132,11 @@ export default function LeadershipEditor({ items, onChange }: LeadershipEditorPr
 
       <button
         onClick={addItem}
-        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors flex items-center justify-center gap-2"
+        className="w-full py-4 border-2 border-dashed border-primary-200 rounded-xl
+                   text-primary-500 hover:border-primary-400 hover:text-primary-700
+                   hover:bg-primary-50/50 transition-all flex items-center justify-center gap-2"
       >
-        <Plus className="w-5 h-5" />
+        <Users className="w-5 h-5" />
         Ajouter un engagement
       </button>
     </div>

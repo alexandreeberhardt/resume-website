@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { Trash2, GraduationCap } from 'lucide-react';
 import { EducationItem, createEmptyEducation } from '../../types';
 
 interface EducationEditorProps {
@@ -24,59 +24,68 @@ export default function EducationEditor({ items, onChange }: EducationEditorProp
   return (
     <div className="space-y-4">
       {items.map((edu, index) => (
-        <div key={index} className="border border-gray-200 rounded-lg p-4 relative">
+        <div
+          key={index}
+          className="relative bg-primary-50/50 border border-primary-100 rounded-xl p-5"
+        >
           <button
             onClick={() => removeItem(index)}
-            className="absolute top-3 right-3 p-1 text-gray-400 hover:text-red-500 transition-colors"
+            className="absolute top-4 right-4 p-1.5 text-primary-400 hover:text-error-500
+                       hover:bg-error-50 rounded-lg transition-colors"
+            title="Supprimer cette formation"
           >
             <Trash2 className="w-4 h-4" />
           </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">École</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-10">
+            <div className="form-group">
+              <label className="label">Ecole / Universite</label>
               <input
                 type="text"
                 value={edu.school}
                 onChange={(e) => updateItem(index, 'school', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Nom de l'etablissement"
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Diplôme</label>
+            <div className="form-group">
+              <label className="label">Diplome</label>
               <input
                 type="text"
                 value={edu.degree}
                 onChange={(e) => updateItem(index, 'degree', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Master en Informatique"
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Dates</label>
+            <div className="form-group">
+              <label className="label">Dates</label>
               <input
                 type="text"
                 value={edu.dates}
                 onChange={(e) => updateItem(index, 'dates', e.target.value)}
-                placeholder="Ex: 2021 - 2025"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="2021 - 2024"
+                className="input"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sous-titre (GPA, etc.)</label>
+            <div className="form-group">
+              <label className="label">Sous-titre (GPA, mention...)</label>
               <input
                 type="text"
                 value={edu.subtitle}
                 onChange={(e) => updateItem(index, 'subtitle', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Mention Tres Bien"
+                className="input"
               />
             </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <div className="form-group md:col-span-2">
+              <label className="label">Description</label>
               <textarea
                 value={edu.description}
                 onChange={(e) => updateItem(index, 'description', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Cours principaux, projets remarquables..."
+                className="input resize-none"
               />
             </div>
           </div>
@@ -85,9 +94,11 @@ export default function EducationEditor({ items, onChange }: EducationEditorProp
 
       <button
         onClick={addItem}
-        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-500 transition-colors flex items-center justify-center gap-2"
+        className="w-full py-4 border-2 border-dashed border-primary-200 rounded-xl
+                   text-primary-500 hover:border-primary-400 hover:text-primary-700
+                   hover:bg-primary-50/50 transition-all flex items-center justify-center gap-2"
       >
-        <Plus className="w-5 h-5" />
+        <GraduationCap className="w-5 h-5" />
         Ajouter une formation
       </button>
     </div>

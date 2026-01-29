@@ -1,3 +1,4 @@
+import { Code2, Wrench } from 'lucide-react';
 import { SkillsItem } from '../../types';
 
 interface SkillsEditorProps {
@@ -11,28 +12,39 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="space-y-5">
+      <div className="form-group">
+        <label className="label flex items-center gap-2">
+          <Code2 className="w-4 h-4 text-primary-500" />
           Langages de programmation
         </label>
         <input
           type="text"
           value={data.languages}
           onChange={(e) => updateField('languages', e.target.value)}
-          placeholder="Ex: Python, JavaScript, C++, Rust"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Python, JavaScript, TypeScript, Go, Rust..."
+          className="input"
         />
+        <p className="text-xs text-primary-400 mt-1.5">
+          Separez les langages par des virgules
+        </p>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Outils</label>
+
+      <div className="form-group">
+        <label className="label flex items-center gap-2">
+          <Wrench className="w-4 h-4 text-primary-500" />
+          Outils et technologies
+        </label>
         <input
           type="text"
           value={data.tools}
           onChange={(e) => updateField('tools', e.target.value)}
-          placeholder="Ex: Git, Docker, Linux, AWS"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Git, Docker, AWS, PostgreSQL, React..."
+          className="input"
         />
+        <p className="text-xs text-primary-400 mt-1.5">
+          Frameworks, outils DevOps, bases de donnees, etc.
+        </p>
       </div>
     </div>
   );

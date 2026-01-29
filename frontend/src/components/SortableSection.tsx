@@ -1,6 +1,16 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Eye, EyeOff, Trash2, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
+import {
+  GripVertical,
+  Eye,
+  EyeOff,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Check,
+  X,
+} from 'lucide-react';
 import { useState } from 'react';
 import {
   CVSection,
@@ -26,6 +36,17 @@ interface SortableSectionProps {
   onDelete: () => void;
 }
 
+const sectionTypeLabels: Record<string, string> = {
+  summary: 'Resume',
+  education: 'Formation',
+  experiences: 'Experience',
+  projects: 'Projets',
+  skills: 'Competences',
+  leadership: 'Leadership',
+  languages: 'Langues',
+  custom: 'Personnalise',
+};
+
 export default function SortableSection({ section, onUpdate, onDelete }: SortableSectionProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -43,11 +64,15 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   };
 
   const handleTitleSave = () => {
     onUpdate({ title: titleInput });
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleCancel = () => {
+    setTitleInput(section.title);
     setIsEditingTitle(false);
   };
 
@@ -118,58 +143,65 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white rounded-lg shadow ${!section.isVisible ? 'opacity-60' : ''}`}
+      className={`card transition-all duration-200 animate-fade-in ${
+        isDragging ? 'shadow-elevated opacity-90 scale-[1.02]' : ''
+      } ${!section.isVisible ? 'opacity-60' : ''}`}
     >
-      {/* Header de la section */}
-      <div className="flex items-center gap-2 p-4 border-b border-gray-100">
-        {/* Handle de drag */}
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-primary-100">
+        {/* Drag Handle */}
         <button
           {...attributes}
           {...listeners}
-          className="p-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+          className="p-1.5 text-primary-300 hover:text-primary-500 rounded-lg
+                     hover:bg-primary-50 cursor-grab active:cursor-grabbing transition-colors"
         >
           <GripVertical className="w-5 h-5" />
         </button>
 
-        {/* Titre */}
-        <div className="flex-1">
+        {/* Title */}
+        <div className="flex-1 min-w-0">
           {isEditingTitle ? (
             <div className="flex items-center gap-2">
               <input
                 type="text"
                 value={titleInput}
                 onChange={(e) => setTitleInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleTitleSave()}
-                className="flex-1 px-2 py-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleTitleSave();
+                  if (e.key === 'Escape') handleTitleCancel();
+                }}
+                className="flex-1 px-3 py-1.5 text-base font-semibold border border-primary-300
+                           rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2
+                           focus:ring-primary-100"
                 autoFocus
               />
               <button
                 onClick={handleTitleSave}
-                className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                className="p-1.5 text-success-600 hover:bg-success-50 rounded-lg transition-colors"
               >
-                OK
+                <Check className="w-4 h-4" />
               </button>
               <button
-                onClick={() => {
-                  setTitleInput(section.title);
-                  setIsEditingTitle(false);
-                }}
-                className="px-3 py-1 text-gray-600 text-sm hover:text-gray-800"
+                onClick={handleTitleCancel}
+                className="p-1.5 text-primary-400 hover:bg-primary-100 rounded-lg transition-colors"
               >
-                Annuler
+                <X className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-semibold text-gray-900">{section.title}</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-base font-semibold text-primary-900 truncate">
+                {section.title}
+              </h2>
               <button
                 onClick={() => setIsEditingTitle(true)}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                className="p-1 text-primary-300 hover:text-primary-500 rounded transition-colors"
               >
-                <Pencil className="w-4 h-4" />
+                <Pencil className="w-3.5 h-3.5" />
               </button>
-              <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded">
-                {section.type}
+              <span className="badge">
+                {sectionTypeLabels[section.type] || section.type}
               </span>
             </div>
           )}
@@ -179,34 +211,51 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
         <div className="flex items-center gap-1">
           <button
             onClick={() => onUpdate({ isVisible: !section.isVisible })}
-            className={`p-2 rounded transition-colors ${
+            className={`p-2 rounded-lg transition-colors ${
               section.isVisible
-                ? 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
-                : 'text-orange-500 hover:text-orange-600 hover:bg-orange-50'
+                ? 'text-primary-400 hover:text-primary-600 hover:bg-primary-50'
+                : 'text-accent-500 hover:text-accent-600 hover:bg-accent-50'
             }`}
-            title={section.isVisible ? 'Masquer' : 'Afficher'}
+            title={section.isVisible ? 'Masquer dans le PDF' : 'Afficher dans le PDF'}
           >
-            {section.isVisible ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+            {section.isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
           </button>
+
           <button
             onClick={onDelete}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-            title="Supprimer"
+            className="p-2 text-primary-400 hover:text-error-500 hover:bg-error-50
+                       rounded-lg transition-colors"
+            title="Supprimer la section"
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash2 className="w-4 h-4" />
           </button>
+
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+            className="p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50
+                       rounded-lg transition-colors"
           >
-            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Contenu de la section */}
+      {/* Content */}
       {isExpanded && section.isVisible && (
-        <div className="p-4">{renderEditor()}</div>
+        <div className="p-5">{renderEditor()}</div>
+      )}
+
+      {/* Collapsed/Hidden message */}
+      {isExpanded && !section.isVisible && (
+        <div className="px-5 py-4 text-center">
+          <p className="text-sm text-primary-400">
+            Cette section est masquee dans le PDF final
+          </p>
+        </div>
       )}
     </div>
   );

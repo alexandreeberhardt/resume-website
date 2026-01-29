@@ -1,3 +1,5 @@
+import { User } from 'lucide-react';
+
 interface SummaryEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -5,19 +7,20 @@ interface SummaryEditorProps {
 
 export default function SummaryEditor({ value, onChange }: SummaryEditorProps) {
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="form-group">
+      <label className="label flex items-center gap-2">
+        <User className="w-4 h-4 text-primary-500" />
         Profil / Objectif professionnel
       </label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Ex: Software engineer with 5+ years of experience in building scalable web applications. Passionate about clean code, user experience, and continuous learning."
+        placeholder="Decrivez votre profil professionnel, vos competences cles et vos objectifs de carriere..."
         rows={4}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-y"
+        className="input resize-y min-h-[100px]"
       />
-      <p className="mt-1 text-sm text-gray-500">
-        Un court paragraphe qui resume votre profil et vos objectifs professionnels.
+      <p className="text-xs text-primary-400 mt-1.5">
+        Un court paragraphe qui resume votre profil et vos objectifs. Soyez concis et percutant.
       </p>
     </div>
   );

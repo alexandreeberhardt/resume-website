@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -14,8 +14,17 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { FileDown, Loader2, AlertCircle, Plus, Upload } from 'lucide-react';
-import { useRef } from 'react';
+import {
+  FileDown,
+  Loader2,
+  AlertCircle,
+  Plus,
+  Upload,
+  FileText,
+  Sparkles,
+  Layout,
+  ChevronDown,
+} from 'lucide-react';
 import {
   ResumeData,
   CVSection,
@@ -30,7 +39,6 @@ import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
 import AddSectionModal from './components/AddSectionModal';
 
-// URL de l'API (en dev: proxy vers localhost:8000, en prod: même domaine)
 const API_URL = import.meta.env.DEV ? '/api' : '';
 
 function App() {
@@ -40,6 +48,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
@@ -49,27 +58,23 @@ function App() {
     })
   );
 
-  // Charger les données par défaut au démarrage
   useEffect(() => {
     fetch(`${API_URL}/default-data`)
       .then((res) => res.json())
       .then((defaultData) => {
-        // Convertir l'ancien format vers le nouveau format avec sections
         const convertedData = convertLegacyData(defaultData);
         setData(convertedData);
         setInitialLoading(false);
       })
       .catch((err) => {
-        console.error('Erreur chargement données:', err);
+        console.error('Erreur chargement donnees:', err);
         setInitialLoading(false);
       });
   }, []);
 
-  // Convertir l'ancien format de données vers le nouveau
   const convertLegacyData = (legacyData: any): ResumeData => {
     const sections: CVSection[] = [];
 
-    // Summary en premier
     if (legacyData.summary) {
       sections.push({
         id: generateId(),
@@ -147,7 +152,6 @@ function App() {
     };
   };
 
-  // Générer et télécharger le PDF
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
@@ -155,18 +159,15 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errData = await response.json();
-        throw new Error(errData.detail || 'Erreur lors de la génération');
+        throw new Error(errData.detail || 'Erreur lors de la generation');
       }
 
-      // Télécharger le PDF
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -183,7 +184,6 @@ function App() {
     }
   };
 
-  // Importer un CV depuis un PDF
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -206,8 +206,6 @@ function App() {
       }
 
       const importedData: ResumeData = await response.json();
-
-      // Régénérer les IDs pour éviter les conflits
       const processedData: ResumeData = {
         ...importedData,
         sections: importedData.sections.map((section) => ({
@@ -217,18 +215,17 @@ function App() {
       };
 
       setData(processedData);
+      setShowLanding(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'import");
     } finally {
       setImportLoading(false);
-      // Reset l'input file pour permettre de re-sélectionner le même fichier
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
   };
 
-  // Gestion du drag & drop
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -236,7 +233,6 @@ function App() {
       setData((prev) => {
         const oldIndex = prev.sections.findIndex((s) => s.id === active.id);
         const newIndex = prev.sections.findIndex((s) => s.id === over.id);
-
         return {
           ...prev,
           sections: arrayMove(prev.sections, oldIndex, newIndex),
@@ -245,7 +241,6 @@ function App() {
     }
   };
 
-  // Mettre à jour une section
   const updateSection = (sectionId: string, updates: Partial<CVSection>) => {
     setData((prev) => ({
       ...prev,
@@ -255,7 +250,6 @@ function App() {
     }));
   };
 
-  // Supprimer une section
   const deleteSection = (sectionId: string) => {
     setData((prev) => ({
       ...prev,
@@ -263,7 +257,6 @@ function App() {
     }));
   };
 
-  // Ajouter une nouvelle section
   const addSection = (type: SectionType, title: string) => {
     const newSection = createSection(type, title);
     setData((prev) => ({
@@ -275,20 +268,196 @@ function App() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="min-h-screen flex items-center justify-center bg-surface-50">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+          <p className="text-sm text-primary-500">Chargement...</p>
+        </div>
       </div>
     );
   }
 
+  // Landing Page
+  if (showLanding) {
+    return (
+      <div className="min-h-screen bg-surface-50">
+        {/* Navigation */}
+        <nav className="fixed top-0 inset-x-0 z-50 bg-surface-0/80 backdrop-blur-md border-b border-primary-100">
+          <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="w-8 h-8 text-primary-900" />
+              <span className="text-lg font-semibold text-primary-900">CV Generator</span>
+            </div>
+            <button
+              onClick={() => setShowLanding(false)}
+              className="btn-primary text-base"
+            >
+              Commencer
+            </button>
+          </div>
+        </nav>
+
+        {/* Hero Section */}
+        <section className="pt-32 pb-20 px-6">
+          <div className="max-w-4xl mx-auto text-center">
+
+            <h1 className="text-6xl font-bold text-primary-900 mb-6 text-balance">
+              Creez un CV professionnel en quelques minutes
+            </h1>
+
+            <p className="text-xl text-primary-600 mb-10 max-w-2xl mx-auto text-balance">
+              Importez votre CV existant ou partez de zero. Editez, personnalisez et exportez en PDF avec un rendu LaTeX impeccable.
+
+            </p>
+
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => setShowLanding(false)}
+                className="btn-primary px-6 py-3 text-base"
+              >
+                Creer mon CV
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImport}
+                accept=".pdf"
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={importLoading}
+                className="btn-secondary px-6 py-3 text-base"
+              >
+                {importLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Import en cours...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    Importer un PDF
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
+
+
+
+        {/* Templates Preview */}
+        <section className="py-20 px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-primary-900 mb-4">
+                {AVAILABLE_TEMPLATES.length} templates disponibles
+              </h2>
+              <p className="text-lg text-primary-600">
+                Du style classique au design moderne
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {AVAILABLE_TEMPLATES.slice(0, 6).map((template) => (
+                <div
+                  key={template.id}
+                  className="card p-4 text-center hover:shadow-medium transition-shadow cursor-pointer"
+                  onClick={() => {
+                    setData((prev) => ({ ...prev, template_id: template.id }));
+                    setShowLanding(false);
+                  }}
+                >
+                  <div className="w-full aspect-[3/4] bg-primary-100 rounded-lg mb-3 flex items-center justify-center">
+                    <FileText className="w-8 h-8 text-primary-400" />
+                  </div>
+                  <p className="text-sm font-medium text-primary-900">{template.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* Features */}
+        <section className="py-20 px-6 bg-surface-0">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold text-primary-900 mb-4">
+                Pourquoi choisir CV Generator ?
+              </h2>
+              <p className="text-lg text-primary-600 max-w-2xl mx-auto">
+                Des outils simples et puissants pour creer le CV parfait
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <FeatureCard
+                icon={<Layout className="w-6 h-6" />}
+                title="Templates professionnels"
+                description="Choisissez parmi nos templates concu pour impressionner les recruteurs."
+              />
+              <FeatureCard
+                icon={<Sparkles className="w-6 h-6" />}
+                title="Interface intuitive"
+                description="Glissez-deposez vos sections, modifiez en temps reel, sans friction."
+              />
+              <FeatureCard
+                icon={<FileDown className="w-6 h-6" />}
+                title="Export PDF haute qualite"
+                description="Generez un PDF parfaitement formate, pret a etre envoye."
+              />
+            </div>
+          </div>
+        </section>
+        {/* CTA */}
+        <section className="py-20 px-6 bg-primary-900">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Pret a creer votre CV ?
+            </h2>
+            <p className="text-lg text-primary-300 mb-8">
+              Commencez gratuitement, exportez en PDF en quelques clics
+            </p>
+            <button
+              onClick={() => setShowLanding(false)}
+              className="btn-accent px-8 py-3 text-base"
+            >
+              Commencer maintenant
+            </button>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-8 px-6 bg-surface-0 border-t border-primary-100">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary-400" />
+              <span className="text-sm text-primary-500">CV Generator</span>
+            </div>
+            <p className="text-sm text-primary-400">
+              Fait avec soin
+            </p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
+  // Editor Interface
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">CV Generator</h1>
+      <header className="bg-surface-0 border-b border-primary-100 sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+          <button
+            onClick={() => setShowLanding(true)}
+            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+          >
+            <FileText className="w-6 h-6 text-primary-900" />
+            <span className="font-semibold text-primary-900">CV Generator</span>
+          </button>
+
           <div className="flex items-center gap-3">
-            {/* Input file caché pour l'import PDF */}
             <input
               type="file"
               ref={fileInputRef}
@@ -299,57 +468,61 @@ function App() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={importLoading}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-ghost"
             >
               {importLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Import...
-                </>
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <>
-                  <Upload className="w-5 h-5" />
-                  Importer PDF
-                </>
+                <Upload className="w-4 h-4" />
               )}
+              <span className="hidden sm:inline">Importer</span>
             </button>
-            <select
-              value={data.template_id}
-              onChange={(e) =>
-                setData((prev) => ({
-                  ...prev,
-                  template_id: e.target.value as TemplateId,
-                }))
-              }
-              className="h-10 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-            >
-              {AVAILABLE_TEMPLATES.map((template) => (
-                <option key={template.id} value={template.id}>
-                  {template.name}
-                </option>
-              ))}
-            </select>
+
+            <div className="relative">
+              <select
+                value={data.template_id}
+                onChange={(e) =>
+                  setData((prev) => ({
+                    ...prev,
+                    template_id: e.target.value as TemplateId,
+                  }))
+                }
+                className="appearance-none h-10 pl-4 pr-10 bg-surface-0 border border-primary-200
+                           rounded-xl text-sm font-medium text-primary-700
+                           hover:border-primary-300 focus:outline-none focus:border-primary-400
+                           focus:ring-2 focus:ring-primary-100 cursor-pointer transition-all"
+              >
+                {AVAILABLE_TEMPLATES.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 pointer-events-none" />
+            </div>
+
             <button
               onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              className="btn-secondary"
             >
-              <Plus className="w-5 h-5" />
-              Ajouter section
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Section</span>
             </button>
+
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn-primary"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Génération...
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="hidden sm:inline">Generation...</span>
                 </>
               ) : (
                 <>
-                  <FileDown className="w-5 h-5" />
-                  Générer PDF
+                  <FileDown className="w-4 h-4" />
+                  <span className="hidden sm:inline">Exporter PDF</span>
                 </>
               )}
             </button>
@@ -357,25 +530,34 @@ function App() {
         </div>
       </header>
 
-      {/* Erreur */}
+      {/* Error Banner */}
       {error && (
-        <div className="max-w-5xl mx-auto px-4 mt-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-            <p className="text-red-700">{error}</p>
+        <div className="max-w-5xl mx-auto px-6 pt-4">
+          <div className="bg-error-50 border border-error-200 rounded-xl p-4 flex items-start gap-3 animate-slide-up">
+            <AlertCircle className="w-5 h-5 text-error-500 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-error-700">{error}</p>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-error-400 hover:text-error-600 transition-colors"
+            >
+              <span className="sr-only">Fermer</span>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       )}
 
-      {/* Contenu principal */}
-      <main className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        {/* Informations personnelles (toujours en premier, non déplaçable) */}
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
         <PersonalSection
           data={data.personal}
           onChange={(personal) => setData((prev) => ({ ...prev, personal }))}
         />
 
-        {/* Sections déplaçables */}
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -397,20 +579,27 @@ function App() {
         </DndContext>
 
         {data.sections.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500 mb-4">Aucune section ajoutée</p>
+          <div className="card p-12 text-center animate-fade-in">
+            <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Plus className="w-8 h-8 text-primary-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-primary-900 mb-2">
+              Aucune section
+            </h3>
+            <p className="text-primary-500 mb-6">
+              Ajoutez des sections pour construire votre CV
+            </p>
             <button
               onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="btn-primary"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" />
               Ajouter une section
             </button>
           </div>
         )}
       </main>
 
-      {/* Modal d'ajout de section */}
       {showAddModal && (
         <AddSectionModal
           onAdd={addSection}
@@ -418,6 +607,26 @@ function App() {
           existingSections={data.sections.map((s) => s.type)}
         />
       )}
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="card p-6">
+      <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-4 text-primary-600">
+        {icon}
+      </div>
+      <h3 className="text-lg font-semibold text-primary-900 mb-2">{title}</h3>
+      <p className="text-primary-600">{description}</p>
     </div>
   );
 }
