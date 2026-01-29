@@ -91,6 +91,11 @@ function App() {
     setInitialLoading(false);
   }, []);
 
+  // Update page title based on language
+  useEffect(() => {
+    document.title = t('landing.pageTitle');
+  }, [t, i18n.language]);
+
   // Cycle through import messages
   useEffect(() => {
     if (!importLoading) {
