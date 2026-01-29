@@ -392,12 +392,12 @@ function App() {
           </div>
         </section>
         {/* CTA */}
-        <section className="py-20 px-6 bg-slate-900 dark:bg-slate-800">
+        <section className="py-20 px-6 bg-slate-200 dark:bg-slate-800">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
               {t('landing.ctaTitle')}
             </h2>
-            <p className="text-lg text-slate-300 mb-8">
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
               {t('landing.ctaSubtitle')}
             </p>
             <button
