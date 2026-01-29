@@ -63,12 +63,17 @@ function App() {
     "Finalisation...",
   ];
 
-  const templatePreviews: { id: TemplateId; name: string; img: string }[] = [
-    { id: 'harvard', name: 'Harvard', img: '/exemples/Luffy_Harvard.png' },
-    { id: 'aurianne', name: 'Aurianne', img: '/exemples/Homer_Auriane.png' },
-    { id: 'michel', name: 'Michel', img: '/exemples/Luke_Michel.png' },
-    { id: 'stephane', name: 'Stephane', img: '/exemples/Luke_Stephane.png' },
+  const templatePreviews: { id: TemplateId; name: string; imgBase: string }[] = [
+    { id: 'harvard', name: 'Harvard', imgBase: '/exemples/Luffy_Harvard' },
+    { id: 'aurianne', name: 'Aurianne', imgBase: '/exemples/Homer_Aurianne' },
+    { id: 'michel', name: 'Michel', imgBase: '/exemples/Luke_Michel' },
+    { id: 'stephane', name: 'Stephane', imgBase: '/exemples/Luke_Stephane' },
   ];
+
+  const getTemplateImage = (imgBase: string, size: string) => {
+    if (size === 'normal') return `${imgBase}.png`;
+    return `${imgBase}_${size}.png`;
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -316,7 +321,7 @@ function App() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { img: '/exemples/Luffy_Harvard.png', name: 'Harvard', id: 'harvard' },
-                { img: '/exemples/Homer_Auriane.png', name: 'Aurianne', id: 'aurianne' },
+                { img: '/exemples/Homer_Aurianne.png', name: 'Aurianne', id: 'aurianne' },
                 { img: '/exemples/Luke_Michel.png', name: 'Michel', id: 'michel' },
                 { img: '/exemples/Luke_Stephane.png', name: 'Stephane', id: 'stephane' },
               ].map((template) => (
@@ -697,29 +702,76 @@ function App() {
         <aside className="w-64 flex-shrink-0 hidden lg:block">
           <div className="sticky top-24">
             <h3 className="text-xl font-semibold text-primary-900 mb-4">Templates</h3>
+
+            {/* Size selector */}
+            <div className="mb-4">
+              <div className="flex rounded-lg border border-primary-200 overflow-hidden">
+                {(['compact', 'normal', 'large'] as const).map((size) => {
+                  const currentBase = data.template_id.replace(/_compact|_large/, '');
+                  const currentSize = data.template_id.includes('_compact') ? 'compact'
+                    : data.template_id.includes('_large') ? 'large' : 'normal';
+                  const isSelected = currentSize === size;
+                  return (
+                    <button
+                      key={size}
+                      onClick={() => {
+                        const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
+                        setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                      }}
+                      className={`flex-1 py-2 text-xs font-medium transition-all ${
+                        isSelected
+                          ? 'bg-brand text-white'
+                          : 'bg-surface-0 text-primary-600 hover:bg-primary-50'
+                      }`}
+                    >
+                      {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="space-y-3">
-              {templatePreviews.map((template) => (
-                <button
-                  key={template.id}
-                  onClick={() => setData((prev) => ({ ...prev, template_id: template.id }))}
-                  className={`w-full text-left rounded-xl overflow-hidden border-2 transition-all ${
-                    data.template_id === template.id || data.template_id.startsWith(template.id)
-                      ? 'border-brand ring-2 ring-brand/20'
-                      : 'border-primary-200 hover:border-primary-300'
-                  }`}
-                >
-                  <div className="aspect-[3/4] bg-primary-50">
-                    <img
-                      src={template.img}
-                      alt={template.name}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="p-2 bg-surface-0">
-                    <p className="text-xs font-medium text-primary-900">{template.name}</p>
-                  </div>
-                </button>
-              ))}
+              {templatePreviews.map((template) => {
+                const currentBase = data.template_id.replace(/_compact|_large/, '');
+                const currentSize = data.template_id.includes('_compact') ? 'compact'
+                  : data.template_id.includes('_large') ? 'large' : 'normal';
+                const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`;
+                const isSelected = currentBase === template.id;
+                const imgSrc = getTemplateImage(template.imgBase, currentSize);
+                const fallbackSrc = `${template.imgBase}.png`;
+                return (
+                  <button
+                    key={template.id}
+                    onClick={() => {
+                      const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
+                      setData((prev) => ({ ...prev, template_id: newId }));
+                    }}
+                    className={`w-full text-left rounded-xl overflow-hidden border-2 transition-all ${
+                      isSelected
+                        ? 'border-brand ring-2 ring-brand/20'
+                        : 'border-primary-200 hover:border-primary-300'
+                    }`}
+                  >
+                    <div className="bg-primary-50">
+                      <img
+                        src={imgSrc}
+                        alt={template.name}
+                        className="w-full h-auto"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== fallbackSrc) {
+                            target.src = fallbackSrc;
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="p-2 bg-surface-0 border-t border-primary-100">
+                      <p className="text-xs font-medium text-primary-900">{template.name}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </aside>
