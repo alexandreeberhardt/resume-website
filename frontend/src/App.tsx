@@ -176,7 +176,10 @@ function App() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'cv.pdf';
+      const fileName = data.personal.name
+        ? `${data.personal.name.trim().replace(/\s+/g, '_')}_CV.pdf`
+        : 'CV.pdf';
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -365,7 +368,10 @@ function App() {
                 {AVAILABLE_TEMPLATES.length} templates disponibles
               </h2>
               <p className="text-lg text-primary-600">
-                Du style classique au design moderne
+                Du style classique au design moderne, 
+              </p>
+              <p className="text-lg text-primary-600">
+                100% ATS friendly et professionnels
               </p>
             </div>
 
@@ -423,12 +429,12 @@ function App() {
               <FeatureCard
                 icon={<Layout className="w-6 h-6" />}
                 title="Templates professionnels"
-                description="Choisissez parmi nos templates concu pour impressionner les recruteurs."
+                description="Choisissez parmi nos templates professionnels 100% compatibles ATS."
               />
               <FeatureCard
                 icon={<Sparkles className="w-6 h-6" />}
                 title="Interface intuitive"
-                description="Glissez-deposez vos sections, modifiez en temps reel, sans friction."
+                description="Importez votre CV et modifiez-le en temps reel, sans friction."
               />
               <FeatureCard
                 icon={<FileDown className="w-6 h-6" />}
