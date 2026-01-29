@@ -13,7 +13,7 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="flex items-center gap-1 bg-surface-100 rounded-lg p-1">
+    <div className="flex items-center gap-1 bg-primary-200 dark:bg-primary-300 rounded-lg p-1">
       {languages.map((lang) => (
         <button
           key={lang.code}
@@ -21,8 +21,8 @@ const LanguageSwitcher = () => {
           className={`
             px-2 py-1 rounded-md text-lg transition-all duration-200
             ${i18n.language === lang.code
-              ? 'bg-white shadow-sm scale-110'
-              : 'hover:bg-surface-200 opacity-60 hover:opacity-100'
+              ? 'bg-surface-0 shadow-sm scale-110'
+              : 'hover:bg-surface-100 opacity-60 hover:opacity-100'
             }
           `}
           title={lang.code.toUpperCase()}

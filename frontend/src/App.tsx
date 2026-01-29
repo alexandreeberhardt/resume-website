@@ -41,6 +41,7 @@ import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
 import AddSectionModal from './components/AddSectionModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import ThemeToggle from './components/ThemeToggle';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
 
@@ -248,6 +249,7 @@ function App() {
               <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
             </div>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <LanguageSwitcher />
               <button
                 onClick={() => setShowLanding(false)}
@@ -390,12 +392,12 @@ function App() {
           </div>
         </section>
         {/* CTA */}
-        <section className="py-20 px-6 bg-primary-900">
+        <section className="py-20 px-6 bg-slate-900 dark:bg-slate-800">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-white mb-4">
               {t('landing.ctaTitle')}
             </h2>
-            <p className="text-lg text-primary-300 mb-8">
+            <p className="text-lg text-slate-300 mb-8">
               {t('landing.ctaSubtitle')}
             </p>
             <button
@@ -427,17 +429,18 @@ function App() {
   return (
     <div className="min-h-screen bg-surface-50">
       {/* Header */}
-      <header className="bg-surface-0 border-b border-primary-100 sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="bg-surface-0/80 backdrop-blur-md border-b border-primary-100 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <button
             onClick={() => setShowLanding(true)}
             className="flex items-center gap-2 hover:opacity-70 transition-opacity"
           >
-            <FileText className="w-6 h-6 text-primary-900" />
-            <span className="font-semibold text-primary-900">{t('landing.appName')}</span>
+            <FileText className="w-8 h-8 text-primary-900" />
+            <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
             <LanguageSwitcher />
             <input
               type="file"

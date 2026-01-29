@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,61 +8,61 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand color - Main CTA buttons
+        // Brand color - Main CTA buttons (using CSS variables for theme support)
         brand: {
-          DEFAULT: '#2563EB',
-          hover: '#1d4ed8',
-          active: '#1e40af',
+          DEFAULT: 'var(--color-brand)',
+          hover: 'var(--color-brand-hover)',
+          active: 'var(--color-brand-active)',
         },
-        // Primary palette - Deep indigo/slate for professional feel
+        // Primary palette - Uses CSS variables for light/dark theming
         primary: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617',
+          50: 'var(--color-primary-50)',
+          100: 'var(--color-primary-100)',
+          200: 'var(--color-primary-200)',
+          300: 'var(--color-primary-300)',
+          400: 'var(--color-primary-400)',
+          500: 'var(--color-primary-500)',
+          600: 'var(--color-primary-600)',
+          700: 'var(--color-primary-700)',
+          800: 'var(--color-primary-800)',
+          900: 'var(--color-primary-900)',
+          950: 'var(--color-primary-950)',
         },
         // Accent - Warm amber for CTAs
         accent: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          50: 'var(--color-accent-50)',
+          100: 'var(--color-accent-100)',
+          200: 'var(--color-accent-200)',
+          300: 'var(--color-accent-300)',
+          400: 'var(--color-accent-400)',
+          500: 'var(--color-accent-500)',
+          600: 'var(--color-accent-600)',
+          700: 'var(--color-accent-700)',
+          800: 'var(--color-accent-800)',
+          900: 'var(--color-accent-900)',
         },
         // Success states
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
+          50: 'var(--color-success-50)',
+          100: 'var(--color-success-100)',
+          500: 'var(--color-success-500)',
+          600: 'var(--color-success-600)',
+          700: 'var(--color-success-700)',
         },
         // Error states
         error: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
+          50: 'var(--color-error-50)',
+          100: 'var(--color-error-100)',
+          500: 'var(--color-error-500)',
+          600: 'var(--color-error-600)',
+          700: 'var(--color-error-700)',
         },
         // Surface colors
         surface: {
-          0: '#ffffff',
-          50: '#fafafa',
-          100: '#f5f5f5',
-          200: '#e5e5e5',
+          0: 'var(--color-surface-0)',
+          50: 'var(--color-surface-50)',
+          100: 'var(--color-surface-100)',
+          200: 'var(--color-surface-200)',
         },
       },
       fontFamily: {
