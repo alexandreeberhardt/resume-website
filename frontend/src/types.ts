@@ -233,7 +233,7 @@ export const emptyResumeData: ResumeData = {
       type: 'summary',
       title: 'Summary',
       isVisible: true,
-      items: 'Dual-degree Computer Science student at Université Laval and UTC, specializing in computer vision, robotics, and embedded systems. Experienced in software engineering and GPU-optimized deep learning model integration. Actively involved in student life and bilingual in French and English.',
+      items: '',
     },
     createSection('education', 'Education'),
     createSection('experiences', 'Experiences'),
