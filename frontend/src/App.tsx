@@ -26,6 +26,9 @@ import {
   Layout,
   ArrowRight,
   FileUp,
+  Eye,
+  Menu,
+  X,
 } from 'lucide-react';
 import {
   ResumeData,
@@ -59,6 +62,8 @@ function App() {
   const [hasImported, setHasImported] = useState(false);
   const [editorStep, setEditorStep] = useState(0); // 0 = personal info, 1+ = sections
   const [importStep, setImportStep] = useState(0);
+  const [showMobilePreview, setShowMobilePreview] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   const actionButtonsRef = useRef<HTMLDivElement>(null);
@@ -297,17 +302,17 @@ function App() {
       <div className="min-h-screen bg-surface-50">
         {/* Navigation */}
         <nav className="fixed top-0 inset-x-0 z-50 bg-surface-0/80 backdrop-blur-md border-b border-primary-100">
-          <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-8 h-8 text-primary-900" />
-              <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+              <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary-900" />
+              <span className="text-base sm:text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <ThemeToggle />
               <LanguageSwitcher />
               <button
                 onClick={() => setShowLanding(false)}
-                className="btn-brand text-base"
+                className="btn-brand text-sm sm:text-base px-3 sm:px-4 py-2"
               >
                 {t('landing.start')}
               </button>
@@ -316,21 +321,21 @@ function App() {
         </nav>
 
         {/* Hero Section */}
-        <section className="pt-32 pb-20 px-6">
+        <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
 
-            <h1 className="text-5xl font-bold text-primary-900 mb-6 text-balance">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-900 mb-4 sm:mb-6 text-balance">
               {t('landing.heroTitle')}
             </h1>
 
-            <p className="text-xl text-primary-600 mb-10 max-w-2xl mx-auto text-balance">
+            <p className="text-base sm:text-lg md:text-xl text-primary-600 mb-8 sm:mb-10 max-w-2xl mx-auto text-balance">
               {t('landing.heroSubtitle')}
             </p>
 
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <button
                 onClick={() => setShowLanding(false)}
-                className="btn-brand px-6 py-3 text-base"
+                className="btn-brand px-6 py-3 text-base w-full sm:w-auto"
               >
                 {t('landing.createCv')}
               </button>
@@ -344,12 +349,12 @@ function App() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={importLoading}
-                className="btn-secondary px-6 py-3 text-base"
+                className="btn-secondary px-6 py-3 text-base w-full sm:w-auto"
               >
                 {importLoading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    {importMessages[importStep]}
+                    <span className="truncate">{importMessages[importStep]}</span>
                   </>
                 ) : (
                   <>
@@ -365,18 +370,18 @@ function App() {
 
 
         {/* Templates Preview */}
-        <section className="py-20 px-6">
+        <section className="py-12 sm:py-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-primary-900 mb-4">
+            <div className="text-center mb-8 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl font-bold text-primary-900 mb-3 sm:mb-4">
                 {t('landing.templatesAvailable', { count: AVAILABLE_TEMPLATES.length })}
               </h2>
-              <p className="text-lg text-primary-600">
+              <p className="text-base sm:text-lg text-primary-600">
                 {t('landing.templatesDescription')}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
               {[
                 { img: '/exemples/Luffy_Harvard.png', name: 'Harvard', id: 'harvard' },
                 { img: '/exemples/Alexandre_Double.png', name: 'Double', id: 'double' },
@@ -385,21 +390,21 @@ function App() {
               ].map((template) => (
                 <div
                   key={template.id}
-                  className="group card p-3 text-center hover:shadow-medium transition-all cursor-pointer"
+                  className="group card p-2 sm:p-3 text-center hover:shadow-medium transition-all cursor-pointer active:scale-[0.98]"
                   onClick={() => {
                     setData((prev) => ({ ...prev, template_id: template.id as TemplateId }));
                     setShowLanding(false);
                     window.scrollTo(0, 0);
                   }}
                 >
-                  <div className="w-full aspect-[3/4] rounded-lg mb-3 overflow-hidden bg-primary-50">
+                  <div className="w-full aspect-[3/4] rounded-lg mb-2 sm:mb-3 overflow-hidden bg-primary-50">
                     <img
                       src={template.img}
                       alt={`Template ${template.name}`}
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  <p className="text-sm font-medium text-primary-900">{template.name}</p>
+                  <p className="text-xs sm:text-sm font-medium text-primary-900">{template.name}</p>
                 </div>
               ))}
             </div>
@@ -415,18 +420,18 @@ function App() {
           </div>
         </section>
         {/* Features */}
-        <section className="py-20 px-6 bg-surface-0">
+        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-surface-0">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-primary-900 mb-4">
+            <div className="text-center mb-8 sm:mb-16">
+              <h2 className="text-2xl sm:text-3xl font-bold text-primary-900 mb-3 sm:mb-4">
                 {t('landing.whyChoose')}
               </h2>
-              <p className="text-lg text-primary-600 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg text-primary-600 max-w-2xl mx-auto">
                 {t('landing.whyDescription')}
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
               <FeatureCard
                 icon={<Layout className="w-6 h-6" />}
                 title={t('features.professionalTemplates')}
@@ -446,17 +451,17 @@ function App() {
           </div>
         </section>
         {/* CTA */}
-        <section className="py-20 px-6 bg-slate-200 dark:bg-slate-800">
+        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-slate-200 dark:bg-slate-800">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
               {t('landing.ctaTitle')}
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-6 sm:mb-8">
               {t('landing.ctaSubtitle')}
             </p>
             <button
               onClick={() => setShowLanding(false)}
-              className="btn-brand px-8 py-3 text-base"
+              className="btn-brand px-6 sm:px-8 py-3 text-base w-full sm:w-auto"
             >
               {t('landing.startNow')}
             </button>
@@ -464,13 +469,13 @@ function App() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 px-6 bg-surface-0 border-t border-primary-100">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <footer className="py-6 sm:py-8 px-4 sm:px-6 bg-surface-0 border-t border-primary-100">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary-400" />
               <span className="text-sm text-primary-500">{t('landing.appName')}</span>
             </div>
-            <p className="text-sm text-primary-400">
+            <p className="text-xs sm:text-sm text-primary-400">
               {t('landing.madeWith')}
             </p>
           </div>
@@ -481,19 +486,20 @@ function App() {
 
   // Editor Interface
   return (
-    <div className="min-h-screen bg-surface-50">
+    <div className="min-h-screen bg-surface-50 pb-20 lg:pb-0">
       {/* Header */}
       <header className="bg-surface-0/80 backdrop-blur-md border-b border-primary-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
           <button
             onClick={() => setShowLanding(true)}
             className="flex items-center gap-2 hover:opacity-70 transition-opacity"
           >
-            <FileText className="w-8 h-8 text-primary-900" />
-            <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+            <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary-900" />
+            <span className="hidden sm:inline text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
           </button>
 
-          <div className="flex items-center gap-4">
+          {/* Desktop actions */}
+          <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             <LanguageSwitcher />
             <input
@@ -513,7 +519,7 @@ function App() {
               ) : (
                 <Upload className="w-4 h-4" />
               )}
-              <span className="hidden sm:inline">{t('landing.importPdf').split(' ')[0]}</span>
+              <span className="hidden lg:inline">{t('landing.importPdf').split(' ')[0]}</span>
             </button>
 
             <button
@@ -521,7 +527,7 @@ function App() {
               className="btn-secondary"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Section</span>
+              <span className="hidden lg:inline">Section</span>
             </button>
 
             <button
@@ -532,17 +538,85 @@ function App() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">{t('common.exporting')}</span>
+                  <span className="hidden lg:inline">{t('common.exporting')}</span>
                 </>
               ) : (
                 <>
                   <FileDown className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('common.export')}</span>
+                  <span className="hidden lg:inline">{t('common.export')}</span>
                 </>
               )}
             </button>
           </div>
+
+          {/* Mobile actions */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="btn-primary px-3"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <FileDown className="w-4 h-4" />
+              )}
+            </button>
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="btn-ghost p-2"
+            >
+              {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu dropdown */}
+        {showMobileMenu && (
+          <div className="md:hidden border-t border-primary-100 bg-surface-0 animate-fade-in">
+            <div className="px-4 py-3 space-y-2">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImport}
+                accept=".pdf"
+                className="hidden"
+              />
+              <button
+                onClick={() => {
+                  fileInputRef.current?.click();
+                  setShowMobileMenu(false);
+                }}
+                disabled={importLoading}
+                className="btn-ghost w-full justify-start"
+              >
+                {importLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {t('landing.importPdf')}
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddModal(true);
+                  setShowMobileMenu(false);
+                }}
+                className="btn-ghost w-full justify-start"
+              >
+                <Plus className="w-4 h-4" />
+                {t('addSection.addButton')}
+              </button>
+              <div className="pt-2 border-t border-primary-100">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-primary-600">{t('common.language')}</span>
+                  <LanguageSwitcher />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Error Banner */}
@@ -567,33 +641,33 @@ function App() {
       )}
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 flex gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 flex gap-4 lg:gap-8">
         {/* Left: Form */}
-        <main className="flex-1 space-y-6 min-w-0">
+        <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
         {/* Import suggestion card - only if not imported and at step 0 */}
         {!hasImported && editorStep === 0 && (
-          <div className="card p-6 border-2 border-dashed border-primary-200 bg-primary-50/30 animate-fade-in">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <FileUp className="w-6 h-6 text-brand" />
+          <div className="card p-4 sm:p-6 border-2 border-dashed border-primary-200 bg-primary-50/30 animate-fade-in">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-brand/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <FileUp className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-primary-900 mb-1">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-primary-900 mb-1 text-sm sm:text-base">
                   {t('import.title')}
                 </h3>
-                <p className="text-sm text-primary-600">
+                <p className="text-xs sm:text-sm text-primary-600">
                   {t('import.description')}
                 </p>
               </div>
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={importLoading}
-                className="btn-brand"
+                className="btn-brand w-full sm:w-auto mt-2 sm:mt-0"
               >
                 {importLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    {importMessages[importStep]}
+                    <span className="truncate">{importMessages[importStep]}</span>
                   </>
                 ) : (
                   <>
@@ -866,6 +940,112 @@ function App() {
           existingSections={data.sections.map((s) => s.type)}
         />
       )}
+
+      {/* Mobile Preview Button - Fixed at bottom */}
+      <button
+        onClick={() => setShowMobilePreview(true)}
+        className="lg:hidden fixed bottom-4 right-4 z-40 btn-brand shadow-elevated rounded-full p-4"
+        aria-label={t('common.preview')}
+      >
+        <Eye className="w-5 h-5" />
+      </button>
+
+      {/* Mobile Preview Panel */}
+      {showMobilePreview && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-surface-50">
+          {/* Header */}
+          <div className="sticky top-0 bg-surface-0 border-b border-primary-100 px-4 py-3 flex items-center justify-between">
+            <h2 className="font-semibold text-primary-900">{t('common.preview')}</h2>
+            <button
+              onClick={() => setShowMobilePreview(false)}
+              className="p-2 text-primary-500 hover:text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Preview content */}
+          <div className="p-4 overflow-y-auto h-[calc(100vh-60px)]">
+            <CVPreview data={data} />
+
+            {/* Template Selector in mobile */}
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-primary-900 mb-4">{t('sections.templates')}</h3>
+
+              {/* Size selector */}
+              <div className="mb-4">
+                <div className="flex rounded-lg border border-primary-200 overflow-hidden">
+                  {(['compact', 'normal', 'large'] as const).map((size) => {
+                    const currentBase = data.template_id.replace(/_compact|_large/, '');
+                    const currentSize = data.template_id.includes('_compact') ? 'compact'
+                      : data.template_id.includes('_large') ? 'large' : 'normal';
+                    const isSelected = currentSize === size;
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => {
+                          const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
+                          setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                        }}
+                        className={`flex-1 py-2.5 text-sm font-medium transition-all ${
+                          isSelected
+                            ? 'bg-brand text-white'
+                            : 'bg-surface-0 text-primary-600 hover:bg-primary-50'
+                        }`}
+                      >
+                        {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {templatePreviews.map((template) => {
+                  const currentBase = data.template_id.replace(/_compact|_large/, '');
+                  const currentSize = data.template_id.includes('_compact') ? 'compact'
+                    : data.template_id.includes('_large') ? 'large' : 'normal';
+                  const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`;
+                  const isSelected = currentBase === template.id;
+                  const imgSrc = getTemplateImage(template.imgBase, currentSize);
+                  const fallbackSrc = `${template.imgBase}.png`;
+                  return (
+                    <button
+                      key={template.id}
+                      onClick={() => {
+                        const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
+                        setData((prev) => ({ ...prev, template_id: newId }));
+                      }}
+                      className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all active:scale-[0.98] ${
+                        isSelected
+                          ? 'border-brand ring-2 ring-brand/20'
+                          : 'border-primary-200'
+                      }`}
+                    >
+                      <div className="bg-primary-50">
+                        <img
+                          src={imgSrc}
+                          alt={template.name}
+                          className="w-full h-auto"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== fallbackSrc) {
+                              target.src = fallbackSrc;
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="p-1.5 bg-surface-0 border-t border-primary-100">
+                        <p className="text-xs font-medium text-primary-900 text-center">{template.name}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -880,12 +1060,12 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="card p-6">
-      <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-4 text-primary-600">
+    <div className="card p-4 sm:p-6">
+      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-3 sm:mb-4 text-primary-600">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-primary-900 mb-2">{title}</h3>
-      <p className="text-primary-600">{description}</p>
+      <h3 className="text-base sm:text-lg font-semibold text-primary-900 mb-2">{title}</h3>
+      <p className="text-sm sm:text-base text-primary-600">{description}</p>
     </div>
   );
 }

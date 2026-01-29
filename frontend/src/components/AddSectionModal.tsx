@@ -86,7 +86,7 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-primary-900/40 backdrop-blur-sm animate-fade-in"
@@ -94,27 +94,27 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
       />
 
       {/* Modal */}
-      <div className="relative bg-surface-0 rounded-2xl shadow-elevated w-full max-w-lg
-                      max-h-[90vh] overflow-hidden animate-scale-in">
+      <div className="relative bg-surface-0 rounded-t-2xl sm:rounded-2xl shadow-elevated w-full sm:max-w-lg
+                      max-h-[85vh] sm:max-h-[90vh] overflow-hidden animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-primary-100">
-          <div>
-            <h2 className="text-xl font-semibold text-primary-900">{t('addSection.title')}</h2>
-            <p className="text-sm text-primary-500 mt-0.5">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-primary-100">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg sm:text-xl font-semibold text-primary-900">{t('addSection.title')}</h2>
+            <p className="text-xs sm:text-sm text-primary-500 mt-0.5 truncate">
               {t('addSection.subtitle')}
             </p>
           </div>
           <button
             onClick={onClose}
             className="p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-100
-                       rounded-xl transition-colors"
+                       rounded-xl transition-colors flex-shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Options */}
-        <div className="p-4 space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar">
+        <div className="p-3 sm:p-4 space-y-2 max-h-[50vh] overflow-y-auto custom-scrollbar">
           {sectionTypes.map((type) => {
             const isExisting = existingSections.includes(type) && type !== 'custom';
             const isSelected = selectedType === type;
@@ -124,8 +124,8 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
                 key={type}
                 onClick={() => !isExisting && setSelectedType(type)}
                 disabled={isExisting}
-                className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all
-                           text-left group ${
+                className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border-2 transition-all
+                           text-left group active:scale-[0.99] ${
                   isSelected
                     ? 'border-primary-900 bg-primary-50'
                     : isExisting
@@ -134,7 +134,7 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
                 }`}
               >
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors flex-shrink-0 ${
                     isSelected
                       ? 'bg-primary-900 text-white'
                       : 'bg-primary-100 text-primary-600 group-hover:bg-primary-200'
@@ -143,8 +143,8 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
                   {sectionIcons[type]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-primary-900">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium text-primary-900 text-sm sm:text-base">
                       {getSectionTitle(type)}
                     </span>
                     {isExisting && (
@@ -153,11 +153,11 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-primary-500 truncate">{getSectionDescription(type)}</p>
+                  <p className="text-xs sm:text-sm text-primary-500 truncate">{getSectionDescription(type)}</p>
                 </div>
                 {isSelected && (
-                  <div className="w-6 h-6 bg-primary-900 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-white" />
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary-900 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                 )}
               </button>
@@ -167,7 +167,7 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
 
         {/* Custom title input */}
         {selectedType === 'custom' && (
-          <div className="px-6 pb-4">
+          <div className="px-4 sm:px-6 pb-4">
             <label className="label">{t('addSection.customTitle')}</label>
             <input
               type="text"
@@ -181,14 +181,14 @@ export default function AddSectionModal({ onAdd, onClose, existingSections }: Ad
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-primary-100 bg-primary-50/50">
-          <button onClick={onClose} className="btn-ghost">
+        <div className="flex items-center justify-end gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 border-t border-primary-100 bg-primary-50/50">
+          <button onClick={onClose} className="btn-ghost text-sm sm:text-base">
             {t('common.cancel')}
           </button>
           <button
             onClick={handleAdd}
             disabled={!selectedType || (selectedType === 'custom' && !customTitle.trim())}
-            className="btn-primary"
+            className="btn-primary text-sm sm:text-base"
           >
             {t('addSection.addButton')}
           </button>

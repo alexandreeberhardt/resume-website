@@ -15,9 +15,9 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
       <div className="form-group">
-        <label className="label flex items-center gap-2">
+        <label className="label flex items-center gap-2 text-sm">
           <Code2 className="w-4 h-4 text-primary-500" />
           {t('editors.skills.languages')}
         </label>
@@ -26,7 +26,7 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
           value={data.languages}
           onChange={(e) => updateField('languages', e.target.value)}
           placeholder={t('editors.skills.languagesPlaceholder')}
-          className="input"
+          className="input text-sm"
         />
         <p className="text-xs text-primary-400 mt-1.5">
           {t('editors.skills.languagesHint')}
@@ -34,7 +34,7 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
       </div>
 
       <div className="form-group">
-        <label className="label flex items-center gap-2">
+        <label className="label flex items-center gap-2 text-sm">
           <Wrench className="w-4 h-4 text-primary-500" />
           {t('editors.skills.tools')}
         </label>
@@ -43,7 +43,7 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
           value={data.tools}
           onChange={(e) => updateField('tools', e.target.value)}
           placeholder={t('editors.skills.toolsPlaceholder')}
-          className="input"
+          className="input text-sm"
         />
         <p className="text-xs text-primary-400 mt-1.5">
           {t('editors.skills.toolsHint')}

@@ -129,10 +129,19 @@
 @layer components {
   /* Button base styles */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+    @apply inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5
            font-medium text-sm rounded-xl transition-all duration-200
            focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-[0.98];
+    /* Ensure minimum touch target size */
+    min-height: 44px;
+  }
+
+  @media (min-width: 640px) {
+    .btn {
+      min-height: auto;
+    }
   }
 
   .btn-primary {
@@ -174,12 +183,20 @@
 
   /* Input styles */
   .input {
-    @apply w-full px-3.5 py-2.5 text-sm
+    @apply w-full px-3 sm:px-3.5 py-2.5 text-base sm:text-sm
            bg-surface-0 border border-primary-200 rounded-xl
            text-primary-900 placeholder:text-primary-400
            transition-all duration-200
            hover:border-primary-300
            focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100;
+    /* Prevent zoom on iOS when focusing inputs */
+    font-size: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .input {
+      font-size: 14px;
+    }
   }
 
   .input-error {
@@ -189,7 +206,7 @@
 
   /* Label styles */
   .label {
-    @apply block text-sm font-medium text-primary-700 mb-1.5;
+    @apply block text-sm font-medium text-primary-700 mb-1 sm:mb-1.5;
   }
 
   /* Card styles */
@@ -248,5 +265,29 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* ===== Mobile Responsive Utilities ===== */
+@media (max-width: 640px) {
+  /* Reduce base padding on very small screens */
+  .mobile-padding {
+    @apply px-4;
+  }
+
+  /* Ensure touch targets are large enough (44x44 minimum) */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Stack buttons vertically on mobile */
+  .mobile-stack {
+    @apply flex-col w-full;
+  }
+
+  /* Full width buttons on mobile */
+  .mobile-full {
+    @apply w-full justify-center;
   }
 }

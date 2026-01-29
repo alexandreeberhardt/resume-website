@@ -7,7 +7,9 @@
     "add": "Add",
     "delete": "Delete",
     "export": "Export to PDF",
-    "exporting": "Generating..."
+    "exporting": "Generating...",
+    "preview": "Preview",
+    "language": "Language"
   },
   "landing": {
     "pageTitle": "Sivee - Create your professional resume",
@@ -73,7 +75,8 @@
     "refresh": "Refresh",
     "generating": "Generating preview...",
     "empty": "Preview will appear here",
-    "hint": "Preview updates automatically"
+    "hint": "Preview updates automatically",
+    "fullscreen": "Fullscreen"
   },
   "sections": {
     "summary": "Summary",

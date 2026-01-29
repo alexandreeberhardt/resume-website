@@ -154,13 +154,13 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
       } ${!section.isVisible ? 'opacity-60' : ''}`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-primary-100">
+      <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-3 sm:py-4 border-b border-primary-100">
         {/* Drag Handle */}
         <button
           {...attributes}
           {...listeners}
-          className="p-1.5 text-primary-300 hover:text-primary-500 rounded-lg
-                     hover:bg-primary-50 cursor-grab active:cursor-grabbing transition-colors"
+          className="p-1 sm:p-1.5 text-primary-300 hover:text-primary-500 rounded-lg
+                     hover:bg-primary-50 cursor-grab active:cursor-grabbing transition-colors touch-manipulation"
         >
           <GripVertical className="w-5 h-5" />
         </button>
@@ -177,7 +177,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
                   if (e.key === 'Enter') handleTitleSave();
                   if (e.key === 'Escape') handleTitleCancel();
                 }}
-                className="flex-1 px-3 py-1.5 text-base font-semibold border border-primary-300
+                className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 text-sm sm:text-base font-semibold border border-primary-300
                            rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2
                            focus:ring-primary-100"
                 autoFocus
@@ -196,17 +196,17 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <h2 className="text-base font-semibold text-primary-900 truncate">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <h2 className="text-sm sm:text-base font-semibold text-primary-900 truncate">
                 {section.title}
               </h2>
               <button
                 onClick={() => setIsEditingTitle(true)}
-                className="p-1 text-primary-300 hover:text-primary-500 rounded transition-colors"
+                className="p-1 text-primary-300 hover:text-primary-500 rounded transition-colors flex-shrink-0"
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
-              <span className="badge">
+              <span className="badge hidden sm:inline-flex">
                 {getSectionTypeLabel(section.type)}
               </span>
             </div>
@@ -214,10 +214,10 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
           <button
             onClick={() => onUpdate({ isVisible: !section.isVisible })}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`p-1.5 sm:p-2 rounded-lg transition-colors ${
               section.isVisible
                 ? 'text-primary-400 hover:text-primary-600 hover:bg-primary-50'
                 : 'text-accent-500 hover:text-accent-600 hover:bg-accent-50'
@@ -229,7 +229,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
 
           <button
             onClick={onDelete}
-            className="p-2 text-primary-400 hover:text-error-500 hover:bg-error-50
+            className="p-1.5 sm:p-2 text-primary-400 hover:text-error-500 hover:bg-error-50
                        rounded-lg transition-colors"
             title={t('sections.deleteSection')}
           >
@@ -238,7 +238,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50
+            className="p-1.5 sm:p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50
                        rounded-lg transition-colors"
           >
             {isExpanded ? (
@@ -252,12 +252,12 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
 
       {/* Content */}
       {isExpanded && section.isVisible && (
-        <div className="p-5">{renderEditor()}</div>
+        <div className="p-3 sm:p-5">{renderEditor()}</div>
       )}
 
       {/* Collapsed/Hidden message */}
       {isExpanded && !section.isVisible && (
-        <div className="px-5 py-4 text-center">
+        <div className="px-3 sm:px-5 py-4 text-center">
           <p className="text-sm text-primary-400">
             {t('sections.hiddenMessage')}
           </p>

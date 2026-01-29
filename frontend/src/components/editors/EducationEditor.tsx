@@ -29,18 +29,18 @@ export default function EducationEditor({ items, onChange }: EducationEditorProp
       {items.map((edu, index) => (
         <div
           key={index}
-          className="relative bg-primary-50/50 border border-primary-100 rounded-xl p-5"
+          className="relative bg-primary-50/50 border border-primary-100 rounded-xl p-3 sm:p-5"
         >
           <button
             onClick={() => removeItem(index)}
-            className="absolute top-4 right-4 p-1.5 text-primary-400 hover:text-error-500
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 text-primary-400 hover:text-error-500
                        hover:bg-error-50 rounded-lg transition-colors"
             title={t('editors.education.deleteEducation')}
           >
             <Trash2 className="w-4 h-4" />
           </button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pr-8 sm:pr-10">
             <div className="form-group">
               <label className="label">{t('editors.education.school')}</label>
               <input
@@ -81,14 +81,14 @@ export default function EducationEditor({ items, onChange }: EducationEditorProp
                 className="input"
               />
             </div>
-            <div className="form-group md:col-span-2">
+            <div className="form-group sm:col-span-2">
               <label className="label">{t('editors.education.description')}</label>
               <textarea
                 value={edu.description}
                 onChange={(e) => updateItem(index, 'description', e.target.value)}
                 rows={2}
                 placeholder={t('editors.education.descriptionPlaceholder')}
-                className="input resize-none"
+                className="input resize-none text-sm"
               />
             </div>
           </div>

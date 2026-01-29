@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Loader2, RefreshCw, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Loader2, RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2 } from 'lucide-react';
 import { ResumeData } from '../types';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
@@ -16,6 +17,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const previousDataRef = useRef<string>('');
@@ -159,18 +161,21 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
         </div>
       </div>
 
-      <div className="relative rounded-xl overflow-hidden border border-primary-200 bg-surface-0 shadow-soft">
+      <div
+        className="relative rounded-xl overflow-hidden border border-primary-200 bg-surface-0 shadow-soft cursor-pointer group"
+        onClick={() => pdfUrl && setIsFullscreen(true)}
+      >
         {/* PDF Container */}
         <div className="aspect-[210/297] w-full bg-gray-100">
           {pdfUrl ? (
             <object
               data={pdfUrl}
               type="application/pdf"
-              className="w-full h-full"
+              className="w-full h-full pointer-events-none"
             >
               <iframe
                 src={pdfUrl}
-                className="w-full h-full border-0"
+                className="w-full h-full border-0 pointer-events-none"
                 title="CV Preview"
               />
             </object>
@@ -183,6 +188,16 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
             </div>
           )}
         </div>
+
+        {/* Fullscreen hint overlay */}
+        {pdfUrl && !loading && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div className="bg-surface-0/90 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 shadow-lg">
+              <Maximize2 className="w-4 h-4 text-primary-700" />
+              <span className="text-sm font-medium text-primary-700">{t('preview.fullscreen')}</span>
+            </div>
+          </div>
+        )}
 
         {/* Loading overlay */}
         {loading && (
@@ -208,6 +223,41 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
       <p className="text-xs text-primary-400 mt-2 text-center">
         {t('preview.hint')}
       </p>
+
+      {/* Fullscreen Modal - rendered via portal to escape stacking context */}
+      {isFullscreen && pdfUrl && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-fade-in"
+          onClick={() => setIsFullscreen(false)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 p-2 bg-surface-0/90 hover:bg-surface-0 rounded-full text-primary-700 transition-colors shadow-lg"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* PDF Container */}
+          <div
+            className="bg-white rounded-xl shadow-2xl overflow-hidden max-w-4xl w-full max-h-[90vh] aspect-[210/297]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <object
+              data={pdfUrl}
+              type="application/pdf"
+              className="w-full h-full"
+            >
+              <iframe
+                src={pdfUrl}
+                className="w-full h-full border-0"
+                title="CV Preview Fullscreen"
+              />
+            </object>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

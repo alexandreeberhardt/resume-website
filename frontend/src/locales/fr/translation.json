@@ -7,7 +7,9 @@
     "add": "Ajouter",
     "delete": "Supprimer",
     "export": "Exporter en PDF",
-    "exporting": "Génération..."
+    "exporting": "Génération...",
+    "preview": "Aperçu",
+    "language": "Langue"
   },
   "landing": {
     "pageTitle": "Sivee - Créez votre CV professionnel",
@@ -73,7 +75,8 @@
     "refresh": "Actualiser",
     "generating": "Génération de l'aperçu...",
     "empty": "L'aperçu apparaîtra ici",
-    "hint": "L'aperçu se met à jour automatiquement"
+    "hint": "L'aperçu se met à jour automatiquement",
+    "fullscreen": "Plein écran"
   },
   "sections": {
     "summary": "Résumé",
