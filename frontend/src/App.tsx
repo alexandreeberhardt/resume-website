@@ -311,7 +311,10 @@ function App() {
               <ThemeToggle />
               <LanguageSwitcher />
               <button
-                onClick={() => setShowLanding(false)}
+                onClick={() => {
+                  setShowLanding(false);
+                  window.scrollTo(0, 0);
+                }}
                 className="btn-brand text-sm sm:text-base px-3 sm:px-4 py-2"
               >
                 {t('landing.start')}
@@ -334,7 +337,10 @@ function App() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <button
-                onClick={() => setShowLanding(false)}
+                onClick={() => {
+                  setShowLanding(false);
+                  window.scrollTo(0, 0);
+                }}
                 className="btn-brand px-6 py-3 text-base w-full sm:w-auto"
               >
                 {t('landing.createCv')}
@@ -411,7 +417,10 @@ function App() {
 
             <div className="text-center mt-8">
               <button
-                onClick={() => setShowLanding(false)}
+                onClick={() => {
+                  setShowLanding(false);
+                  window.scrollTo(0, 0);
+                }}
                 className="btn-ghost text-primary-600"
               >
                 {t('landing.viewAllTemplates')}
@@ -460,7 +469,10 @@ function App() {
               {t('landing.ctaSubtitle')}
             </p>
             <button
-              onClick={() => setShowLanding(false)}
+              onClick={() => {
+                setShowLanding(false);
+                window.scrollTo(0, 0);
+              }}
               className="btn-brand px-6 sm:px-8 py-3 text-base w-full sm:w-auto"
             >
               {t('landing.startNow')}
