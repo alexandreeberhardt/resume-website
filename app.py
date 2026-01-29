@@ -24,6 +24,7 @@ from pypdf import PdfReader
 
 from core.LatexRenderer import LatexRenderer
 from core.PdfCompiler import PdfCompiler
+from translations import get_section_title
 
 
 # === Modèles Pydantic ===
@@ -107,6 +108,7 @@ class ResumeData(BaseModel):
     personal: PersonalInfo
     sections: List[CVSection] = []
     template_id: str = "harvard"
+    lang: str = "fr"  # Langue pour les titres de sections dans le PDF
 
 
 # === Application FastAPI ===
@@ -143,16 +145,23 @@ VALID_TEMPLATES = {
 STATIC_DIR = TEMPLATE_DIR / "static"
 
 
-def convert_section_items(section: CVSection) -> Dict[str, Any]:
+def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any]:
     """Convertit une section en dictionnaire pour le rendu LaTeX.
 
     Note: On utilise 'content' au lieu de 'items' pour éviter le conflit
     avec la méthode dict.items() dans Jinja2.
+
+    Args:
+        section: La section CV à convertir.
+        lang: Code langue pour la traduction des titres (fr, en).
     """
+    # Utiliser le titre traduit pour le PDF
+    translated_title = get_section_title(section.type, lang, section.title)
+
     section_dict = {
         "id": section.id,
         "type": section.type,
-        "title": section.title,
+        "title": translated_title,
         "isVisible": section.isVisible,
     }
 
@@ -208,10 +217,11 @@ async def generate_cv(data: ResumeData):
         template_dst = temp_path / template_filename
         shutil.copy(template_src, template_dst)
 
-        # Préparer les données pour le rendu
+        # Préparer les données pour le rendu (avec titres traduits)
+        lang = data.lang if data.lang in ("fr", "en") else "fr"
         render_data: Dict[str, Any] = {
             "personal": data.personal.model_dump(),
-            "sections": [convert_section_items(s) for s in data.sections],
+            "sections": [convert_section_items(s, lang) for s in data.sections],
         }
 
         # Rendre le template LaTeX
