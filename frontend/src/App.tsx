@@ -31,6 +31,7 @@ import {
   ResumeData,
   CVSection,
   emptyResumeData,
+  getEmptyResumeData,
   createSection,
   SectionType,
   generateId,
@@ -89,15 +90,59 @@ function App() {
     })
   );
 
+  // Helper to get translated section title
+  const getTranslatedSectionTitle = (type: SectionType): string => {
+    const titles: Record<SectionType, string> = {
+      summary: t('sections.summary'),
+      education: t('sections.education'),
+      experiences: t('sections.experience'),
+      projects: t('sections.projects'),
+      skills: t('sections.skills'),
+      leadership: t('sections.leadership'),
+      languages: t('sections.languages'),
+      custom: t('sections.custom'),
+    };
+    return titles[type];
+  };
+
+  // Default titles in all languages (to detect if a title is customized)
+  const defaultTitlesAllLanguages: Record<SectionType, string[]> = {
+    summary: ['Summary', 'Résumé'],
+    education: ['Education', 'Formation'],
+    experiences: ['Experience', 'Expérience'],
+    projects: ['Projects', 'Projets'],
+    skills: ['Skills', 'Compétences'],
+    leadership: ['Leadership', 'Leadership'],
+    languages: ['Languages', 'Langues'],
+    custom: ['Custom', 'Personnalisé'],
+  };
+
+  const isDefaultTitle = (type: SectionType, title: string): boolean => {
+    return defaultTitlesAllLanguages[type]?.includes(title) ?? false;
+  };
+
   useEffect(() => {
-    // Start with empty data
+    // Initialize with translated section titles
+    setData(getEmptyResumeData(getTranslatedSectionTitle));
     setInitialLoading(false);
   }, []);
 
-  // Update page title based on language
+  // Update default section titles when language changes
   useEffect(() => {
     document.title = t('landing.pageTitle');
-  }, [t, i18n.language]);
+
+    // Update section titles that are still default (not customized)
+    setData(prev => ({
+      ...prev,
+      sections: prev.sections.map(section => {
+        // Only update if the current title is a default title
+        if (isDefaultTitle(section.type, section.title)) {
+          return { ...section, title: getTranslatedSectionTitle(section.type) };
+        }
+        return section;
+      }),
+    }));
+  }, [i18n.language]);
 
   // Cycle through import messages
   useEffect(() => {
@@ -119,7 +164,7 @@ function App() {
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, lang: i18n.language }),
+        body: JSON.stringify({ ...data, lang: i18n.language.substring(0, 2) }),
       });
 
       if (!response.ok) {

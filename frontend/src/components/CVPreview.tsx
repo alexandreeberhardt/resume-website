@@ -42,7 +42,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, lang: i18n.language }),
+        body: JSON.stringify({ ...data, lang: i18n.language.substring(0, 2) }),
         signal: abortControllerRef.current.signal,
       });
 

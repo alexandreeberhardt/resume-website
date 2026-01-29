@@ -216,8 +216,40 @@ export const createSection = (type: SectionType, title: string): CVSection => {
   return { id, type, title, isVisible: true, items };
 };
 
-// Données par défaut vides
+// Titres par défaut en anglais (utilisés comme fallback et pour la détection de personnalisation)
+export const defaultSectionTitlesEn: Record<SectionType, string> = {
+  summary: 'Summary',
+  education: 'Education',
+  experiences: 'Experiences',
+  projects: 'Projects',
+  skills: 'Technical Skills',
+  leadership: 'Leadership & Community Involvement',
+  languages: 'Languages',
+  custom: 'Custom Section',
+};
+
+// Alias pour compatibilité
+export const defaultSectionTitles = defaultSectionTitlesEn;
+
+// Données par défaut vides (avec titres en anglais, sera remplacé par getEmptyResumeData)
 export const emptyResumeData: ResumeData = {
+  personal: {
+    name: '',
+    title: '',
+    location: '',
+    email: '',
+    phone: '',
+    github: '',
+    github_url: '',
+  },
+  sections: [],
+  template_id: 'harvard',
+};
+
+// Fonction pour créer les données par défaut avec les titres traduits
+export const getEmptyResumeData = (
+  getSectionTitle: (type: SectionType) => string
+): ResumeData => ({
   personal: {
     name: '',
     title: '',
@@ -231,28 +263,16 @@ export const emptyResumeData: ResumeData = {
     {
       id: generateId(),
       type: 'summary',
-      title: 'Summary',
+      title: getSectionTitle('summary'),
       isVisible: true,
       items: '',
     },
-    createSection('education', 'Education'),
-    createSection('experiences', 'Experiences'),
-    createSection('projects', 'Projects'),
-    createSection('skills', 'Technical Skills'),
-    createSection('leadership', 'Leadership & Community Involvement'),
-    createSection('languages', 'Languages'),
+    createSection('education', getSectionTitle('education')),
+    createSection('experiences', getSectionTitle('experiences')),
+    createSection('projects', getSectionTitle('projects')),
+    createSection('skills', getSectionTitle('skills')),
+    createSection('leadership', getSectionTitle('leadership')),
+    createSection('languages', getSectionTitle('languages')),
   ],
   template_id: 'harvard',
-};
-
-// Titres par défaut pour chaque type de section
-export const defaultSectionTitles: Record<SectionType, string> = {
-  summary: 'Summary',
-  education: 'Education',
-  experiences: 'Experiences',
-  projects: 'Projects',
-  skills: 'Technical Skills',
-  leadership: 'Leadership & Community Involvement',
-  languages: 'Languages',
-  custom: 'Custom Section',
-};
+});
