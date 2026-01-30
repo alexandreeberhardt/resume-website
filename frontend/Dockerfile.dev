@@ -1,0 +1,21 @@
+# ===========================================
+# Dockerfile for Development (Frontend)
+# ===========================================
+# Vite dev server with HMR
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package.json package-lock.json* ./
+
+# Installer les dépendances
+RUN npm install
+
+# Le code sera monté en volume
+
+EXPOSE 5173
+
+# Vite dev server avec HMR accessible depuis l'extérieur
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

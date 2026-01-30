@@ -1,4 +1,4 @@
-# CV Generator
+# CV Generator SaaS
 
 A web application to generate professional PDF resumes from a dynamic form interface. Built with FastAPI (Python) and React, with LaTeX-based PDF generation.
 
@@ -15,185 +15,303 @@ A web application to generate professional PDF resumes from a dynamic form inter
 - **Custom sections**: Create personalized sections with custom titles
 - **Real-time editing**: Edit all CV content through an intuitive web interface
 - **PDF generation**: High-quality PDF output using LaTeX compilation
+- **PDF Import**: Import existing CVs using AI-powered extraction
 - **Responsive design**: Works on desktop and mobile devices
 
 ## Tech Stack
 
 **Backend**
-- Python 3.13
-- FastAPI
-- Jinja2 (LaTeX templating)
-- LaTeX (PDF compilation via latexmk)
+- Python 3.13 + FastAPI
+- SQLAlchemy + PostgreSQL
+- Alembic (migrations)
+- Gunicorn + Uvicorn (production)
+- LaTeX (PDF compilation)
+- boto3 (S3 storage)
 
 **Frontend**
-- React 18
-- TypeScript
+- React 18 + TypeScript
 - Tailwind CSS
 - dnd-kit (drag and drop)
-- Lucide React (icons)
+- Vite
+
+**Infrastructure**
+- Docker + Docker Compose
+- Nginx (reverse proxy)
+- Certbot (SSL)
 
 ## Project Structure
 
 ```
 site-CV/
 ├── curriculum-vitae/     # Backend (git submodule)
-│   ├── core/             # Business logic (LaTeX rendering, PDF compilation)
+│   ├── core/             # Business logic (LaTeX, PDF)
+│   ├── database/         # SQLAlchemy models
+│   ├── alembic/          # Database migrations
 │   ├── app.py            # FastAPI application
-│   ├── template.tex      # LaTeX template with Jinja2
-│   └── data.yml          # Default CV data
+│   └── templates/        # LaTeX templates
 ├── frontend/             # React application
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   │   └── editors/  # Section-specific editors
-│   │   ├── App.tsx       # Main application
-│   │   └── types.ts      # TypeScript definitions
-│   └── package.json
-├── Dockerfile            # Multi-stage Docker build
-├── docker-compose.yml    # Container orchestration
-├── nginx.conf            # Nginx configuration for production
-└── run.sh                # Development startup script
+├── vps/                  # VPS deployment configs
+│   ├── nginx_saas.conf   # Nginx configuration
+│   ├── SECURITY.md       # Security checklist
+│   ├── backup_db.sh      # Database backup script
+│   └── restore_db.sh     # Database restore script
+├── docker-compose.yml    # Production setup
+├── docker-compose.dev.yml # Development setup
+├── Dockerfile            # Production image
+├── Dockerfile.dev        # Development image
+├── deploy.sh             # Production deployment
+└── migrate.sh            # Database migrations
 ```
 
-## Requirements
+---
 
-### Development
-- Python 3.13+
-- Node.js 20+
-- LaTeX distribution (texlive-latex-extra, latexmk)
-- uv (Python package manager)
+## Development Setup
 
-### Production
-- Docker and Docker Compose
-- Nginx (for reverse proxy)
+### Option 1: Docker (Recommended)
 
-## Installation
-
-### Development Setup
-
-1. Clone the repository with submodules:
 ```bash
+# Clone the repository
 git clone --recursive <repository-url>
 cd site-CV
+
+# Copy environment file
+cp .env.example .env
+# Edit .env with your API keys (optional for dev)
+
+# Start development environment
+docker compose -f docker-compose.dev.yml up --build
+
+# Access:
+# - Frontend: http://localhost:5173
+# - Backend:  http://localhost:8000
+# - Database: localhost:5432
 ```
 
-2. Install backend dependencies:
+**Hot Reload**: Any changes to Python or React files will automatically restart the server.
+
+### Option 2: Local Setup
+
 ```bash
+# Backend
 cd curriculum-vitae
 uv sync
-```
-
-3. Install frontend dependencies:
-```bash
-cd frontend
-npm install
-```
-
-4. Start the development servers:
-```bash
-./run.sh
-```
-
-Or manually:
-```bash
-# Terminal 1 - Backend
-cd curriculum-vitae
 uv run uvicorn app:app --reload --port 8000
 
-# Terminal 2 - Frontend
+# Frontend (new terminal)
 cd frontend
+npm install
 npm run dev
 ```
 
-The application will be available at:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000
+---
 
-### Production Deployment
+## Database Migrations
 
-1. Build and start with Docker:
-```bash
-docker-compose up -d --build
+### Workflow: Adding a New Database Column
+
+Example: Adding a `profile_photo_url` column to the `User` table.
+
+#### Step 1: Modify the model
+
+Edit `curriculum-vitae/database/models.py`:
+
+```python
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    profile_photo_url = Column(String(500), nullable=True)  # NEW COLUMN
 ```
 
-2. Configure Nginx:
+#### Step 2: Generate the migration
+
 ```bash
-sudo cp nginx.conf /etc/nginx/sites-available/cv-generator
-sudo ln -s /etc/nginx/sites-available/cv-generator /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
+# Using the migrate script
+./migrate.sh generate "Add profile photo to users"
+
+# Or manually (if running locally)
+cd curriculum-vitae
+DATABASE_URL="postgresql://cvuser:devpassword@localhost:5432/cvdatabase" \
+  uv run alembic revision --autogenerate -m "Add profile photo to users"
 ```
 
-3. (Optional) Setup SSL with Let's Encrypt:
-```bash
-sudo certbot --nginx -d your-domain.com
+#### Step 3: Review the migration
+
+Check the generated file in `curriculum-vitae/alembic/versions/`:
+
+```python
+def upgrade() -> None:
+    op.add_column('users', sa.Column('profile_photo_url', sa.String(500), nullable=True))
+
+def downgrade() -> None:
+    op.drop_column('users', 'profile_photo_url')
 ```
+
+#### Step 4: Apply the migration locally
+
+```bash
+./migrate.sh
+# Or: ./migrate.sh dev
+```
+
+#### Step 5: Test
+
+```bash
+# Verify the column exists
+docker compose -f docker-compose.dev.yml exec db \
+  psql -U cvuser -d cvdatabase -c "\d users"
+```
+
+#### Step 6: Deploy to production
+
+```bash
+# Commit your changes
+git add -A
+git commit -m "Add profile photo column to users"
+git push
+
+# On the VPS
+cd /opt/cv-generator
+./deploy.sh  # This runs migrations automatically
+```
+
+### Migration Commands
+
+```bash
+./migrate.sh                    # Apply pending migrations (auto-detect env)
+./migrate.sh generate "message" # Generate new migration (dev only)
+./migrate.sh history            # Show migration history
+./migrate.sh current            # Show current version
+./migrate.sh downgrade          # Rollback one migration
+./migrate.sh prod               # Force production mode
+./migrate.sh dev                # Force development mode
+```
+
+---
+
+## Production Deployment
+
+### Initial Setup (VPS)
+
+See `vps/SECURITY.md` for the complete security checklist.
+
+```bash
+# On the VPS
+cd /opt/cv-generator
+cp .env.example .env
+nano .env  # Configure your variables
+
+# Deploy
+./deploy.sh
+```
+
+### Subsequent Deployments
+
+```bash
+# On the VPS
+cd /opt/cv-generator
+./deploy.sh
+```
+
+The deploy script will:
+1. Pull latest changes from git
+2. Build Docker images
+3. Start/restart services
+4. Run database migrations
+5. Show service status
+
+### Database Backups
+
+```bash
+# Manual backup
+./vps/backup_db.sh
+
+# Restore from backup
+./vps/restore_db.sh cv_database_2024-01-15_03-00-00.sql.gz
+
+# Setup automatic daily backups (cron)
+(crontab -l; echo "0 3 * * * /opt/cv-generator/vps/backup_db.sh >> /var/log/cv-backup.log 2>&1") | crontab -
+```
+
+---
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/default-data` | Returns default CV data from data.yml |
-| POST | `/generate` | Generates PDF from JSON payload |
-| GET | `/api/health` | Health check endpoint |
+| GET | `/default-data` | Returns default CV data |
+| POST | `/generate` | Generates PDF from JSON |
+| POST | `/import` | Import CV from PDF (AI) |
+| GET | `/api/health` | Health check |
+| GET | `/health_db` | Database health check |
 
-### Generate PDF Request
+---
 
-```json
-{
-  "personal": {
-    "name": "John Doe",
-    "location": "City, Country",
-    "email": "john@example.com",
-    "phone": "+1 234 567 890",
-    "github": "github.com/johndoe",
-    "github_url": "https://github.com/johndoe"
-  },
-  "sections": [
-    {
-      "id": "unique-id",
-      "type": "education",
-      "title": "Education",
-      "isVisible": true,
-      "items": [
-        {
-          "school": "University",
-          "degree": "Bachelor's Degree",
-          "dates": "2020 - 2024",
-          "subtitle": "GPA: 3.8/4.0",
-          "description": "Relevant coursework..."
-        }
-      ]
-    }
-  ]
-}
+## Environment Variables
+
+```bash
+# Database (auto-configured in Docker)
+DATABASE_URL=postgresql://user:pass@host:5432/dbname
+POSTGRES_USER=cvuser
+POSTGRES_PASSWORD=secure_password
+POSTGRES_DB=cvdatabase
+
+# OpenAI (for PDF import feature)
+OPENAI_API_KEY=sk-...
+
+# AWS S3 (for file storage)
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_S3_BUCKET=your-bucket
+AWS_REGION=eu-west-3
+
+# Application
+WORKERS=4        # Gunicorn workers (prod)
+LOG_LEVEL=info   # Logging level
 ```
 
-### Section Types
+---
 
-- `education` - Academic background
-- `experiences` - Work experience
-- `projects` - Personal or professional projects
-- `skills` - Technical skills (languages and tools)
-- `leadership` - Leadership and community involvement
-- `languages` - Spoken languages
-- `custom` - Custom sections with flexible content
+## Troubleshooting
 
-## Configuration
+### Database connection issues
 
-### Environment Variables
+```bash
+# Check if PostgreSQL is running
+docker compose ps
 
-The application uses sensible defaults but can be configured:
+# Check database logs
+docker compose logs db
 
-- Backend runs on port 8000
-- Frontend dev server runs on port 5173
-- Frontend proxies `/api` requests to the backend in development
+# Connect to database manually
+docker compose exec db psql -U cvuser -d cvdatabase
+```
 
-### Nginx Configuration
+### Migration issues
 
-Edit `nginx.conf` to set your domain name before deploying. The configuration includes:
-- Reverse proxy to the backend
-- Extended timeouts for PDF generation
-- HTTPS support (commented, enable after obtaining SSL certificate)
+```bash
+# Check current state
+./migrate.sh current
+./migrate.sh history
+
+# If stuck, check the alembic_version table
+docker compose exec db psql -U cvuser -d cvdatabase \
+  -c "SELECT * FROM alembic_version;"
+```
+
+### Reset development database
+
+```bash
+# Stop and remove dev containers + volumes
+docker compose -f docker-compose.dev.yml down -v
+
+# Restart fresh
+docker compose -f docker-compose.dev.yml up --build
+```
+
+---
 
 ## License
 
