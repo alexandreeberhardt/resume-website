@@ -1,3 +1,5 @@
+# This is the submodule from resume-website
+
 # Dynamic LaTeX Resume Generator
 
 This project dynamically generates a PDF resume from a YAML data file using Python and a LaTeX template.

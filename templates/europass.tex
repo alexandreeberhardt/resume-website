@@ -38,6 +38,7 @@
 \titlespacing*{\subsection}{0pt}{0.5ex}{0.5ex}
 
 \begin{document}
+\pagestyle{empty}
 
 \begin{center}
   {\Huge\textbf{\VAR{personal.name | escape_latex}}}\\[0.3em]
@@ -47,57 +48,69 @@
   \href{\VAR{personal.github_url | escape_latex}}{\VAR{personal.github | escape_latex}}
 \end{center}
 
-\section*{Education}
+\BLOCK{for section in sections}
+\BLOCK{if section.isVisible}
 
-\BLOCK{for edu in education}
-\textbf{\VAR{edu.school | escape_latex}}, 
-\textit{\VAR{edu.degree | escape_latex}} 
+\section*{\VAR{section.title | escape_latex}}
+
+\BLOCK{if section.type == 'education'}
+\BLOCK{for edu in section.content}
+\textbf{\VAR{edu.school | escape_latex}},
+\textit{\VAR{edu.degree | escape_latex}}
 \hfill \VAR{edu.dates | escape_latex}
 \BLOCK{if edu.subtitle}
-\par\vspace{0.1em} 
+\par\vspace{0.1em}
 \textit{\VAR{edu.subtitle | escape_latex}}
 \BLOCK{endif}
 \BLOCK{if edu.description}
-\par\vspace{0.1em} 
+\par\vspace{0.1em}
 \VAR{edu.description | escape_latex}
 \BLOCK{endif}
-\par\vspace{0.4em} 
+\par\vspace{0.4em}
 \BLOCK{endfor}
+\BLOCK{endif}
 
-\section*{Experiences}
+\BLOCK{if section.type == 'summary'}
+\VAR{section.content | escape_latex}
+\BLOCK{endif}
 
-\BLOCK{for exp in experiences}
+\BLOCK{if section.type == 'experiences'}
+\BLOCK{for exp in section.content}
 \textbf{\VAR{exp.title | escape_latex}}, \textit{\VAR{exp.company | escape_latex}} \hfill \VAR{exp.dates | escape_latex}
+\BLOCK{if exp.highlights}
 \begin{itemize}[leftmargin=*]
   \BLOCK{for item in exp.highlights}
   \item \VAR{item | escape_latex}
   \BLOCK{endfor}
 \end{itemize}
-\par\vspace{0.4em} 
+\BLOCK{endif}
+\par\vspace{0.4em}
 \BLOCK{endfor}
+\BLOCK{endif}
 
-\section*{Projects}
-
-\BLOCK{for proj in projects}
+\BLOCK{if section.type == 'projects'}
+\BLOCK{for proj in section.content}
 \textbf{\VAR{proj.name | escape_latex}} \hfill \VAR{proj.year | escape_latex}
+\BLOCK{if proj.highlights}
 \begin{itemize}
   \BLOCK{for item in proj.highlights}
   \item \VAR{item | escape_latex}
   \BLOCK{endfor}
 \end{itemize}
-\par\vspace{0.4em} 
+\BLOCK{endif}
+\par\vspace{0.4em}
 \BLOCK{endfor}
+\BLOCK{endif}
 
-\section*{Technical Skills}
+\BLOCK{if section.type == 'skills'}
+\textbf{Programming Languages:} \VAR{section.content.languages | escape_latex}
 
-\textbf{Programming Languages:} \VAR{skills.languages | escape_latex}
+\textbf{Tools:} \VAR{section.content.tools | escape_latex}
+\par\vspace{0.4em}
+\BLOCK{endif}
 
-\textbf{Tools:} \VAR{skills.tools | escape_latex}
-
-\par\vspace{0.4em} 
-\section*{\VAR{'Leadership & Community Involvement' | escape_latex}}
-
-\BLOCK{for lead in leadership}
+\BLOCK{if section.type == 'leadership'}
+\BLOCK{for lead in section.content}
 \textbf{\VAR{lead.role | escape_latex}} \BLOCK{if lead.place}— \VAR{lead.place | escape_latex} \BLOCK{endif} \hfill \VAR{lead.dates | escape_latex}
 \BLOCK{if lead.highlights}
 \begin{itemize}
@@ -106,10 +119,29 @@
   \BLOCK{endfor}
 \end{itemize}
 \BLOCK{endif}
-\par\vspace{0.4em} 
+\par\vspace{0.4em}
 \BLOCK{endfor}
+\BLOCK{endif}
 
-\section*{Languages}
-\VAR{languages_spoken | escape_latex}
+\BLOCK{if section.type == 'languages'}
+\VAR{section.content | escape_latex}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'custom'}
+\BLOCK{for item in section.content}
+\textbf{\VAR{item.title | escape_latex}} \BLOCK{if item.subtitle}— \VAR{item.subtitle | escape_latex} \BLOCK{endif} \BLOCK{if item.dates}\hfill \VAR{item.dates | escape_latex}\BLOCK{endif}
+\BLOCK{if item.highlights}
+\begin{itemize}
+  \BLOCK{for hl in item.highlights}
+  \item \VAR{hl | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.4em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{endif}
+\BLOCK{endfor}
 
 \end{document}
