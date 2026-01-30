@@ -80,4 +80,4 @@ USER appuser
 EXPOSE 8000
 
 # Commande de démarrage avec Gunicorn + Uvicorn workers
-CMD ["sh", "-c", "uv run gunicorn app:app --bind 0.0.0.0:8000 --workers ${WORKERS:-4} --worker-class uvicorn.workers.UvicornWorker --access-logfile - --error-logfile - --log-level ${LOG_LEVEL:-info}"]
+CMD ["sh", "-c", "uv run gunicorn app:app --bind 0.0.0.0:8000 --workers ${WORKERS:-4} --worker-class uvicorn.workers.UvicornWorker --timeout 120 --access-logfile - --error-logfile - --log-level ${LOG_LEVEL:-info}"]

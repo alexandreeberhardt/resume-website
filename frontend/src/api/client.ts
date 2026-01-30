@@ -65,8 +65,8 @@ export async function apiClient<T>(
     ...options.headers,
   };
 
-  // Add Content-Type for JSON requests (unless it's FormData)
-  if (!(options.body instanceof FormData)) {
+  // Add Content-Type for JSON requests (unless it's FormData or already set)
+  if (!(options.body instanceof FormData) && !(headers as Record<string, string>)['Content-Type']) {
     (headers as Record<string, string>)['Content-Type'] = 'application/json';
   }
 
