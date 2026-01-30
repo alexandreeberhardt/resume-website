@@ -50,7 +50,120 @@ import {
   applyTemplateSizeVariant,
   getTemplateSizeVariant,
   getBaseTemplateId,
+  CustomItem,
 } from './types';
+
+// Liste des types de sections connus
+const KNOWN_SECTION_TYPES: SectionType[] = [
+  'summary',
+  'education',
+  'experiences',
+  'projects',
+  'skills',
+  'leadership',
+  'languages',
+  'custom',
+];
+
+/**
+ * Vérifie si un type de section est connu
+ */
+const isKnownSectionType = (type: string): type is SectionType => {
+  return KNOWN_SECTION_TYPES.includes(type as SectionType);
+};
+
+/**
+ * Convertit les items d'une section inconnue en format CustomItem[]
+ * Gère différents formats possibles envoyés par le backend
+ */
+const convertToCustomItems = (items: unknown): CustomItem[] => {
+  // Si c'est déjà un tableau
+  if (Array.isArray(items)) {
+    return items.map((item) => {
+      // Si c'est une chaîne de caractères simple
+      if (typeof item === 'string') {
+        return {
+          title: '',
+          subtitle: '',
+          dates: '',
+          highlights: [item],
+        };
+      }
+      // Si c'est un objet avec des highlights (tableau de strings)
+      if (typeof item === 'object' && item !== null) {
+        const obj = item as Record<string, unknown>;
+        // Extraire les highlights depuis différentes propriétés possibles
+        let highlights: string[] = [];
+        if (Array.isArray(obj.highlights)) {
+          highlights = obj.highlights.filter((h): h is string => typeof h === 'string');
+        } else if (Array.isArray(obj.points)) {
+          highlights = obj.points.filter((p): p is string => typeof p === 'string');
+        } else if (Array.isArray(obj.items)) {
+          highlights = obj.items.filter((i): i is string => typeof i === 'string');
+        } else if (typeof obj.description === 'string') {
+          highlights = [obj.description];
+        }
+
+        return {
+          title: typeof obj.title === 'string' ? obj.title : (typeof obj.name === 'string' ? obj.name : ''),
+          subtitle: typeof obj.subtitle === 'string' ? obj.subtitle : (typeof obj.organization === 'string' ? obj.organization : ''),
+          dates: typeof obj.dates === 'string' ? obj.dates : (typeof obj.date === 'string' ? obj.date : ''),
+          highlights,
+        };
+      }
+      // Fallback
+      return {
+        title: '',
+        subtitle: '',
+        dates: '',
+        highlights: [],
+      };
+    });
+  }
+  // Si c'est une chaîne (ex: contenu texte simple)
+  if (typeof items === 'string' && items.trim()) {
+    return [{
+      title: '',
+      subtitle: '',
+      dates: '',
+      highlights: [items],
+    }];
+  }
+  // Fallback: tableau vide
+  return [];
+};
+
+/**
+ * Normalise une section reçue du backend
+ * Si le type est inconnu, convertit en section custom
+ */
+const normalizeSection = (sectionData: Record<string, unknown>): CVSection => {
+  const type = sectionData.type as string;
+  const title = (sectionData.title as string) || type || 'Section';
+  const isVisible = sectionData.isVisible !== false;
+  const id = generateId();
+
+  // Si le type est connu, retourner la section telle quelle
+  if (isKnownSectionType(type)) {
+    return {
+      id,
+      type,
+      title,
+      isVisible,
+      items: sectionData.items as CVSection['items'],
+    };
+  }
+
+  // Type inconnu: convertir en section custom
+  console.log(`Section type "${type}" inconnu, conversion en custom avec titre "${title}"`);
+  return {
+    id,
+    type: 'custom',
+    title, // Conserve le titre original (ex: "Centres d'intérêt", "Publications")
+    isVisible,
+    items: convertToCustomItems(sectionData.items),
+  };
+};
 import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
 import AddSectionModal from './components/AddSectionModal';
@@ -426,22 +539,22 @@ function App() {
                   break;
 
                 case 'section':
-                  // Ajoute une section
+                  // Ajoute une section (avec normalisation pour les types inconnus)
+                  const normalizedSection = normalizeSection(event.data as Record<string, unknown>);
                   setData(prev => ({
                     ...prev,
-                    sections: [...prev.sections, { ...event.data, id: generateId() }],
+                    sections: [...prev.sections, normalizedSection],
                   }));
                   setImportStep(3);
                   break;
 
                 case 'complete':
-                  // Données finales complètes
+                  // Données finales complètes (avec normalisation des sections)
                   const processedData: ResumeData = {
                     ...event.data,
-                    sections: event.data.sections.map((section: CVSection) => ({
-                      ...section,
-                      id: generateId(),
-                    })),
+                    sections: event.data.sections.map((section: Record<string, unknown>) =>
+                      normalizeSection(section)
+                    ),
                   };
                   setData(processedData);
                   setHasImported(true);
