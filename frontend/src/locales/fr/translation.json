@@ -170,6 +170,12 @@
     "hiddenMessage": "Cette section est masquée dans le PDF final",
     "templates": "Templates"
   },
+  "templates": {
+    "autoSize": "Auto",
+    "autoSizeDesc": "Ajuste automatiquement la taille selon le contenu",
+    "autoSizeOptimized": "Taille optimisée",
+    "autoSizeCalculating": "Optimisation en cours..."
+  },
   "addSection": {
     "title": "Ajouter une section",
     "subtitle": "Choisissez le type de contenu à ajouter",

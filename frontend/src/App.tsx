@@ -46,6 +46,10 @@ import {
   TemplateId,
   AVAILABLE_TEMPLATES,
   SavedResume,
+  SizeVariant,
+  applyTemplateSizeVariant,
+  getTemplateSizeVariant,
+  getBaseTemplateId,
 } from './types';
 import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
@@ -86,6 +90,12 @@ function App() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [resumeName, setResumeName] = useState('');
+
+  // Auto-size state
+  const [autoSize, setAutoSize] = useState(true);
+  const [recommendedSize, setRecommendedSize] = useState<SizeVariant>('normal');
+  const [autoSizeLoading, setAutoSizeLoading] = useState(false);
+  const autoSizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const importMessages = [
     t('import.analyzing'),
@@ -254,6 +264,63 @@ function App() {
       setImportStep(0);
     }
   }, [importLoading]);
+
+  // Auto-size: call backend to find optimal size when data changes
+  useEffect(() => {
+    if (!autoSize) return;
+
+    // Debounce the API call to avoid excessive requests
+    if (autoSizeTimeoutRef.current) {
+      clearTimeout(autoSizeTimeoutRef.current);
+    }
+
+    // Get current base template to use in API call
+    const currentBase = getBaseTemplateId(data.template_id);
+
+    autoSizeTimeoutRef.current = setTimeout(async () => {
+      setAutoSizeLoading(true);
+      try {
+        // Always use the base template for optimal-size calculation
+        const dataToSend = {
+          ...data,
+          template_id: currentBase,
+          lang: i18n.language.substring(0, 2),
+        };
+
+        const response = await fetch(`${API_URL}/optimal-size`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataToSend),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const newRecommendedSize = result.optimal_size as SizeVariant;
+          setRecommendedSize(newRecommendedSize);
+
+          // Apply the optimal template only if different
+          const newTemplateId = result.template_id as TemplateId;
+          setData(prev => {
+            if (prev.template_id !== newTemplateId) {
+              return { ...prev, template_id: newTemplateId };
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to get optimal size:', err);
+      } finally {
+        setAutoSizeLoading(false);
+      }
+    }, 1000); // 1 second debounce
+
+    return () => {
+      if (autoSizeTimeoutRef.current) {
+        clearTimeout(autoSizeTimeoutRef.current);
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(data.sections), JSON.stringify(data.personal), autoSize]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -1193,19 +1260,32 @@ function App() {
             <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
 
             {/* Size selector */}
-            <div className="mb-3">
+            <div className="mb-3 space-y-2">
               <div className="flex rounded-lg bg-primary-100/50 p-0.5">
+                {/* Auto button */}
+                <button
+                  onClick={() => setAutoSize(true)}
+                  className={`flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    autoSize
+                      ? 'bg-brand text-white shadow-sm'
+                      : 'text-primary-500 hover:text-primary-700'
+                  }`}
+                  title={t('templates.autoSizeDesc')}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Auto</span>
+                </button>
                 {(['compact', 'normal', 'large'] as const).map((size) => {
-                  const currentBase = data.template_id.replace(/_compact|_large/, '');
-                  const currentSize = data.template_id.includes('_compact') ? 'compact'
-                    : data.template_id.includes('_large') ? 'large' : 'normal';
-                  const isSelected = currentSize === size;
+                  const currentSize = getTemplateSizeVariant(data.template_id);
+                  const isSelected = !autoSize && currentSize === size;
                   return (
                     <button
                       key={size}
                       onClick={() => {
-                        const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
-                        setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                        setAutoSize(false);
+                        const currentBase = getBaseTemplateId(data.template_id);
+                        const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
+                        setData((prev) => ({ ...prev, template_id: newId }));
                       }}
                       className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
                         isSelected
@@ -1218,6 +1298,26 @@ function App() {
                   );
                 })}
               </div>
+              {/* Auto-size indicator */}
+              {autoSize && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-brand/5 rounded-md">
+                  {autoSizeLoading ? (
+                    <>
+                      <Loader2 className="w-3 h-3 text-brand animate-spin" />
+                      <span className="text-[10px] text-brand font-medium">
+                        {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3 h-3 text-brand" />
+                      <span className="text-[10px] text-brand font-medium">
+                        {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -1363,19 +1463,32 @@ function App() {
               <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
 
               {/* Size selector */}
-              <div className="mb-3">
+              <div className="mb-3 space-y-2">
                 <div className="flex rounded-lg bg-primary-100/50 p-0.5">
+                  {/* Auto button */}
+                  <button
+                    onClick={() => setAutoSize(true)}
+                    className={`flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                      autoSize
+                        ? 'bg-brand text-white shadow-sm'
+                        : 'text-primary-500'
+                    }`}
+                    title={t('templates.autoSizeDesc')}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Auto</span>
+                  </button>
                   {(['compact', 'normal', 'large'] as const).map((size) => {
-                    const currentBase = data.template_id.replace(/_compact|_large/, '');
-                    const currentSize = data.template_id.includes('_compact') ? 'compact'
-                      : data.template_id.includes('_large') ? 'large' : 'normal';
-                    const isSelected = currentSize === size;
+                    const currentSize = getTemplateSizeVariant(data.template_id);
+                    const isSelected = !autoSize && currentSize === size;
                     return (
                       <button
                         key={size}
                         onClick={() => {
-                          const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
-                          setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                          setAutoSize(false);
+                          const currentBase = getBaseTemplateId(data.template_id);
+                          const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
+                          setData((prev) => ({ ...prev, template_id: newId }));
                         }}
                         className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                           isSelected
@@ -1388,6 +1501,26 @@ function App() {
                     );
                   })}
                 </div>
+                {/* Auto-size indicator */}
+                {autoSize && (
+                  <div className="flex items-center gap-1.5 px-2 py-1.5 bg-brand/5 rounded-md">
+                    {autoSizeLoading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 text-brand animate-spin" />
+                        <span className="text-xs text-brand font-medium">
+                          {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-brand" />
+                        <span className="text-xs text-brand font-medium">
+                          {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-2">
