@@ -1,0 +1,83 @@
+# ===========================================
+# Docker Compose - Development Environment
+# ===========================================
+# Usage: docker compose -f docker-compose.dev.yml up
+#
+# Features:
+# - Hot reload: code changes restart the server automatically
+# - Debug mode: uvicorn with --reload instead of gunicorn
+# - Local PostgreSQL with ephemeral data (easy reset)
+# - Mounted volumes for live code editing
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: cv-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cvuser
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: cvdatabase
+    ports:
+      - "5432:5432"  # Exposé pour accès direct en dev (DBeaver, psql, etc.)
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cvuser -d cvdatabase"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: cv-backend-dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://cvuser:devpassword@db:5432/cvdatabase
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET:-}
+      - AWS_REGION=${AWS_REGION:-eu-west-3}
+    volumes:
+      # Monter le code source pour hot reload
+      - ./curriculum-vitae/app.py:/app/app.py:ro
+      - ./curriculum-vitae/translations.py:/app/translations.py:ro
+      - ./curriculum-vitae/core:/app/core:ro
+      - ./curriculum-vitae/database:/app/database:ro
+      - ./curriculum-vitae/templates:/app/templates:ro
+      - ./curriculum-vitae/alembic:/app/alembic:rw
+      - ./curriculum-vitae/alembic.ini:/app/alembic.ini:ro
+      - ./curriculum-vitae/data.yml:/app/data.yml:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: cv-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+      - ./frontend/index.html:/app/index.html:ro
+      - ./frontend/vite.config.ts:/app/vite.config.ts:ro
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js:ro
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_dev_data:
+    name: cv_postgres_dev_data

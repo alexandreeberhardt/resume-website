@@ -1,6 +1,21 @@
-version: "3.8"
-
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: cv-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cvuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cvpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-cvdatabase}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cvuser} -d ${POSTGRES_DB:-cvdatabase}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   cv-generator:
     build:
       context: .
@@ -13,9 +28,17 @@ services:
       - .env
     environment:
       - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-cvuser}:${POSTGRES_PASSWORD:-cvpassword}@db:5432/${POSTGRES_DB:-cvdatabase}
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+
+volumes:
+  postgres_data:
+    name: cv_postgres_data

@@ -1,0 +1,39 @@
+# ===========================================
+# Dockerfile for Development (Backend)
+# ===========================================
+# Hot reload enabled with uvicorn --reload
+
+FROM python:3.13-slim
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Installation de LaTeX et dépendances système
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    texlive-latex-recommended \
+    texlive-publishers \
+    lmodern \
+    latexmk \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installation de uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY curriculum-vitae/pyproject.toml curriculum-vitae/uv.lock ./
+
+# Installer les dépendances
+RUN uv sync --frozen --no-cache
+
+# Le code sera monté en volume, pas besoin de COPY
+
+EXPOSE 8000
+
+# Mode développement avec hot reload
+CMD ["uv", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app"]
