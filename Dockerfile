@@ -13,7 +13,7 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm ci --only=production=false
 
 # Copier le code source
 COPY frontend/ ./
@@ -28,6 +28,8 @@ FROM python:3.13-slim
 # Variables d'environnement
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV WORKERS=4
+ENV LOG_LEVEL=info
 
 # Installation de LaTeX et dépendances système
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -54,16 +56,26 @@ RUN uv sync --frozen --no-cache
 
 # Copier le code backend
 COPY curriculum-vitae/core ./core
+COPY curriculum-vitae/database ./database
 COPY curriculum-vitae/app.py ./
 COPY curriculum-vitae/translations.py ./
 COPY curriculum-vitae/templates ./templates
 COPY curriculum-vitae/data.yml ./
 
+# Copier Alembic pour les migrations
+COPY curriculum-vitae/alembic ./alembic
+COPY curriculum-vitae/alembic.ini ./
+
 # Copier le frontend buildé
 COPY --from=frontend-builder /app/frontend/dist ./static
+
+# Créer un utilisateur non-root pour la sécurité
+RUN useradd --create-home --shell /bin/bash appuser && \
+    chown -R appuser:appuser /app
+USER appuser
 
 # Exposer le port
 EXPOSE 8000
 
-# Commande de démarrage
-CMD ["uv", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Commande de démarrage avec Gunicorn + Uvicorn workers
+CMD ["sh", "-c", "uv run gunicorn app:app --bind 0.0.0.0:8000 --workers ${WORKERS:-4} --worker-class uvicorn.workers.UvicornWorker --access-logfile - --error-logfile - --log-level ${LOG_LEVEL:-info}"]
