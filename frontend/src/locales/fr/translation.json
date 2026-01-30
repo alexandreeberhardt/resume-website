@@ -9,7 +9,63 @@
     "export": "Exporter en PDF",
     "exporting": "Génération...",
     "preview": "Aperçu",
-    "language": "Langue"
+    "language": "Langue",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "email": "Email",
+    "emailPlaceholder": "vous@exemple.com",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+    "loggingIn": "Connexion...",
+    "registering": "Inscription...",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous pour accéder à vos CV",
+      "button": "Se connecter",
+      "link": "Se connecter"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour sauvegarder vos CV",
+      "button": "S'inscrire",
+      "link": "Créer un compte",
+      "success": "Compte créé !",
+      "successMessage": "Connexion en cours..."
+    },
+    "passwordRules": {
+      "length": "Au moins 8 caractères",
+      "uppercase": "Au moins une majuscule",
+      "lowercase": "Au moins une minuscule",
+      "digit": "Au moins un chiffre"
+    },
+    "errors": {
+      "invalidCredentials": "Email ou mot de passe incorrect",
+      "emailExists": "Cet email est déjà utilisé",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordRequirements": "Le mot de passe ne respecte pas les exigences",
+      "generic": "Une erreur est survenue"
+    }
+  },
+  "resumes": {
+    "myResumes": "Mes CV",
+    "noResumes": "Aucun CV sauvegardé",
+    "noResumesHint": "Créez votre premier CV pour le retrouver ici",
+    "createNew": "Nouveau CV",
+    "lastModified": "Modifié le",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce CV ?",
+    "open": "Ouvrir",
+    "saveCurrent": "Sauvegarder",
+    "saveAs": "Enregistrer sous",
+    "resumeName": "Nom du CV",
+    "resumeNamePlaceholder": "Mon CV 2024"
   },
   "landing": {
     "pageTitle": "Sivee - Créez votre CV professionnel",

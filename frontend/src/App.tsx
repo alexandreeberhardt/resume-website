@@ -29,6 +29,10 @@ import {
   Eye,
   Menu,
   X,
+  LogOut,
+  Save,
+  FolderOpen,
+  User,
 } from 'lucide-react';
 import {
   ResumeData,
@@ -40,6 +44,7 @@ import {
   generateId,
   TemplateId,
   AVAILABLE_TEMPLATES,
+  SavedResume,
 } from './types';
 import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
@@ -47,11 +52,16 @@ import AddSectionModal from './components/AddSectionModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import ThemeToggle from './components/ThemeToggle';
 import CVPreview from './components/CVPreview';
+import AuthPage from './components/auth/AuthPage';
+import { useAuth } from './context/AuthContext';
+import { listResumes, createResume, updateResume, deleteResume } from './api/resumes';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
 
 function App() {
   const { t, i18n } = useTranslation();
+  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+
   const [data, setData] = useState<ResumeData>(emptyResumeData);
   const [loading, setLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
@@ -67,6 +77,14 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   const actionButtonsRef = useRef<HTMLDivElement>(null);
+
+  // Resume management state
+  const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
+  const [currentResumeId, setCurrentResumeId] = useState<number | null>(null);
+  const [showResumeList, setShowResumeList] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [resumeName, setResumeName] = useState('');
 
   const importMessages = [
     t('import.analyzing'),
@@ -132,6 +150,85 @@ function App() {
     setData(getEmptyResumeData(getTranslatedSectionTitle));
     setInitialLoading(false);
   }, []);
+
+  // Load saved resumes when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadSavedResumes();
+    } else {
+      setSavedResumes([]);
+      setCurrentResumeId(null);
+    }
+  }, [isAuthenticated]);
+
+  const loadSavedResumes = async () => {
+    try {
+      const response = await listResumes();
+      setSavedResumes(response.resumes);
+    } catch (err) {
+      console.error('Failed to load resumes:', err);
+    }
+  };
+
+  const handleSaveResume = async () => {
+    if (!isAuthenticated) return;
+
+    setSaveLoading(true);
+    try {
+      if (currentResumeId) {
+        // Update existing resume
+        await updateResume(currentResumeId, {
+          json_content: data,
+        });
+      } else {
+        // Create new resume
+        const name = resumeName || data.personal.name || 'Mon CV';
+        const newResume = await createResume(name, data);
+        setCurrentResumeId(newResume.id);
+        setShowSaveModal(false);
+      }
+      await loadSavedResumes();
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save resume');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleOpenResume = async (resume: SavedResume) => {
+    if (resume.json_content) {
+      setData(resume.json_content);
+      setCurrentResumeId(resume.id);
+      setShowResumeList(false);
+      setShowLanding(false);
+      setHasImported(true);
+      setEditorStep(999);
+    }
+  };
+
+  const handleDeleteResume = async (resumeId: number) => {
+    if (!confirm(t('resumes.deleteConfirm'))) return;
+
+    try {
+      await deleteResume(resumeId);
+      if (currentResumeId === resumeId) {
+        setCurrentResumeId(null);
+      }
+      await loadSavedResumes();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete resume');
+    }
+  };
+
+  const handleNewResume = () => {
+    setData(getEmptyResumeData(getTranslatedSectionTitle));
+    setCurrentResumeId(null);
+    setShowResumeList(false);
+    setShowLanding(false);
+    setHasImported(false);
+    setEditorStep(0);
+  };
 
   // Update default section titles when language changes
   useEffect(() => {
@@ -285,7 +382,8 @@ function App() {
     }
   };
 
-  if (initialLoading) {
+  // Show loading during auth check
+  if (authLoading || initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50">
         <div className="flex flex-col items-center gap-4">
@@ -294,6 +392,11 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  // Show auth page if not authenticated
+  if (!isAuthenticated) {
+    return <AuthPage />;
   }
 
   // Landing Page
@@ -514,6 +617,30 @@ function App() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             <LanguageSwitcher />
+
+            {/* My Resumes */}
+            <button
+              onClick={() => setShowResumeList(true)}
+              className="btn-ghost"
+            >
+              <FolderOpen className="w-4 h-4" />
+              <span className="hidden lg:inline">{t('resumes.myResumes')}</span>
+            </button>
+
+            {/* Save button */}
+            <button
+              onClick={() => currentResumeId ? handleSaveResume() : setShowSaveModal(true)}
+              disabled={saveLoading}
+              className="btn-ghost"
+            >
+              {saveLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span className="hidden lg:inline">{t('common.save')}</span>
+            </button>
+
             <input
               type="file"
               ref={fileInputRef}
@@ -559,6 +686,18 @@ function App() {
                 </>
               )}
             </button>
+
+            {/* User menu */}
+            <div className="flex items-center gap-2 pl-2 border-l border-primary-200">
+              <span className="text-sm text-primary-600 hidden lg:inline">{user?.email}</span>
+              <button
+                onClick={logout}
+                className="btn-ghost text-error-600 hover:bg-error-50"
+                title={t('common.logout')}
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Mobile actions */}
@@ -588,6 +727,41 @@ function App() {
         {showMobileMenu && (
           <div className="md:hidden border-t border-primary-100 bg-surface-0 animate-fade-in">
             <div className="px-4 py-3 space-y-2">
+              {/* User info */}
+              <div className="flex items-center gap-2 pb-2 border-b border-primary-100 mb-2">
+                <User className="w-4 h-4 text-primary-500" />
+                <span className="text-sm text-primary-600 truncate">{user?.email}</span>
+              </div>
+
+              {/* My Resumes */}
+              <button
+                onClick={() => {
+                  setShowResumeList(true);
+                  setShowMobileMenu(false);
+                }}
+                className="btn-ghost w-full justify-start"
+              >
+                <FolderOpen className="w-4 h-4" />
+                {t('resumes.myResumes')}
+              </button>
+
+              {/* Save */}
+              <button
+                onClick={() => {
+                  currentResumeId ? handleSaveResume() : setShowSaveModal(true);
+                  setShowMobileMenu(false);
+                }}
+                disabled={saveLoading}
+                className="btn-ghost w-full justify-start"
+              >
+                {saveLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {t('common.save')}
+              </button>
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -626,6 +800,18 @@ function App() {
                   <LanguageSwitcher />
                 </div>
               </div>
+
+              {/* Logout */}
+              <button
+                onClick={() => {
+                  logout();
+                  setShowMobileMenu(false);
+                }}
+                className="btn-ghost w-full justify-start text-error-600"
+              >
+                <LogOut className="w-4 h-4" />
+                {t('common.logout')}
+              </button>
             </div>
           </div>
         )}
@@ -951,6 +1137,125 @@ function App() {
           onClose={() => setShowAddModal(false)}
           existingSections={data.sections.map((s) => s.type)}
         />
+      )}
+
+      {/* Resume List Modal */}
+      {showResumeList && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-surface-0 rounded-2xl shadow-elevated w-full max-w-lg max-h-[80vh] overflow-hidden">
+            <div className="p-4 border-b border-primary-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-primary-900">{t('resumes.myResumes')}</h2>
+              <button
+                onClick={() => setShowResumeList(false)}
+                className="p-2 text-primary-500 hover:text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[60vh]">
+              <button
+                onClick={handleNewResume}
+                className="btn-brand w-full mb-4"
+              >
+                <Plus className="w-4 h-4" />
+                {t('resumes.createNew')}
+              </button>
+
+              {savedResumes.length === 0 ? (
+                <div className="text-center py-8">
+                  <FolderOpen className="w-12 h-12 text-primary-300 mx-auto mb-3" />
+                  <p className="text-primary-500">{t('resumes.noResumes')}</p>
+                  <p className="text-sm text-primary-400 mt-1">{t('resumes.noResumesHint')}</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {savedResumes.map((resume) => (
+                    <div
+                      key={resume.id}
+                      className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                        currentResumeId === resume.id
+                          ? 'border-brand bg-brand/5'
+                          : 'border-primary-200 hover:border-primary-300 hover:bg-primary-50'
+                      }`}
+                      onClick={() => handleOpenResume(resume)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-primary-900 truncate">{resume.name}</p>
+                          {resume.created_at && (
+                            <p className="text-xs text-primary-500 mt-0.5">
+                              {new Date(resume.created_at).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteResume(resume.id);
+                          }}
+                          className="p-2 text-error-500 hover:bg-error-50 rounded-lg transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-surface-0 rounded-2xl shadow-elevated w-full max-w-md">
+            <div className="p-4 border-b border-primary-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-primary-900">{t('resumes.saveAs')}</h2>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="p-2 text-primary-500 hover:text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-primary-700 mb-1">
+                  {t('resumes.resumeName')}
+                </label>
+                <input
+                  type="text"
+                  value={resumeName}
+                  onChange={(e) => setResumeName(e.target.value)}
+                  placeholder={t('resumes.resumeNamePlaceholder')}
+                  className="input-field"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  className="btn-secondary flex-1"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleSaveResume}
+                  disabled={saveLoading}
+                  className="btn-brand flex-1"
+                >
+                  {saveLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  {t('common.save')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Mobile Preview Button - Fixed at bottom */}

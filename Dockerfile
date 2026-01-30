@@ -57,6 +57,8 @@ RUN uv sync --frozen --no-cache
 # Copier le code backend
 COPY curriculum-vitae/core ./core
 COPY curriculum-vitae/database ./database
+COPY curriculum-vitae/auth ./auth
+COPY curriculum-vitae/api ./api
 COPY curriculum-vitae/app.py ./
 COPY curriculum-vitae/translations.py ./
 COPY curriculum-vitae/templates ./templates

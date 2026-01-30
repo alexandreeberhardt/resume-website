@@ -1,5 +1,48 @@
 // Types pour les données du CV avec sections dynamiques
 
+// === Types d'authentification ===
+
+export interface User {
+  id: number;
+  email: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface SavedResume {
+  id: number;
+  user_id: number;
+  name: string;
+  json_content: ResumeData | null;
+  s3_url: string | null;
+  created_at?: string;
+}
+
+export interface SavedResumeListResponse {
+  resumes: SavedResume[];
+  total: number;
+}
+
 // === Types de base pour les items ===
 
 export interface PersonalInfo {
