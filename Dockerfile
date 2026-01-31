@@ -52,7 +52,7 @@ WORKDIR /app
 COPY curriculum-vitae/pyproject.toml curriculum-vitae/uv.lock ./
 
 # Installer les dépendances Python
-RUN uv sync --frozen --no-cache
+RUN uv sync --no-cache
 
 # Copier le code backend
 COPY curriculum-vitae/core ./core
