@@ -1,5 +1,7 @@
 """Authentication routes for the CV SaaS application."""
 import os
+import secrets
+from datetime import timedelta
 from typing import Annotated
 from urllib.parse import urlencode
 
@@ -10,7 +12,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from auth.schemas import Token, UserCreate, UserResponse
-from auth.security import create_access_token, get_password_hash, verify_password
+from auth.security import create_access_token, decode_access_token, get_password_hash, verify_password
 from database.db_config import get_db
 from database.models import User
 
@@ -23,6 +25,9 @@ GOOGLE_REDIRECT_URI = os.environ.get("GOOGLE_REDIRECT_URI", "")
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+# OAuth state token expiration (5 minutes)
+OAUTH_STATE_EXPIRE_MINUTES = 5
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -113,6 +118,13 @@ async def google_login() -> RedirectResponse:
             detail="Google OAuth2 not configured",
         )
 
+    # Generate a signed state token to prevent CSRF attacks
+    state_nonce = secrets.token_urlsafe(32)
+    state_token = create_access_token(
+        data={"nonce": state_nonce, "type": "oauth_state"},
+        expires_delta=timedelta(minutes=OAUTH_STATE_EXPIRE_MINUTES),
+    )
+
     params = {
         "client_id": GOOGLE_CLIENT_ID,
         "redirect_uri": GOOGLE_REDIRECT_URI,
@@ -120,6 +132,7 @@ async def google_login() -> RedirectResponse:
         "scope": "openid email profile",
         "access_type": "offline",
         "prompt": "select_account",
+        "state": state_token,
     }
 
     auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
@@ -129,12 +142,14 @@ async def google_login() -> RedirectResponse:
 @router.get("/google/callback")
 async def google_callback(
     code: str,
+    state: str,
     db: Annotated[Session, Depends(get_db)],
 ) -> RedirectResponse:
     """Handle Google OAuth2 callback.
 
     Args:
         code: Authorization code from Google.
+        state: State token for CSRF protection.
         db: Database session.
 
     Returns:
@@ -144,6 +159,14 @@ async def google_callback(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Google OAuth2 not configured",
+        )
+
+    # Verify state token to prevent CSRF attacks
+    state_payload = decode_access_token(state)
+    if not state_payload or state_payload.get("type") != "oauth_state":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired state token",
         )
 
     # Exchange authorization code for tokens
