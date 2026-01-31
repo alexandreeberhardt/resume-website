@@ -6,6 +6,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      'xs': '400px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         // Brand color - Main CTA buttons (using CSS variables for theme support)
@@ -45,6 +53,8 @@ export default {
         success: {
           50: 'var(--color-success-50)',
           100: 'var(--color-success-100)',
+          300: 'var(--color-success-300)',
+          400: 'var(--color-success-400)',
           500: 'var(--color-success-500)',
           600: 'var(--color-success-600)',
           700: 'var(--color-success-700)',
@@ -53,9 +63,12 @@ export default {
         error: {
           50: 'var(--color-error-50)',
           100: 'var(--color-error-100)',
+          200: 'var(--color-error-200)',
+          300: 'var(--color-error-300)',
           500: 'var(--color-error-500)',
           600: 'var(--color-error-600)',
           700: 'var(--color-error-700)',
+          800: 'var(--color-error-800)',
         },
         // Surface colors
         surface: {

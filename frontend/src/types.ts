@@ -1,6 +1,57 @@
 // Types pour les données du CV avec sections dynamiques
 
+// === Types d'authentification ===
+
+export interface User {
+  id: number;
+  email: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface SavedResume {
+  id: number;
+  user_id: number;
+  name: string;
+  json_content: ResumeData | null;
+  s3_url: string | null;
+  created_at?: string;
+}
+
+export interface SavedResumeListResponse {
+  resumes: SavedResume[];
+  total: number;
+}
+
 // === Types de base pour les items ===
+
+export type PlatformType = 'linkedin' | 'github' | 'portfolio' | 'behance' | 'website' | 'other';
+
+export interface ProfessionalLink {
+  platform: PlatformType;
+  username: string;
+  url: string;
+}
 
 export interface PersonalInfo {
   name: string;
@@ -8,9 +59,14 @@ export interface PersonalInfo {
   location: string;
   email: string;
   phone: string;
-  github: string;
-  github_url: string;
+  links: ProfessionalLink[];
 }
+
+export const createEmptyLink = (): ProfessionalLink => ({
+  platform: 'linkedin',
+  username: '',
+  url: '',
+});
 
 export interface EducationItem {
   school: string;
@@ -244,11 +300,156 @@ export const emptyResumeData: ResumeData = {
     location: '',
     email: '',
     phone: '',
-    github: '',
-    github_url: '',
+    links: [],
   },
   sections: [],
   template_id: 'harvard',
+};
+
+// === Estimation de densité du contenu ===
+
+export type SizeVariant = 'compact' | 'normal' | 'large';
+
+/**
+ * Estime la densité du contenu du CV pour recommander une variante de taille.
+ *
+ * Critères de calcul:
+ * - Nombre de caractères dans le summary (pondéré)
+ * - Nombre total d'items dans les sections (formations, expériences, projets, etc.)
+ * - Nombre total de highlights/puces
+ * - Longueur des skills
+ *
+ * Seuils:
+ * - score < 12: 'large' (peu de contenu, besoin d'espacement)
+ * - 12 <= score < 30: 'normal' (contenu équilibré)
+ * - score >= 30: 'compact' (contenu dense, besoin de compression)
+ */
+export const estimateContentDensity = (data: ResumeData): SizeVariant => {
+  let score = 0;
+
+  // Parcourir toutes les sections visibles
+  for (const section of data.sections) {
+    if (!section.isVisible) continue;
+
+    switch (section.type) {
+      case 'summary': {
+        const summaryText = section.items as string;
+        // 1 point par 100 caractères
+        score += Math.floor((summaryText?.length || 0) / 100);
+        break;
+      }
+
+      case 'education': {
+        const items = section.items as EducationItem[];
+        // 2 points par formation
+        score += (items?.length || 0) * 2;
+        // +1 si description présente
+        items?.forEach(item => {
+          if (item.description?.trim()) score += 1;
+        });
+        break;
+      }
+
+      case 'experiences': {
+        const items = section.items as ExperienceItem[];
+        // 3 points par expérience (plus impactant visuellement)
+        score += (items?.length || 0) * 3;
+        // 0.5 point par highlight
+        items?.forEach(item => {
+          score += (item.highlights?.length || 0) * 0.5;
+        });
+        break;
+      }
+
+      case 'projects': {
+        const items = section.items as ProjectItem[];
+        // 2 points par projet
+        score += (items?.length || 0) * 2;
+        // 0.5 point par highlight
+        items?.forEach(item => {
+          score += (item.highlights?.length || 0) * 0.5;
+        });
+        break;
+      }
+
+      case 'leadership': {
+        const items = section.items as LeadershipItem[];
+        // 2 points par engagement
+        score += (items?.length || 0) * 2;
+        // 0.5 point par highlight
+        items?.forEach(item => {
+          score += (item.highlights?.length || 0) * 0.5;
+        });
+        break;
+      }
+
+      case 'custom': {
+        const items = section.items as CustomItem[];
+        // 2 points par item custom
+        score += (items?.length || 0) * 2;
+        // 0.5 point par highlight
+        items?.forEach(item => {
+          score += (item.highlights?.length || 0) * 0.5;
+        });
+        break;
+      }
+
+      case 'skills': {
+        const skills = section.items as SkillsItem;
+        // Points basés sur la longueur des compétences
+        const languagesLen = skills?.languages?.length || 0;
+        const toolsLen = skills?.tools?.length || 0;
+        score += Math.floor((languagesLen + toolsLen) / 50);
+        break;
+      }
+
+      case 'languages': {
+        const langText = section.items as string;
+        // 0.5 point par 50 caractères
+        score += Math.floor((langText?.length || 0) / 100);
+        break;
+      }
+    }
+  }
+
+  // Déterminer la variante selon le score
+  if (score < 12) {
+    return 'large';
+  } else if (score < 30) {
+    return 'normal';
+  } else {
+    return 'compact';
+  }
+};
+
+/**
+ * Applique une variante de taille à un template ID.
+ */
+export const applyTemplateSizeVariant = (
+  templateId: TemplateId,
+  variant: SizeVariant
+): TemplateId => {
+  const baseTemplate = templateId.replace(/_compact|_large/, '');
+  if (variant === 'normal') {
+    return baseTemplate as TemplateId;
+  }
+  return `${baseTemplate}_${variant}` as TemplateId;
+};
+
+/**
+ * Extrait la variante de taille d'un template ID.
+ */
+export const getTemplateSizeVariant = (templateId: TemplateId): SizeVariant => {
+  if (templateId.includes('_compact')) return 'compact';
+  if (templateId.includes('_large')) return 'large';
+  return 'normal';
+};
+
+/**
+ * Extrait le template de base (sans suffixe de taille).
+ */
+export const getBaseTemplateId = (templateId: TemplateId): string => {
+  return templateId.replace(/_compact|_large/, '');
 };
 
 // Fonction pour créer les données par défaut avec les titres traduits
@@ -261,8 +462,7 @@ export const getEmptyResumeData = (
     location: '',
     email: '',
     phone: '',
-    github: '',
-    github_url: '',
+    links: [],
   },
   sections: [
     {

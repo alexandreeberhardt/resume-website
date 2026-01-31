@@ -9,7 +9,74 @@
     "export": "Export to PDF",
     "exporting": "Generating...",
     "preview": "Preview",
-    "language": "Language"
+    "language": "Language",
+    "save": "Save",
+    "saving": "Saving...",
+    "logout": "Log out",
+    "actions": "Actions"
+  },
+  "auth": {
+    "brandingTitle": "Create professional resumes in minutes",
+    "brandingSubtitle": "Import, edit and export your resumes with perfect LaTeX rendering.",
+    "feature1": "Professional and modern templates",
+    "feature2": "Instant high-quality PDF export",
+    "feature3": "Your data secured and saved",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Your password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "loggingIn": "Signing in...",
+    "registering": "Registering...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Sign in to access your resumes",
+      "button": "Sign in",
+      "link": "Sign in"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Register to save your resumes",
+      "button": "Register",
+      "link": "Create an account",
+      "success": "Account created!",
+      "successMessage": "Signing you in..."
+    },
+    "passwordRules": {
+      "length": "At least 12 characters",
+      "uppercase": "At least one uppercase letter",
+      "lowercase": "At least one lowercase letter",
+      "digit": "At least one digit",
+      "special": "At least one special character (!@#$...)"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "emailExists": "This email is already in use",
+      "passwordMismatch": "Passwords do not match",
+      "passwordRequirements": "Password does not meet requirements",
+      "generic": "An error occurred"
+    },
+    "loginWithGoogle": "Continue with Google",
+    "orContinueWith": "or continue with your email"
+  },
+  "resumes": {
+    "myResumes": "My Resumes",
+    "pageSubtitle": "Manage and access all your resumes",
+    "noResumes": "No saved resumes",
+    "noResumesHint": "Create your first resume to find it here",
+    "current": "Current",
+    "createNew": "New Resume",
+    "lastModified": "Modified on",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this resume?",
+    "open": "Open",
+    "saveCurrent": "Save",
+    "saveAs": "Save as",
+    "resumeName": "Resume name",
+    "resumeNamePlaceholder": "My Resume 2024"
   },
   "landing": {
     "pageTitle": "Sivee - Create your professional resume",
@@ -63,10 +130,21 @@
     "emailPlaceholder": "john@example.com",
     "phone": "Phone",
     "phonePlaceholder": "+1 555 123 4567",
-    "github": "GitHub",
-    "githubPlaceholder": "username",
-    "githubUrl": "GitHub URL",
-    "githubUrlPlaceholder": "https://github.com/username"
+    "links": {
+      "title": "Professional Links",
+      "add": "Add a link",
+      "empty": "No links added. Add LinkedIn, GitHub, Portfolio...",
+      "usernamePlaceholder": "Display name",
+      "urlPlaceholder": "https://...",
+      "platforms": {
+        "linkedin": "LinkedIn",
+        "github": "GitHub",
+        "portfolio": "Portfolio",
+        "behance": "Behance",
+        "website": "Personal website",
+        "other": "Other"
+      }
+    }
   },
   "preview": {
     "title": "Preview",
@@ -76,7 +154,9 @@
     "generating": "Generating preview...",
     "empty": "Preview will appear here",
     "hint": "Preview updates automatically",
-    "fullscreen": "Fullscreen"
+    "fullscreen": "Fullscreen",
+    "mobileHint": "Preview not available on mobile",
+    "download": "Download preview"
   },
   "sections": {
     "summary": "Summary",
@@ -94,6 +174,12 @@
     "deleteSection": "Delete section",
     "hiddenMessage": "This section is hidden in the final PDF",
     "templates": "Templates"
+  },
+  "templates": {
+    "autoSize": "Auto",
+    "autoSizeDesc": "Automatically adjusts size based on content",
+    "autoSizeOptimized": "Optimized size",
+    "autoSizeCalculating": "Optimizing..."
   },
   "addSection": {
     "title": "Add a section",

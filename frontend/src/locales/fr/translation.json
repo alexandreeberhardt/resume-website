@@ -9,7 +9,74 @@
     "export": "Exporter en PDF",
     "exporting": "Génération...",
     "preview": "Aperçu",
-    "language": "Langue"
+    "language": "Langue",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "logout": "Déconnexion",
+    "actions": "Actions"
+  },
+  "auth": {
+    "brandingTitle": "Créez des CV professionnels en quelques minutes",
+    "brandingSubtitle": "Importez, éditez et exportez vos CV avec un rendu LaTeX impeccable.",
+    "feature1": "Templates professionnels et modernes",
+    "feature2": "Export PDF haute qualité instantané",
+    "feature3": "Vos données sécurisées et sauvegardées",
+    "email": "Email",
+    "emailPlaceholder": "vous@exemple.com",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+    "loggingIn": "Connexion...",
+    "registering": "Inscription...",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "hasAccount": "Vous avez déjà un compte ?",
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous pour accéder à vos CV",
+      "button": "Se connecter",
+      "link": "Se connecter"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Inscrivez-vous pour sauvegarder vos CV",
+      "button": "S'inscrire",
+      "link": "Créer un compte",
+      "success": "Compte créé !",
+      "successMessage": "Connexion en cours..."
+    },
+    "passwordRules": {
+      "length": "Au moins 12 caractères",
+      "uppercase": "Au moins une majuscule",
+      "lowercase": "Au moins une minuscule",
+      "digit": "Au moins un chiffre",
+      "special": "Au moins un caractère spécial (!@#$...)"
+    },
+    "errors": {
+      "invalidCredentials": "Email ou mot de passe incorrect",
+      "emailExists": "Cet email est déjà utilisé",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordRequirements": "Le mot de passe ne respecte pas les exigences",
+      "generic": "Une erreur est survenue"
+    },
+    "loginWithGoogle": "Continuer avec Google",
+    "orContinueWith": "ou continuer avec votre email"
+  },
+  "resumes": {
+    "myResumes": "Mes CV",
+    "pageSubtitle": "Gérez et accédez à tous vos CV",
+    "noResumes": "Aucun CV sauvegardé",
+    "noResumesHint": "Créez votre premier CV pour le retrouver ici",
+    "current": "Actuel",
+    "createNew": "Nouveau CV",
+    "lastModified": "Modifié le",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce CV ?",
+    "open": "Ouvrir",
+    "saveCurrent": "Sauvegarder",
+    "saveAs": "Enregistrer sous",
+    "resumeName": "Nom du CV",
+    "resumeNamePlaceholder": "Mon CV 2024"
   },
   "landing": {
     "pageTitle": "Sivee - Créez votre CV professionnel",
@@ -63,10 +130,21 @@
     "emailPlaceholder": "jean@exemple.com",
     "phone": "Téléphone",
     "phonePlaceholder": "+33 6 12 34 56 78",
-    "github": "GitHub",
-    "githubPlaceholder": "username",
-    "githubUrl": "GitHub URL",
-    "githubUrlPlaceholder": "https://github.com/username"
+    "links": {
+      "title": "Liens professionnels",
+      "add": "Ajouter un lien",
+      "empty": "Aucun lien ajouté. Ajoutez LinkedIn, GitHub, Portfolio...",
+      "usernamePlaceholder": "Nom d'affichage",
+      "urlPlaceholder": "https://...",
+      "platforms": {
+        "linkedin": "LinkedIn",
+        "github": "GitHub",
+        "portfolio": "Portfolio",
+        "behance": "Behance",
+        "website": "Site personnel",
+        "other": "Autre"
+      }
+    }
   },
   "preview": {
     "title": "Aperçu",
@@ -76,7 +154,9 @@
     "generating": "Génération de l'aperçu...",
     "empty": "L'aperçu apparaîtra ici",
     "hint": "L'aperçu se met à jour automatiquement",
-    "fullscreen": "Plein écran"
+    "fullscreen": "Plein écran",
+    "mobileHint": "Aperçu non disponible sur mobile",
+    "download": "Télécharger l'aperçu"
   },
   "sections": {
     "summary": "Résumé",
@@ -94,6 +174,12 @@
     "deleteSection": "Supprimer la section",
     "hiddenMessage": "Cette section est masquée dans le PDF final",
     "templates": "Templates"
+  },
+  "templates": {
+    "autoSize": "Auto",
+    "autoSizeDesc": "Ajuste automatiquement la taille selon le contenu",
+    "autoSizeOptimized": "Taille optimisée",
+    "autoSizeCalculating": "Optimisation en cours..."
   },
   "addSection": {
     "title": "Ajouter une section",

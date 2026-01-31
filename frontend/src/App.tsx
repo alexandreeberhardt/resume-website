@@ -29,6 +29,11 @@ import {
   Eye,
   Menu,
   X,
+  LogOut,
+  Save,
+  FolderOpen,
+  User,
+  Trash2,
 } from 'lucide-react';
 import {
   ResumeData,
@@ -40,18 +45,141 @@ import {
   generateId,
   TemplateId,
   AVAILABLE_TEMPLATES,
+  SavedResume,
+  SizeVariant,
+  applyTemplateSizeVariant,
+  getTemplateSizeVariant,
+  getBaseTemplateId,
+  CustomItem,
 } from './types';
+
+// Liste des types de sections connus
+const KNOWN_SECTION_TYPES: SectionType[] = [
+  'summary',
+  'education',
+  'experiences',
+  'projects',
+  'skills',
+  'leadership',
+  'languages',
+  'custom',
+];
+
+/**
+ * Vérifie si un type de section est connu
+ */
+const isKnownSectionType = (type: string): type is SectionType => {
+  return KNOWN_SECTION_TYPES.includes(type as SectionType);
+};
+
+/**
+ * Convertit les items d'une section inconnue en format CustomItem[]
+ * Gère différents formats possibles envoyés par le backend
+ */
+const convertToCustomItems = (items: unknown): CustomItem[] => {
+  // Si c'est déjà un tableau
+  if (Array.isArray(items)) {
+    return items.map((item) => {
+      // Si c'est une chaîne de caractères simple
+      if (typeof item === 'string') {
+        return {
+          title: '',
+          subtitle: '',
+          dates: '',
+          highlights: [item],
+        };
+      }
+      // Si c'est un objet avec des highlights (tableau de strings)
+      if (typeof item === 'object' && item !== null) {
+        const obj = item as Record<string, unknown>;
+        // Extraire les highlights depuis différentes propriétés possibles
+        let highlights: string[] = [];
+        if (Array.isArray(obj.highlights)) {
+          highlights = obj.highlights.filter((h): h is string => typeof h === 'string');
+        } else if (Array.isArray(obj.points)) {
+          highlights = obj.points.filter((p): p is string => typeof p === 'string');
+        } else if (Array.isArray(obj.items)) {
+          highlights = obj.items.filter((i): i is string => typeof i === 'string');
+        } else if (typeof obj.description === 'string') {
+          highlights = [obj.description];
+        }
+
+        return {
+          title: typeof obj.title === 'string' ? obj.title : (typeof obj.name === 'string' ? obj.name : ''),
+          subtitle: typeof obj.subtitle === 'string' ? obj.subtitle : (typeof obj.organization === 'string' ? obj.organization : ''),
+          dates: typeof obj.dates === 'string' ? obj.dates : (typeof obj.date === 'string' ? obj.date : ''),
+          highlights,
+        };
+      }
+      // Fallback
+      return {
+        title: '',
+        subtitle: '',
+        dates: '',
+        highlights: [],
+      };
+    });
+  }
+  // Si c'est une chaîne (ex: contenu texte simple)
+  if (typeof items === 'string' && items.trim()) {
+    return [{
+      title: '',
+      subtitle: '',
+      dates: '',
+      highlights: [items],
+    }];
+  }
+  // Fallback: tableau vide
+  return [];
+};
+
+/**
+ * Normalise une section reçue du backend
+ * Si le type est inconnu, convertit en section custom
+ */
+const normalizeSection = (sectionData: Record<string, unknown>): CVSection => {
+  const type = sectionData.type as string;
+  const title = (sectionData.title as string) || type || 'Section';
+  const isVisible = sectionData.isVisible !== false;
+  const id = generateId();
+
+  // Si le type est connu, retourner la section telle quelle
+  if (isKnownSectionType(type)) {
+    return {
+      id,
+      type,
+      title,
+      isVisible,
+      items: sectionData.items as CVSection['items'],
+    };
+  }
+
+  // Type inconnu: convertir en section custom
+  console.log(`Section type "${type}" inconnu, conversion en custom avec titre "${title}"`);
+  return {
+    id,
+    type: 'custom',
+    title, // Conserve le titre original (ex: "Centres d'intérêt", "Publications")
+    isVisible,
+    items: convertToCustomItems(sectionData.items),
+  };
+};
 import PersonalSection from './components/PersonalSection';
 import SortableSection from './components/SortableSection';
 import AddSectionModal from './components/AddSectionModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import ThemeToggle from './components/ThemeToggle';
 import CVPreview from './components/CVPreview';
+import AuthPage from './components/auth/AuthPage';
+import { useAuth } from './context/AuthContext';
+import { listResumes, createResume, updateResume, deleteResume } from './api/resumes';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
 
 function App() {
   const { t, i18n } = useTranslation();
+  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+
   const [data, setData] = useState<ResumeData>(emptyResumeData);
   const [loading, setLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
@@ -67,6 +195,20 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
   const actionButtonsRef = useRef<HTMLDivElement>(null);
+
+  // Resume management state
+  const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
+  const [currentResumeId, setCurrentResumeId] = useState<number | null>(null);
+  const [showResumesPage, setShowResumesPage] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [resumeName, setResumeName] = useState('');
+
+  // Auto-size state
+  const [autoSize, setAutoSize] = useState(true);
+  const [recommendedSize, setRecommendedSize] = useState<SizeVariant>('normal');
+  const [autoSizeLoading, setAutoSizeLoading] = useState(false);
+  const autoSizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const importMessages = [
     t('import.analyzing'),
@@ -133,6 +275,85 @@ function App() {
     setInitialLoading(false);
   }, []);
 
+  // Load saved resumes when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadSavedResumes();
+    } else {
+      setSavedResumes([]);
+      setCurrentResumeId(null);
+    }
+  }, [isAuthenticated]);
+
+  const loadSavedResumes = async () => {
+    try {
+      const response = await listResumes();
+      setSavedResumes(response.resumes);
+    } catch (err) {
+      console.error('Failed to load resumes:', err);
+    }
+  };
+
+  const handleSaveResume = async () => {
+    if (!isAuthenticated) return;
+
+    setSaveLoading(true);
+    try {
+      if (currentResumeId) {
+        // Update existing resume
+        await updateResume(currentResumeId, {
+          json_content: data,
+        });
+      } else {
+        // Create new resume
+        const name = resumeName || data.personal.name || 'Mon CV';
+        const newResume = await createResume(name, data);
+        setCurrentResumeId(newResume.id);
+        setShowSaveModal(false);
+      }
+      await loadSavedResumes();
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save resume');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleOpenResume = async (resume: SavedResume) => {
+    if (resume.json_content) {
+      setData(resume.json_content);
+      setCurrentResumeId(resume.id);
+      setShowResumesPage(false);
+      setShowLanding(false);
+      setHasImported(true);
+      setEditorStep(999);
+    }
+  };
+
+  const handleDeleteResume = async (resumeId: number) => {
+    if (!confirm(t('resumes.deleteConfirm'))) return;
+
+    try {
+      await deleteResume(resumeId);
+      if (currentResumeId === resumeId) {
+        setCurrentResumeId(null);
+      }
+      await loadSavedResumes();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete resume');
+    }
+  };
+
+  const handleNewResume = () => {
+    setData(getEmptyResumeData(getTranslatedSectionTitle));
+    setCurrentResumeId(null);
+    setShowResumesPage(false);
+    setShowLanding(false);
+    setHasImported(false);
+    setEditorStep(0);
+  };
+
   // Update default section titles when language changes
   useEffect(() => {
     document.title = t('landing.pageTitle');
@@ -150,17 +371,69 @@ function App() {
     }));
   }, [i18n.language]);
 
-  // Cycle through import messages
+  // Reset import step when not loading
   useEffect(() => {
     if (!importLoading) {
       setImportStep(0);
-      return;
     }
-    const interval = setInterval(() => {
-      setImportStep((prev) => Math.min(prev + 1, importMessages.length - 1));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [importLoading, importMessages.length]);
+  }, [importLoading]);
+
+  // Auto-size: call backend to find optimal size when data changes
+  useEffect(() => {
+    if (!autoSize) return;
+
+    // Debounce the API call to avoid excessive requests
+    if (autoSizeTimeoutRef.current) {
+      clearTimeout(autoSizeTimeoutRef.current);
+    }
+
+    // Get current base template to use in API call
+    const currentBase = getBaseTemplateId(data.template_id);
+
+    autoSizeTimeoutRef.current = setTimeout(async () => {
+      setAutoSizeLoading(true);
+      try {
+        // Always use the base template for optimal-size calculation
+        const dataToSend = {
+          ...data,
+          template_id: currentBase,
+          lang: i18n.language.substring(0, 2),
+        };
+
+        const response = await fetch(`${API_URL}/optimal-size`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dataToSend),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const newRecommendedSize = result.optimal_size as SizeVariant;
+          setRecommendedSize(newRecommendedSize);
+
+          // Apply the optimal template only if different
+          const newTemplateId = result.template_id as TemplateId;
+          setData(prev => {
+            if (prev.template_id !== newTemplateId) {
+              return { ...prev, template_id: newTemplateId };
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error('Failed to get optimal size:', err);
+      } finally {
+        setAutoSizeLoading(false);
+      }
+    }, 1000); // 1 second debounce
+
+    return () => {
+      if (autoSizeTimeoutRef.current) {
+        clearTimeout(autoSizeTimeoutRef.current);
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(data.sections), JSON.stringify(data.personal), autoSize]);
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -203,12 +476,21 @@ function App() {
 
     setImportLoading(true);
     setError(null);
+    setShowLanding(false);
+
+    // Initialiser avec des données vides pour afficher progressivement
+    const initialData: ResumeData = {
+      personal: { name: '', title: '', location: '', email: '', phone: '', links: [] },
+      sections: [],
+      template_id: 'harvard',
+    };
+    setData(initialData);
 
     try {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`${API_URL}/import`, {
+      const response = await fetch(`${API_URL}/import-stream`, {
         method: 'POST',
         body: formData,
       });
@@ -218,19 +500,80 @@ function App() {
         throw new Error(errData.detail || t('errors.import'));
       }
 
-      const importedData: ResumeData = await response.json();
-      const processedData: ResumeData = {
-        ...importedData,
-        sections: importedData.sections.map((section) => ({
-          ...section,
-          id: generateId(),
-        })),
-      };
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error('Stream non disponible');
 
-      setData(processedData);
-      setShowLanding(false);
-      setHasImported(true);
-      setEditorStep(999); // Show all sections after import
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const event = JSON.parse(line.slice(6));
+
+              switch (event.type) {
+                case 'status':
+                  // Met à jour le message de statut
+                  if (event.message === 'extracting') {
+                    setImportStep(0);
+                  } else if (event.message === 'processing') {
+                    setImportStep(1);
+                  }
+                  break;
+
+                case 'personal':
+                  // Met à jour les infos personnelles
+                  setData(prev => ({
+                    ...prev,
+                    personal: event.data,
+                  }));
+                  setImportStep(2);
+                  break;
+
+                case 'section':
+                  // Ajoute une section (avec normalisation pour les types inconnus)
+                  const normalizedSection = normalizeSection(event.data as Record<string, unknown>);
+                  setData(prev => ({
+                    ...prev,
+                    sections: [...prev.sections, normalizedSection],
+                  }));
+                  setImportStep(3);
+                  break;
+
+                case 'complete':
+                  // Données finales complètes (avec normalisation des sections)
+                  const processedData: ResumeData = {
+                    ...event.data,
+                    sections: event.data.sections.map((section: Record<string, unknown>) =>
+                      normalizeSection(section)
+                    ),
+                  };
+                  setData(processedData);
+                  setHasImported(true);
+                  setEditorStep(999);
+                  setImportStep(4);
+                  break;
+
+                case 'error':
+                  throw new Error(event.message);
+              }
+            } catch (parseErr) {
+              // Ignorer les erreurs de parsing SSE partielles
+              if (parseErr instanceof Error && parseErr.message !== 'Unexpected end of JSON input') {
+                console.error('SSE parse error:', parseErr);
+              }
+            }
+          }
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de l'import");
     } finally {
@@ -285,7 +628,8 @@ function App() {
     }
   };
 
-  if (initialLoading) {
+  // Show loading during auth check
+  if (authLoading || initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50">
         <div className="flex flex-col items-center gap-4">
@@ -296,6 +640,11 @@ function App() {
     );
   }
 
+  // Show auth page if not authenticated
+  if (!isAuthenticated) {
+    return <AuthPage />;
+  }
+
   // Landing Page
   if (showLanding) {
     return (
@@ -304,21 +653,33 @@ function App() {
         <nav className="fixed top-0 inset-x-0 z-50 bg-surface-0/80 backdrop-blur-md border-b border-primary-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary-900" />
-              <span className="text-base sm:text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+              <FileText className="w-7 h-7 text-primary-900" />
+              <span className="text-lg font-semibold text-primary-900 hidden xs:inline">{t('landing.appName')}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <ThemeToggle />
               <LanguageSwitcher />
               <button
                 onClick={() => {
                   setShowLanding(false);
-                  window.scrollTo(0, 0);
+                  setShowResumesPage(true);
                 }}
-                className="btn-brand text-sm sm:text-base px-3 sm:px-4 py-2"
+                className="btn-brand text-sm px-2.5 sm:px-4 py-2"
               >
-                {t('landing.start')}
+                <FolderOpen className="w-4 h-4" />
+                <span className="hidden sm:inline">{t('resumes.myResumes')}</span>
               </button>
+              <div className="w-px h-5 bg-primary-200/60 hidden sm:block" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm text-primary-500 hidden md:inline max-w-[140px] truncate">{user?.email}</span>
+                <button
+                  onClick={logout}
+                  className="btn-ghost !p-2 text-primary-500 hover:text-error-600 hover:bg-error-50"
+                  title={t('common.logout')}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -492,6 +853,80 @@ function App() {
             </p>
           </div>
         </footer>
+
+      </div>
+    );
+  }
+
+  // Resumes Page
+  if (showResumesPage) {
+    return (
+      <div className="min-h-screen bg-surface-50">
+        {/* Header */}
+        <header className="bg-surface-0/80 backdrop-blur-xl border-b border-primary-100/50 sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <button
+              onClick={() => {
+                setShowResumesPage(false);
+                setShowLanding(true);
+              }}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
+              <FileText className="w-7 h-7 text-primary-900" />
+              <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-semibold text-primary-900">{t('resumes.myResumes')}</h1>
+              <p className="text-sm text-primary-500 mt-1">{t('resumes.pageSubtitle') || 'Gérez et accédez à tous vos CV'}</p>
+            </div>
+            <button
+              onClick={handleNewResume}
+              className="btn-brand"
+            >
+              <Plus className="w-4 h-4" />
+              {t('resumes.createNew')}
+            </button>
+          </div>
+
+          {savedResumes.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="w-20 h-20 bg-primary-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                <FolderOpen className="w-10 h-10 text-primary-400" />
+              </div>
+              <h2 className="text-xl font-semibold text-primary-900 mb-2">{t('resumes.noResumes')}</h2>
+              <p className="text-primary-500 mb-6 max-w-md mx-auto">{t('resumes.noResumesHint')}</p>
+              <button
+                onClick={handleNewResume}
+                className="btn-brand"
+              >
+                <Plus className="w-4 h-4" />
+                {t('resumes.createNew')}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {savedResumes.map((resume) => (
+                <ResumeCard
+                  key={resume.id}
+                  resume={resume}
+                  isActive={currentResumeId === resume.id}
+                  onOpen={() => handleOpenResume(resume)}
+                  onDelete={() => handleDeleteResume(resume.id)}
+                />
+              ))}
+            </div>
+          )}
+        </main>
       </div>
     );
   }
@@ -500,20 +935,48 @@ function App() {
   return (
     <div className="min-h-screen bg-surface-50 pb-20 lg:pb-0">
       {/* Header */}
-      <header className="bg-surface-0/80 backdrop-blur-md border-b border-primary-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+      <header className="bg-surface-0/80 backdrop-blur-xl border-b border-primary-100/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+          {/* Logo */}
           <button
             onClick={() => setShowLanding(true)}
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary-900" />
+            <FileText className="w-7 h-7 text-primary-900" />
             <span className="hidden sm:inline text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
           </button>
 
           {/* Desktop actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 flex-nowrap">
             <ThemeToggle />
             <LanguageSwitcher />
+
+            <div className="w-px h-5 bg-primary-200/60 mx-1" />
+
+            {/* My Resumes */}
+            <button
+              onClick={() => setShowResumesPage(true)}
+              className="btn-ghost"
+            >
+              <FolderOpen className="w-4 h-4" />
+              <span className="hidden lg:inline">{t('resumes.myResumes')}</span>
+            </button>
+
+            {/* Save */}
+            <button
+              onClick={() => currentResumeId ? handleSaveResume() : setShowSaveModal(true)}
+              disabled={saveLoading}
+              className="btn-ghost"
+            >
+              {saveLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span className="hidden lg:inline">{t('common.save')}</span>
+            </button>
+
+            {/* Hidden file input for import */}
             <input
               type="file"
               ref={fileInputRef}
@@ -521,31 +984,12 @@ function App() {
               accept=".pdf"
               className="hidden"
             />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={importLoading}
-              className="btn-ghost"
-            >
-              {importLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Upload className="w-4 h-4" />
-              )}
-              <span className="hidden lg:inline">{t('landing.importPdf').split(' ')[0]}</span>
-            </button>
 
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-secondary"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden lg:inline">Section</span>
-            </button>
-
+            {/* Primary Export button */}
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="btn-primary"
+              className="btn-brand"
             >
               {loading ? (
                 <>
@@ -555,19 +999,34 @@ function App() {
               ) : (
                 <>
                   <FileDown className="w-4 h-4" />
-                  <span className="hidden lg:inline">{t('common.export')}</span>
+                  <span>{t('common.export')}</span>
                 </>
               )}
             </button>
+
+            <div className="w-px h-5 bg-primary-200/60 mx-1" />
+
+            {/* User menu */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm text-primary-500 hidden lg:inline max-w-[140px] truncate">{user?.email}</span>
+              <button
+                onClick={logout}
+                className="btn-ghost !p-2 text-primary-500 hover:text-error-600 hover:bg-error-50"
+                title={t('common.logout')}
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Mobile actions */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex md:hidden items-center gap-1.5">
             <ThemeToggle />
+            <LanguageSwitcher />
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="btn-primary px-3"
+              className="btn-brand !px-3"
             >
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -577,7 +1036,7 @@ function App() {
             </button>
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="btn-ghost p-2"
+              className="btn-ghost !p-2"
             >
               {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -586,8 +1045,47 @@ function App() {
 
         {/* Mobile menu dropdown */}
         {showMobileMenu && (
-          <div className="md:hidden border-t border-primary-100 bg-surface-0 animate-fade-in">
-            <div className="px-4 py-3 space-y-2">
+          <div className="md:hidden border-t border-primary-100/50 bg-surface-0/95 backdrop-blur-xl animate-fade-in">
+            <div className="px-4 py-3 space-y-1">
+              {/* User info */}
+              <div className="flex items-center gap-2 px-2 py-2 mb-1">
+                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                  <User className="w-4 h-4 text-primary-600" />
+                </div>
+                <span className="text-sm text-primary-700 truncate font-medium">{user?.email}</span>
+              </div>
+
+              <div className="h-px bg-primary-100/80 !my-2" />
+
+              {/* My Resumes */}
+              <button
+                onClick={() => {
+                  setShowResumesPage(true);
+                  setShowMobileMenu(false);
+                }}
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
+              >
+                <FolderOpen className="w-4 h-4 text-primary-500" />
+                {t('resumes.myResumes')}
+              </button>
+
+              {/* Save */}
+              <button
+                onClick={() => {
+                  currentResumeId ? handleSaveResume() : setShowSaveModal(true);
+                  setShowMobileMenu(false);
+                }}
+                disabled={saveLoading}
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors disabled:opacity-50"
+              >
+                {saveLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-primary-500" />
+                ) : (
+                  <Save className="w-4 h-4 text-primary-500" />
+                )}
+                {t('common.save')}
+              </button>
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -601,31 +1099,47 @@ function App() {
                   setShowMobileMenu(false);
                 }}
                 disabled={importLoading}
-                className="btn-ghost w-full justify-start"
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors disabled:opacity-50"
               >
                 {importLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-primary-500" />
                 ) : (
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-4 h-4 text-primary-500" />
                 )}
                 {t('landing.importPdf')}
               </button>
+
               <button
                 onClick={() => {
                   setShowAddModal(true);
                   setShowMobileMenu(false);
                 }}
-                className="btn-ghost w-full justify-start"
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-primary-500" />
                 {t('addSection.addButton')}
               </button>
-              <div className="pt-2 border-t border-primary-100">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-primary-600">{t('common.language')}</span>
-                  <LanguageSwitcher />
-                </div>
+
+              <div className="h-px bg-primary-100/80 !my-2" />
+
+              <div className="flex items-center justify-between px-2 py-2">
+                <span className="text-sm text-primary-600">{t('common.language')}</span>
+                <LanguageSwitcher />
               </div>
+
+              <div className="h-px bg-primary-100/80 !my-2" />
+
+              {/* Logout */}
+              <button
+                onClick={() => {
+                  logout();
+                  setShowMobileMenu(false);
+                }}
+                className="w-full px-2 py-2.5 text-left text-sm text-error-600 hover:bg-error-50 rounded-lg flex items-center gap-3 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                {t('common.logout')}
+              </button>
             </div>
           </div>
         )}
@@ -868,27 +1382,40 @@ function App() {
 
             {/* Template Selector */}
             <div>
-            <h3 className="text-xl font-semibold text-primary-900 mb-4">{t('sections.templates')}</h3>
+            <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
 
             {/* Size selector */}
-            <div className="mb-4">
-              <div className="flex rounded-lg border border-primary-200 overflow-hidden">
+            <div className="mb-3 space-y-2">
+              <div className="flex rounded-lg bg-primary-100/50 p-0.5">
+                {/* Auto button */}
+                <button
+                  onClick={() => setAutoSize(true)}
+                  className={`flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md transition-all ${
+                    autoSize
+                      ? 'bg-brand text-white shadow-sm'
+                      : 'text-primary-500 hover:text-primary-700'
+                  }`}
+                  title={t('templates.autoSizeDesc')}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>Auto</span>
+                </button>
                 {(['compact', 'normal', 'large'] as const).map((size) => {
-                  const currentBase = data.template_id.replace(/_compact|_large/, '');
-                  const currentSize = data.template_id.includes('_compact') ? 'compact'
-                    : data.template_id.includes('_large') ? 'large' : 'normal';
-                  const isSelected = currentSize === size;
+                  const currentSize = getTemplateSizeVariant(data.template_id);
+                  const isSelected = !autoSize && currentSize === size;
                   return (
                     <button
                       key={size}
                       onClick={() => {
-                        const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
-                        setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                        setAutoSize(false);
+                        const currentBase = getBaseTemplateId(data.template_id);
+                        const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
+                        setData((prev) => ({ ...prev, template_id: newId }));
                       }}
-                      className={`flex-1 py-2 text-xs font-medium transition-all ${
+                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
                         isSelected
-                          ? 'bg-brand text-white'
-                          : 'bg-surface-0 text-primary-600 hover:bg-primary-50'
+                          ? 'bg-surface-0 text-primary-900 shadow-sm'
+                          : 'text-primary-500 hover:text-primary-700'
                       }`}
                     >
                       {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
@@ -896,6 +1423,26 @@ function App() {
                   );
                 })}
               </div>
+              {/* Auto-size indicator */}
+              {autoSize && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-brand/5 rounded-md">
+                  {autoSizeLoading ? (
+                    <>
+                      <Loader2 className="w-3 h-3 text-brand animate-spin" />
+                      <span className="text-[10px] text-brand font-medium">
+                        {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3 h-3 text-brand" />
+                      <span className="text-[10px] text-brand font-medium">
+                        {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -914,13 +1461,13 @@ function App() {
                       const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
                       setData((prev) => ({ ...prev, template_id: newId }));
                     }}
-                    className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`w-full text-left rounded-xl overflow-hidden transition-all ${
                       isSelected
-                        ? 'border-brand ring-2 ring-brand/20'
-                        : 'border-primary-200 hover:border-primary-300'
+                        ? 'ring-2 ring-brand ring-offset-2 ring-offset-surface-50'
+                        : 'ring-1 ring-primary-100 hover:ring-primary-200'
                     }`}
                   >
-                    <div className="bg-primary-50">
+                    <div className="bg-white">
                       <img
                         src={imgSrc}
                         alt={template.name}
@@ -933,8 +1480,12 @@ function App() {
                         }}
                       />
                     </div>
-                    <div className="p-1.5 bg-surface-0 border-t border-primary-100">
-                      <p className="text-xs font-medium text-primary-900 text-center">{template.name}</p>
+                    <div className={`p-1.5 border-t transition-colors ${
+                      isSelected ? 'bg-brand/5 border-brand/10' : 'bg-surface-0 border-primary-50'
+                    }`}>
+                      <p className={`text-xs font-medium text-center ${
+                        isSelected ? 'text-brand' : 'text-primary-700'
+                      }`}>{template.name}</p>
                     </div>
                   </button>
                 );
@@ -953,10 +1504,62 @@ function App() {
         />
       )}
 
+      {/* Save Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-950/50 backdrop-blur-sm p-4">
+          <div className="bg-surface-0 rounded-2xl shadow-xl border border-primary-100/30 w-full max-w-md animate-fade-in">
+            <div className="px-5 py-4 border-b border-primary-100/50 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-primary-900">{t('resumes.saveAs')}</h2>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="p-1.5 text-primary-400 hover:text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-5">
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-primary-700">
+                  {t('resumes.resumeName')}
+                </label>
+                <input
+                  type="text"
+                  value={resumeName}
+                  onChange={(e) => setResumeName(e.target.value)}
+                  placeholder={t('resumes.resumeNamePlaceholder')}
+                  className="input"
+                  autoFocus
+                />
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button
+                  onClick={() => setShowSaveModal(false)}
+                  className="btn-secondary flex-1"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleSaveResume}
+                  disabled={saveLoading}
+                  className="btn-brand flex-1"
+                >
+                  {saveLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  {t('common.save')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Preview Button - Fixed at bottom */}
       <button
         onClick={() => setShowMobilePreview(true)}
-        className="lg:hidden fixed bottom-4 right-4 z-40 btn-brand shadow-elevated rounded-full p-4"
+        className="lg:hidden fixed bottom-5 right-5 z-40 bg-brand text-white shadow-xl shadow-brand/30 rounded-full p-4 hover:bg-brand-hover active:scale-95 transition-all"
         aria-label={t('common.preview')}
       >
         <Eye className="w-5 h-5" />
@@ -966,11 +1569,11 @@ function App() {
       {showMobilePreview && (
         <div className="lg:hidden fixed inset-0 z-50 bg-surface-50">
           {/* Header */}
-          <div className="sticky top-0 bg-surface-0 border-b border-primary-100 px-4 py-3 flex items-center justify-between">
+          <div className="sticky top-0 bg-surface-0/80 backdrop-blur-xl border-b border-primary-100/50 px-4 py-3 flex items-center justify-between">
             <h2 className="font-semibold text-primary-900">{t('common.preview')}</h2>
             <button
               onClick={() => setShowMobilePreview(false)}
-              className="p-2 text-primary-500 hover:text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+              className="p-1.5 text-primary-400 hover:text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -982,27 +1585,40 @@ function App() {
 
             {/* Template Selector in mobile */}
             <div className="mt-6">
-              <h3 className="text-lg font-semibold text-primary-900 mb-4">{t('sections.templates')}</h3>
+              <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
 
               {/* Size selector */}
-              <div className="mb-4">
-                <div className="flex rounded-lg border border-primary-200 overflow-hidden">
+              <div className="mb-3 space-y-2">
+                <div className="flex rounded-lg bg-primary-100/50 p-0.5">
+                  {/* Auto button */}
+                  <button
+                    onClick={() => setAutoSize(true)}
+                    className={`flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                      autoSize
+                        ? 'bg-brand text-white shadow-sm'
+                        : 'text-primary-500'
+                    }`}
+                    title={t('templates.autoSizeDesc')}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Auto</span>
+                  </button>
                   {(['compact', 'normal', 'large'] as const).map((size) => {
-                    const currentBase = data.template_id.replace(/_compact|_large/, '');
-                    const currentSize = data.template_id.includes('_compact') ? 'compact'
-                      : data.template_id.includes('_large') ? 'large' : 'normal';
-                    const isSelected = currentSize === size;
+                    const currentSize = getTemplateSizeVariant(data.template_id);
+                    const isSelected = !autoSize && currentSize === size;
                     return (
                       <button
                         key={size}
                         onClick={() => {
-                          const newId = size === 'normal' ? currentBase : `${currentBase}_${size}`;
-                          setData((prev) => ({ ...prev, template_id: newId as TemplateId }));
+                          setAutoSize(false);
+                          const currentBase = getBaseTemplateId(data.template_id);
+                          const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
+                          setData((prev) => ({ ...prev, template_id: newId }));
                         }}
-                        className={`flex-1 py-2.5 text-sm font-medium transition-all ${
+                        className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                           isSelected
-                            ? 'bg-brand text-white'
-                            : 'bg-surface-0 text-primary-600 hover:bg-primary-50'
+                            ? 'bg-surface-0 text-primary-900 shadow-sm'
+                            : 'text-primary-500'
                         }`}
                       >
                         {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
@@ -1010,6 +1626,26 @@ function App() {
                     );
                   })}
                 </div>
+                {/* Auto-size indicator */}
+                {autoSize && (
+                  <div className="flex items-center gap-1.5 px-2 py-1.5 bg-brand/5 rounded-md">
+                    {autoSizeLoading ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 text-brand animate-spin" />
+                        <span className="text-xs text-brand font-medium">
+                          {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-brand" />
+                        <span className="text-xs text-brand font-medium">
+                          {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-2">
@@ -1028,13 +1664,13 @@ function App() {
                         const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
                         setData((prev) => ({ ...prev, template_id: newId }));
                       }}
-                      className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all active:scale-[0.98] ${
+                      className={`w-full text-left rounded-xl overflow-hidden transition-all active:scale-[0.98] ${
                         isSelected
-                          ? 'border-brand ring-2 ring-brand/20'
-                          : 'border-primary-200'
+                          ? 'ring-2 ring-brand ring-offset-2 ring-offset-surface-50'
+                          : 'ring-1 ring-primary-100'
                       }`}
                     >
-                      <div className="bg-primary-50">
+                      <div className="bg-white">
                         <img
                           src={imgSrc}
                           alt={template.name}
@@ -1047,8 +1683,12 @@ function App() {
                           }}
                         />
                       </div>
-                      <div className="p-1.5 bg-surface-0 border-t border-primary-100">
-                        <p className="text-xs font-medium text-primary-900 text-center">{template.name}</p>
+                      <div className={`p-1.5 border-t transition-colors ${
+                        isSelected ? 'bg-brand/5 border-brand/10' : 'bg-surface-0 border-primary-50'
+                      }`}>
+                        <p className={`text-xs font-medium text-center ${
+                          isSelected ? 'text-brand' : 'text-primary-700'
+                        }`}>{template.name}</p>
                       </div>
                     </button>
                   );
@@ -1072,12 +1712,151 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="card p-4 sm:p-6">
-      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-3 sm:mb-4 text-primary-600">
+    <div className="p-5 sm:p-6 rounded-2xl bg-surface-0 border border-primary-100/50 hover:border-primary-200/50 hover:shadow-soft transition-all">
+      <div className="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center mb-4 text-brand">
         {icon}
       </div>
-      <h3 className="text-base sm:text-lg font-semibold text-primary-900 mb-2">{title}</h3>
-      <p className="text-sm sm:text-base text-primary-600">{description}</p>
+      <h3 className="text-base font-semibold text-primary-900 mb-1.5">{title}</h3>
+      <p className="text-sm text-primary-500 leading-relaxed">{description}</p>
+    </div>
+  );
+}
+
+// Detect if we're on a mobile device that doesn't support inline PDF
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+};
+
+function ResumeCard({
+  resume,
+  isActive,
+  onOpen,
+  onDelete,
+}: {
+  resume: SavedResume;
+  isActive: boolean;
+  onOpen: () => void;
+  onDelete: () => void;
+}) {
+  const { t } = useTranslation();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isMobile] = useState(isMobileDevice);
+
+  // Generate preview on mount
+  useEffect(() => {
+    if (resume.json_content) {
+      generatePreview();
+    }
+  }, [resume.id]);
+
+  const generatePreview = async () => {
+    if (!resume.json_content) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...resume.json_content, lang: 'fr' }),
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setPreviewUrl(url);
+      }
+    } catch (err) {
+      console.error('Failed to generate preview:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cleanup URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  // Get template name from resume data
+  const templateId = resume.json_content?.template_id?.replace(/_compact|_large/, '') || 'harvard';
+  const personName = resume.json_content?.personal?.name || resume.name;
+
+  return (
+    <div
+      className={`group bg-surface-0 rounded-2xl border overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
+        isActive
+          ? 'border-brand ring-2 ring-brand/20'
+          : 'border-primary-100 hover:border-primary-200'
+      }`}
+      onClick={onOpen}
+    >
+      {/* Preview */}
+      <div className="relative aspect-[210/297] bg-primary-50 overflow-hidden">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full border-2 border-primary-200 border-t-brand animate-spin" />
+          </div>
+        ) : previewUrl && !isMobile ? (
+          <object
+            data={previewUrl}
+            type="application/pdf"
+            className="w-full h-full pointer-events-none"
+          >
+            <div className="w-full h-full flex items-center justify-center">
+              <FileText className="w-12 h-12 text-primary-300" />
+            </div>
+          </object>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <FileText className="w-12 h-12 text-primary-300" />
+          </div>
+        )}
+
+        {/* Hover overlay */}
+        <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-primary-100">
+            <span className="text-sm font-medium text-primary-700">{t('resumes.open') || 'Ouvrir'}</span>
+          </div>
+        </div>
+
+        {/* Delete button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-error-50 text-primary-400 hover:text-error-600 rounded-lg transition-all opacity-0 group-hover:opacity-100 shadow-sm"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+
+        {/* Active indicator */}
+        {isActive && (
+          <div className="absolute top-2 left-2 px-2 py-1 bg-brand text-white text-xs font-medium rounded-md">
+            {t('resumes.current') || 'Actuel'}
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="p-4">
+        <h3 className="font-medium text-primary-900 truncate">{personName}</h3>
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-xs text-primary-400 capitalize">{templateId}</span>
+          {resume.created_at && (
+            <span className="text-xs text-primary-400">
+              {new Date(resume.created_at).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

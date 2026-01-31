@@ -52,11 +52,13 @@ WORKDIR /app
 COPY curriculum-vitae/pyproject.toml curriculum-vitae/uv.lock ./
 
 # Installer les dépendances Python
-RUN uv sync --frozen --no-cache
+RUN uv sync --no-cache
 
 # Copier le code backend
 COPY curriculum-vitae/core ./core
 COPY curriculum-vitae/database ./database
+COPY curriculum-vitae/auth ./auth
+COPY curriculum-vitae/api ./api
 COPY curriculum-vitae/app.py ./
 COPY curriculum-vitae/translations.py ./
 COPY curriculum-vitae/templates ./templates
@@ -78,4 +80,4 @@ USER appuser
 EXPOSE 8000
 
 # Commande de démarrage avec Gunicorn + Uvicorn workers
-CMD ["sh", "-c", "uv run gunicorn app:app --bind 0.0.0.0:8000 --workers ${WORKERS:-4} --worker-class uvicorn.workers.UvicornWorker --access-logfile - --error-logfile - --log-level ${LOG_LEVEL:-info}"]
+CMD ["sh", "-c", "uv run gunicorn app:app --bind 0.0.0.0:8000 --workers ${WORKERS:-4} --worker-class uvicorn.workers.UvicornWorker --timeout 120 --access-logfile - --error-logfile - --log-level ${LOG_LEVEL:-info}"]
