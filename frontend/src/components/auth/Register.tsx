@@ -1,5 +1,5 @@
 /**
- * Register component - Modern design
+ * Register component - Matching CV form design system
  */
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,6 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // Password validation - must match backend requirements (12 chars + special char)
   const passwordChecks = {
@@ -83,14 +82,14 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
 
   if (success) {
     return (
-      <div className="w-full text-center py-4">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-success-100 rounded-2xl mb-5 animate-bounce-in">
-          <CheckCircle className="w-7 h-7 text-success-600" />
+      <div className="w-full text-center py-4 animate-fade-in">
+        <div className="inline-flex items-center justify-center w-10 h-10 bg-success-100 dark:bg-success-500/20 rounded-xl mb-4 animate-bounce-in">
+          <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
         </div>
-        <h2 className="text-xl font-semibold text-primary-900 mb-2">
+        <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
           {t('auth.register.success')}
         </h2>
-        <p className="text-sm text-primary-500 mb-5">{t('auth.register.successMessage')}</p>
+        <p className="text-sm text-black dark:text-white mb-5">{t('auth.register.successMessage')}</p>
         <div className="flex items-center justify-center gap-2 text-brand">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-sm font-medium">{t('auth.loggingIn')}</span>
@@ -100,37 +99,35 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-fade-in">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-brand/10 dark:bg-brand/20 rounded-2xl mb-5">
-          <UserPlus className="w-7 h-7 text-brand" />
+        <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-100 dark:bg-primary-200 rounded-xl mb-4">
+          <UserPlus className="w-5 h-5 text-primary-600 dark:text-primary-400" />
         </div>
-        <h2 className="text-2xl font-semibold text-primary-900 dark:text-primary-50 mb-1.5 tracking-tight">
+        <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
           {t('auth.register.title')}
         </h2>
-        <p className="text-sm text-primary-500 dark:text-primary-400">
+        <p className="text-sm text-black dark:text-white">
           {t('auth.register.subtitle')}
         </p>
       </div>
 
       {/* Error message */}
       {error && (
-        <div className="mb-6 p-3.5 bg-error-50/80 border border-error-200/50 rounded-xl flex items-center gap-3 animate-shake">
-          <div className="w-9 h-9 bg-error-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <AlertCircle className="w-4.5 h-4.5 text-error-600" />
+        <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
+          <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-error-700 truncate">{error}</p>
-          </div>
+          <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
         </div>
       )}
 
-      {/* Google Login Button */}
+      {/* Google Login Button - Style matching CV secondary buttons */}
       <button
         type="button"
         onClick={loginWithGoogle}
-        className="w-full py-3 px-6 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 hover:border-primary-300 dark:hover:border-primary-600 text-primary-700 dark:text-primary-200 font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-3"
+        className="btn-secondary w-full py-3 flex items-center justify-center gap-3"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -153,85 +150,69 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         <span>{t('auth.loginWithGoogle')}</span>
       </button>
 
-      {/* Divider */}
+      {/* Divider - Style matching CV */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-primary-200/60 dark:border-primary-700/60"></div>
+          <div className="w-full border-t border-primary-200 dark:border-primary-700"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-surface-0 dark:bg-surface-200 text-primary-400 dark:text-primary-500">{t('auth.orContinueWith')}</span>
+          <span className="px-3 bg-surface-0 dark:bg-surface-100 text-black dark:text-white">
+            {t('auth.orContinueWith')}
+          </span>
         </div>
       </div>
 
-      {/* Form */}
+      {/* Form - Using CV form styling */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email field */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="register-email"
-            className="block text-sm font-medium text-primary-700 dark:text-primary-300"
-          >
+        {/* Email field - CV style */}
+        <div className="form-group">
+          <label htmlFor="register-email" className="label">
             {t('auth.email')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Mail className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                focusedField === 'email' ? 'text-brand' : 'text-primary-400 dark:text-primary-500'
-              }`} />
-            </div>
             <input
               type="email"
               id="register-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => setFocusedField('email')}
-              onBlur={() => setFocusedField(null)}
-              className="w-full pl-11 pr-4 py-3 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 rounded-xl text-primary-900 dark:text-primary-100 placeholder-primary-400 dark:placeholder-primary-500 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10 dark:focus:ring-brand/20"
               placeholder={t('auth.emailPlaceholder')}
+              className="input pl-10"
               required
               autoComplete="email"
             />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
           </div>
         </div>
 
-        {/* Password field */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="register-password"
-            className="block text-sm font-medium text-primary-700 dark:text-primary-300"
-          >
+        {/* Password field - CV style */}
+        <div className="form-group">
+          <label htmlFor="register-password" className="label">
             {t('auth.password')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Lock className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                focusedField === 'password' ? 'text-brand' : 'text-primary-400 dark:text-primary-500'
-              }`} />
-            </div>
             <input
               type={showPassword ? 'text' : 'password'}
               id="register-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
-              className="w-full pl-11 pr-11 py-3 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 rounded-xl text-primary-900 dark:text-primary-100 placeholder-primary-400 dark:placeholder-primary-500 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10 dark:focus:ring-brand/20"
               placeholder={t('auth.passwordPlaceholder')}
+              className="input pl-10 pr-10"
               required
               autoComplete="new-password"
             />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
-              {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
 
           {/* Password requirements */}
           {password && (
-            <div className="mt-2.5 p-2.5 bg-primary-50/80 dark:bg-primary-900/20 rounded-lg border border-primary-100/50">
+            <div className="mt-2.5 p-2.5 bg-primary-50 dark:bg-primary-200/50 rounded-lg border border-primary-100 dark:border-primary-700/50">
               <div className="grid grid-cols-1 xs:grid-cols-2 gap-1.5">
                 <PasswordCheck passed={passwordChecks.length} label={t('auth.passwordRules.length')} />
                 <PasswordCheck passed={passwordChecks.uppercase} label={t('auth.passwordRules.uppercase')} />
@@ -243,69 +224,60 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
           )}
         </div>
 
-        {/* Confirm password field */}
-        <div className="space-y-1.5">
-          <label
-            htmlFor="register-confirm-password"
-            className="block text-sm font-medium text-primary-700 dark:text-primary-300"
-          >
+        {/* Confirm password field - CV style */}
+        <div className="form-group">
+          <label htmlFor="register-confirm-password" className="label">
             {t('auth.confirmPassword')}
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Lock className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                focusedField === 'confirmPassword' ? 'text-brand' : 'text-primary-400 dark:text-primary-500'
-              }`} />
-            </div>
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               id="register-confirm-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              onFocus={() => setFocusedField('confirmPassword')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full pl-11 pr-11 py-3 bg-surface-0 dark:bg-surface-100 border rounded-xl text-primary-900 dark:text-primary-100 placeholder-primary-400 dark:placeholder-primary-500 transition-all duration-200 focus:outline-none focus:ring-4 ${
+              placeholder={t('auth.confirmPasswordPlaceholder')}
+              className={`input pl-10 pr-10 ${
                 confirmPassword && !passwordsMatch
                   ? 'border-error-300 focus:border-error-400 focus:ring-error-100 dark:focus:ring-error-900/30'
                   : confirmPassword && passwordsMatch
                   ? 'border-success-300 focus:border-success-400 focus:ring-success-100 dark:focus:ring-success-900/30'
-                  : 'border-primary-200/80 dark:border-primary-700/80 focus:border-brand/50 focus:ring-brand/10 dark:focus:ring-brand/20'
+                  : ''
               }`}
-              placeholder={t('auth.confirmPasswordPlaceholder')}
               required
               autoComplete="new-password"
             />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
-              {showConfirmPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {confirmPassword && !passwordsMatch && (
-            <p className="mt-1.5 text-xs text-error-600 flex items-center gap-1">
+            <p className="mt-1.5 text-xs text-error-600 dark:text-error-400 flex items-center gap-1">
               <AlertCircle className="w-3.5 h-3.5" />
               {t('auth.errors.passwordMismatch')}
             </p>
           )}
           {confirmPassword && passwordsMatch && (
-            <p className="mt-1.5 text-xs text-success-600 flex items-center gap-1">
+            <p className="mt-1.5 text-xs text-success-600 dark:text-success-400 flex items-center gap-1">
               <CheckCircle className="w-3.5 h-3.5" />
               {t('auth.passwordsMatch') || 'Les mots de passe correspondent'}
             </p>
           )}
         </div>
 
-        {/* Submit button */}
+        {/* Submit button - CV brand button style */}
         <button
           type="submit"
           disabled={loading || !allChecksValid}
-          className="w-full mt-2 py-3 px-6 bg-brand hover:bg-brand-hover text-white font-medium rounded-xl shadow-sm shadow-brand/20 hover:shadow-md hover:shadow-brand/25 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:bg-primary-300 flex items-center justify-center gap-2"
+          className="btn-brand w-full py-3 mt-2"
         >
           {loading ? (
             <>
-              <Loader2 className="w-[18px] h-[18px] animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
               <span>{t('auth.registering')}</span>
             </>
           ) : (
@@ -316,7 +288,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
 
       {/* Switch to login */}
       <div className="mt-6 text-center">
-        <p className="text-sm text-primary-500 dark:text-primary-400">
+        <p className="text-sm text-black dark:text-white">
           {t('auth.hasAccount')}{' '}
           <button
             onClick={onSwitchToLogin}
@@ -333,10 +305,10 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
 function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
     <div className={`flex items-center gap-1.5 text-[11px] transition-all duration-200 ${
-      passed ? 'text-success-600 dark:text-success-400' : 'text-primary-400 dark:text-primary-500'
+      passed ? 'text-success-600 dark:text-success-400' : 'text-primary-500 dark:text-primary-400'
     }`}>
       <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
-        passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-700'
+        passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-600'
       }`}>
         {passed && <Check className="w-2.5 h-2.5" />}
       </div>
