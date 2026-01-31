@@ -21,7 +21,7 @@
 \address{\VAR{personal.location | escape_latex}}{}{}
 \phone[mobile]{\VAR{personal.phone | escape_latex}}
 \email{\VAR{personal.email | escape_latex}}
-\BLOCK{if personal.github}\social[github]{\VAR{personal.github | escape_latex}}\BLOCK{endif}
+\BLOCK{for link in personal.links}\BLOCK{if link.platform == 'linkedin'}\social[linkedin]{\VAR{link.username | escape_latex}}\BLOCK{endif}\BLOCK{if link.platform == 'github'}\social[github]{\VAR{link.username | escape_latex}}\BLOCK{endif}\BLOCK{if link.platform not in ['linkedin', 'github'] and link.url}\homepage{\VAR{link.url | escape_latex}}\BLOCK{endif}\BLOCK{endfor}
 
 \begin{document}
 \pagestyle{empty}
@@ -30,7 +30,7 @@
 \vspace{-1.5em}
 
 \BLOCK{for section in sections}
-\BLOCK{if section.isVisible}
+\BLOCK{if section.isVisible and section.has_content}
 
 \BLOCK{if section.type == 'skills'}
 \section{\VAR{section.title | escape_latex}}

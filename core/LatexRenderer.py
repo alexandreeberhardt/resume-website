@@ -22,10 +22,24 @@ class LatexRenderer:
 
     @staticmethod
     def escape_latex(text: str) -> str:
-        """Escapes special LaTeX characters in a string."""
+        """Escapes special LaTeX characters in a string.
+
+        SECURITY: All special LaTeX characters must be escaped to prevent
+        command injection attacks. The backslash is escaped FIRST to avoid
+        double-escaping other replacements.
+        """
         if not isinstance(text, str):
             return text
-        # Backslash is not escaped to allow for LaTeX commands in the YAML file.
+
+        # CRITICAL: Escape backslash FIRST to prevent injection of LaTeX commands
+        # This blocks attempts like \input{/etc/passwd} or \write18{rm -rf /}
+        text = text.replace('\\', r'\textbackslash{}')
+
+        # Escape braces (must be done before other replacements that use braces)
+        text = text.replace('{', r'\{')
+        text = text.replace('}', r'\}')
+
+        # Escape other special LaTeX characters
         replacements = {
             '&': r'\&',
             '%': r'\%',

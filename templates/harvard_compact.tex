@@ -45,12 +45,14 @@
   \BLOCK{if personal.title}{\large \VAR{personal.title | escape_latex}}\\[0.2em]\BLOCK{endif}
   \VAR{personal.location | escape_latex} \;|\;
   \href{mailto:\VAR{personal.email}}{\VAR{personal.email | escape_latex}} \;|\;
-  \VAR{personal.phone | escape_latex} \;|\;
-  \href{\VAR{personal.github_url | escape_latex}}{\VAR{personal.github | escape_latex}}
+  \VAR{personal.phone | escape_latex}%
+  \BLOCK{for link in personal.links}%
+  \BLOCK{if link.url and link.username} \;|\; \href{\VAR{link.url | escape_latex}}{\VAR{link.username | escape_latex}}\BLOCK{endif}%
+  \BLOCK{endfor}
 \end{center}
 
 \BLOCK{for section in sections}
-\BLOCK{if section.isVisible}
+\BLOCK{if section.isVisible and section.has_content}
 
 \section*{\VAR{section.title | escape_latex}}
 
