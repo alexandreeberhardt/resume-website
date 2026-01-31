@@ -92,11 +92,11 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         }} />
 
         {/* Mobile Header */}
-        <header className="lg:hidden relative z-10 bg-surface-0/80 backdrop-blur-md border-b border-primary-100/50">
-          <div className="px-4 h-14 flex items-center justify-between">
+        <header className="lg:hidden relative z-10 bg-surface-0/80 dark:bg-surface-100/80 backdrop-blur-md border-b border-primary-100/50 dark:border-primary-800/50">
+          <div className="px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-6 h-6 text-brand" />
-              <span className="text-base font-semibold text-primary-900">{t('landing.appName')}</span>
+              <FileText className="w-7 h-7 text-brand" />
+              <span className="text-lg font-semibold text-primary-900 dark:text-primary-50">{t('landing.appName')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <ThemeToggle />
@@ -115,7 +115,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12 relative z-10">
           <div className="w-full max-w-[400px]">
             {/* Glass card container */}
-            <div className="bg-surface-0/70 dark:bg-surface-0/50 backdrop-blur-xl rounded-2xl border border-primary-200/30 shadow-xl shadow-primary-900/5 p-6 sm:p-8">
+            <div className="bg-surface-0/90 dark:bg-surface-200/90 backdrop-blur-xl rounded-2xl border border-primary-200/30 dark:border-primary-700/30 shadow-xl shadow-primary-900/5 dark:shadow-primary-950/20 p-6 sm:p-8">
               {/* Animated content */}
               <div
                 key={mode}
@@ -134,17 +134,17 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
               <div className="mt-6 text-center">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-primary-200/50" />
+                    <div className="w-full border-t border-primary-200/50 dark:border-primary-700/50" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-surface-50 dark:bg-surface-100 text-primary-400 text-xs">
+                    <span className="px-3 bg-surface-50 dark:bg-surface-200 text-primary-400 dark:text-primary-500 text-xs">
                       {t('auth.or') || 'ou'}
                     </span>
                   </div>
                 </div>
                 <button
                   onClick={onContinueWithoutAuth}
-                  className="mt-3 text-sm text-primary-500 hover:text-brand transition-colors font-medium"
+                  className="mt-3 text-sm text-primary-500 dark:text-primary-400 hover:text-brand transition-colors font-medium"
                 >
                   {t('auth.continueWithoutAccount') || 'Continuer sans compte'}
                 </button>
@@ -155,7 +155,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
 
         {/* Footer */}
         <footer className="py-4 px-4 text-center lg:hidden relative z-10">
-          <p className="text-xs text-primary-400">{t('landing.madeWith')}</p>
+          <p className="text-xs text-primary-400 dark:text-primary-500">{t('landing.madeWith')}</p>
         </footer>
       </div>
     </div>

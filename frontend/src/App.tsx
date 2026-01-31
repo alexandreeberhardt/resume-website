@@ -653,10 +653,10 @@ function App() {
         <nav className="fixed top-0 inset-x-0 z-50 bg-surface-0/80 backdrop-blur-md border-b border-primary-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-primary-900" />
-              <span className="text-base sm:text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+              <FileText className="w-7 h-7 text-primary-900" />
+              <span className="text-lg font-semibold text-primary-900 hidden xs:inline">{t('landing.appName')}</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               <ThemeToggle />
               <LanguageSwitcher />
               <button
@@ -664,14 +664,14 @@ function App() {
                   setShowLanding(false);
                   setShowResumesPage(true);
                 }}
-                className="btn-brand text-sm sm:text-base px-3 sm:px-4 py-2"
+                className="btn-brand text-sm px-2.5 sm:px-4 py-2"
               >
                 <FolderOpen className="w-4 h-4" />
-                {t('resumes.myResumes')}
+                <span className="hidden sm:inline">{t('resumes.myResumes')}</span>
               </button>
-              <div className="w-px h-5 bg-primary-200/60" />
+              <div className="w-px h-5 bg-primary-200/60 hidden sm:block" />
               <div className="flex items-center gap-1.5">
-                <span className="text-sm text-primary-500 hidden sm:inline max-w-[140px] truncate">{user?.email}</span>
+                <span className="text-sm text-primary-500 hidden md:inline max-w-[140px] truncate">{user?.email}</span>
                 <button
                   onClick={logout}
                   className="btn-ghost !p-2 text-primary-500 hover:text-error-600 hover:bg-error-50"
@@ -872,8 +872,8 @@ function App() {
               }}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <FileText className="w-6 h-6 text-primary-900" />
-              <span className="text-base font-semibold text-primary-900">{t('landing.appName')}</span>
+              <FileText className="w-7 h-7 text-primary-900" />
+              <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
             </button>
             <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -942,8 +942,8 @@ function App() {
             onClick={() => setShowLanding(true)}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <FileText className="w-6 h-6 text-primary-900" />
-            <span className="hidden sm:inline text-base font-semibold text-primary-900">{t('landing.appName')}</span>
+            <FileText className="w-7 h-7 text-primary-900" />
+            <span className="hidden sm:inline text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
           </button>
 
           {/* Desktop actions */}
@@ -1022,6 +1022,7 @@ function App() {
           {/* Mobile actions */}
           <div className="flex md:hidden items-center gap-1.5">
             <ThemeToggle />
+            <LanguageSwitcher />
             <button
               onClick={handleGenerate}
               disabled={loading}
@@ -1721,6 +1722,13 @@ function FeatureCard({
   );
 }
 
+// Detect if we're on a mobile device that doesn't support inline PDF
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+};
+
 function ResumeCard({
   resume,
   isActive,
@@ -1735,6 +1743,7 @@ function ResumeCard({
   const { t } = useTranslation();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isMobile] = useState(isMobileDevice);
 
   // Generate preview on mount
   useEffect(() => {
@@ -1794,7 +1803,7 @@ function ResumeCard({
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-8 h-8 rounded-full border-2 border-primary-200 border-t-brand animate-spin" />
           </div>
-        ) : previewUrl ? (
+        ) : previewUrl && !isMobile ? (
           <object
             data={previewUrl}
             type="application/pdf"

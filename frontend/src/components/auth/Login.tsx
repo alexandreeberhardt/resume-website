@@ -45,13 +45,13 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
     <div className="w-full">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-brand/10 rounded-2xl mb-5">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-brand/10 dark:bg-brand/20 rounded-2xl mb-5">
           <LogIn className="w-7 h-7 text-brand" />
         </div>
-        <h2 className="text-2xl font-semibold text-primary-900 mb-1.5 tracking-tight">
+        <h2 className="text-2xl font-semibold text-primary-900 dark:text-primary-50 mb-1.5 tracking-tight">
           {t('auth.login.title')}
         </h2>
-        <p className="text-sm text-primary-500">
+        <p className="text-sm text-primary-500 dark:text-primary-400">
           {t('auth.login.subtitle')}
         </p>
       </div>
@@ -72,7 +72,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       <button
         type="button"
         onClick={loginWithGoogle}
-        className="w-full py-3 px-6 bg-surface-0 border border-primary-200/80 hover:border-primary-300 text-primary-700 font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-3"
+        className="w-full py-3 px-6 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 hover:border-primary-300 dark:hover:border-primary-600 text-primary-700 dark:text-primary-200 font-medium rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-3"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -98,10 +98,10 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
       {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-primary-200/60"></div>
+          <div className="w-full border-t border-primary-200/60 dark:border-primary-700/60"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-surface-0 text-primary-400">{t('auth.orContinueWith')}</span>
+          <span className="px-3 bg-surface-0 dark:bg-surface-200 text-primary-400 dark:text-primary-500">{t('auth.orContinueWith')}</span>
         </div>
       </div>
 
@@ -111,14 +111,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <div className="space-y-1.5">
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-primary-700"
+            className="block text-sm font-medium text-primary-700 dark:text-primary-300"
           >
             {t('auth.email')}
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Mail className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                focusedField === 'email' ? 'text-brand' : 'text-primary-400'
+                focusedField === 'email' ? 'text-brand' : 'text-primary-400 dark:text-primary-500'
               }`} />
             </div>
             <input
@@ -128,7 +128,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')}
               onBlur={() => setFocusedField(null)}
-              className="w-full pl-11 pr-4 py-3 bg-surface-0 border border-primary-200/80 rounded-xl text-primary-900 placeholder-primary-400 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10"
+              className="w-full pl-11 pr-4 py-3 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 rounded-xl text-primary-900 dark:text-primary-100 placeholder-primary-400 dark:placeholder-primary-500 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10 dark:focus:ring-brand/20"
               placeholder={t('auth.emailPlaceholder')}
               required
               autoComplete="email"
@@ -140,14 +140,14 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <div className="space-y-1.5">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-primary-700"
+            className="block text-sm font-medium text-primary-700 dark:text-primary-300"
           >
             {t('auth.password')}
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Lock className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                focusedField === 'password' ? 'text-brand' : 'text-primary-400'
+                focusedField === 'password' ? 'text-brand' : 'text-primary-400 dark:text-primary-500'
               }`} />
             </div>
             <input
@@ -157,7 +157,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setFocusedField('password')}
               onBlur={() => setFocusedField(null)}
-              className="w-full pl-11 pr-11 py-3 bg-surface-0 border border-primary-200/80 rounded-xl text-primary-900 placeholder-primary-400 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10"
+              className="w-full pl-11 pr-11 py-3 bg-surface-0 dark:bg-surface-100 border border-primary-200/80 dark:border-primary-700/80 rounded-xl text-primary-900 dark:text-primary-100 placeholder-primary-400 dark:placeholder-primary-500 transition-all duration-200 focus:outline-none focus:border-brand/50 focus:ring-4 focus:ring-brand/10 dark:focus:ring-brand/20"
               placeholder={t('auth.passwordPlaceholder')}
               required
               autoComplete="current-password"
@@ -165,7 +165,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary-400 hover:text-primary-600 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
               {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
             </button>
@@ -191,7 +191,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
 
       {/* Switch to register */}
       <div className="mt-6 text-center">
-        <p className="text-sm text-primary-500">
+        <p className="text-sm text-primary-500 dark:text-primary-400">
           {t('auth.noAccount')}{' '}
           <button
             onClick={onSwitchToRegister}

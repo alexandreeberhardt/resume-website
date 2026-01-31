@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2 } from 'lucide-react';
+import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2, Download } from 'lucide-react';
 import { ResumeData } from '../types';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
+
+// Detect if we're on a mobile device that doesn't support inline PDF
+const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  const userAgent = navigator.userAgent.toLowerCase();
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+};
 
 interface CVPreviewProps {
   data: ResumeData;
@@ -18,6 +25,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
   const [error, setError] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMobile] = useState(isMobileDevice);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const previousDataRef = useRef<string>('');
@@ -175,17 +183,38 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
           {/* PDF Container */}
           <div className="aspect-[210/297] w-full bg-white">
             {pdfUrl ? (
-              <object
-                data={pdfUrl}
-                type="application/pdf"
-                className="w-full h-full pointer-events-none"
-              >
-                <iframe
-                  src={pdfUrl}
-                  className="w-full h-full border-0 pointer-events-none"
-                  title="CV Preview"
-                />
-              </object>
+              isMobile ? (
+                // Mobile fallback - PDF inline display doesn't work on mobile browsers
+                <div className="w-full h-full flex items-center justify-center bg-primary-50">
+                  <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Eye className="w-8 h-8 text-brand" />
+                    </div>
+                    <p className="text-sm text-primary-600 mb-4">{t('preview.mobileHint') || 'Aperçu non disponible sur mobile'}</p>
+                    <a
+                      href={pdfUrl}
+                      download="CV_preview.pdf"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Download className="w-4 h-4" />
+                      {t('preview.download') || 'Télécharger'}
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <object
+                  data={pdfUrl}
+                  type="application/pdf"
+                  className="w-full h-full pointer-events-none"
+                >
+                  <iframe
+                    src={pdfUrl}
+                    className="w-full h-full border-0 pointer-events-none"
+                    title="CV Preview"
+                  />
+                </object>
+              )
             ) : (
               <div className="w-full h-full flex items-center justify-center text-primary-300">
                 <div className="text-center p-4">
@@ -196,8 +225,8 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
             )}
           </div>
 
-          {/* Fullscreen hint overlay */}
-          {pdfUrl && !loading && (
+          {/* Fullscreen hint overlay - only on desktop */}
+          {pdfUrl && !loading && !isMobile && (
             <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
               <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 shadow-md border border-primary-100/50 transform scale-95 group-hover:scale-100 transition-transform">
                 <Maximize2 className="w-4 h-4 text-primary-600" />
@@ -232,8 +261,8 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
         {t('preview.hint')}
       </p>
 
-      {/* Fullscreen Modal - rendered via portal to escape stacking context */}
-      {isFullscreen && pdfUrl && createPortal(
+      {/* Fullscreen Modal - rendered via portal to escape stacking context (desktop only) */}
+      {isFullscreen && pdfUrl && !isMobile && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-primary-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
           onClick={() => setIsFullscreen(false)}

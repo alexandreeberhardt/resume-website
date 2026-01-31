@@ -154,7 +154,9 @@
     "generating": "Génération de l'aperçu...",
     "empty": "L'aperçu apparaîtra ici",
     "hint": "L'aperçu se met à jour automatiquement",
-    "fullscreen": "Plein écran"
+    "fullscreen": "Plein écran",
+    "mobileHint": "Aperçu non disponible sur mobile",
+    "download": "Télécharger l'aperçu"
   },
   "sections": {
     "summary": "Résumé",
