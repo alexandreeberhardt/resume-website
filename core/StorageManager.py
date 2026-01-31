@@ -107,18 +107,24 @@ class StorageManager:
         self.s3_client.delete_object(Bucket=self.bucket_name, Key=s3_key)
         return True
 
-    def get_presigned_url(self, s3_key: str, expiration: int = 3600) -> str:
+    # SECURITY: Maximum URL expiration time (5 minutes) to limit exposure window
+    MAX_URL_EXPIRATION = 300
+
+    def get_presigned_url(self, s3_key: str, expiration: int = 300) -> str:
         """Generate a presigned URL for downloading a file.
 
         Args:
             s3_key: The key (path) of the file in S3.
-            expiration: URL expiration time in seconds (default: 1 hour).
+            expiration: URL expiration time in seconds (default: 5 minutes, max: 5 minutes).
 
         Returns:
             A presigned URL for downloading the file.
         """
+        # SECURITY: Enforce maximum expiration time
+        safe_expiration = min(expiration, self.MAX_URL_EXPIRATION)
+
         return self.s3_client.generate_presigned_url(
             "get_object",
             Params={"Bucket": self.bucket_name, "Key": s3_key},
-            ExpiresIn=expiration,
+            ExpiresIn=safe_expiration,
         )

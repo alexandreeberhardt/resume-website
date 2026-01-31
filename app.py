@@ -24,7 +24,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, HttpUrl, Field
 import json
 import re
 from openai import OpenAI, AsyncOpenAI
@@ -47,21 +47,29 @@ from api.resumes import router as resumes_router
 
 class ProfessionalLink(BaseModel):
     """Un lien professionnel (LinkedIn, GitHub, Portfolio, etc.)"""
-    platform: str = "linkedin"
-    username: str = ""
-    url: str = ""
+    platform: str = Field(default="linkedin", max_length=50)
+    username: str = Field(default="", max_length=100)
+    url: str = Field(default="", max_length=500)
+
+    @field_validator("url")
+    @classmethod
+    def validate_url(cls, v: str) -> str:
+        """Validate URL format if provided."""
+        if v and not v.startswith(("http://", "https://")):
+            raise ValueError("URL must start with http:// or https://")
+        return v
 
 
 class PersonalInfo(BaseModel):
-    name: str = ""
-    title: Optional[str] = ""
-    location: str = ""
-    email: str = ""
-    phone: str = ""
-    links: List[ProfessionalLink] = []
+    name: str = Field(default="", max_length=200)
+    title: Optional[str] = Field(default="", max_length=200)
+    location: str = Field(default="", max_length=200)
+    email: str = Field(default="", max_length=254)  # RFC 5321 max email length
+    phone: str = Field(default="", max_length=50)
+    links: List[ProfessionalLink] = Field(default_factory=list, max_length=20)
     # Champs legacy pour la compatibilité ascendante
-    github: Optional[str] = None
-    github_url: Optional[str] = None
+    github: Optional[str] = Field(default=None, max_length=100)
+    github_url: Optional[str] = Field(default=None, max_length=500)
 
     def model_post_init(self, __context):
         """Migration silencieuse des anciennes données github vers links."""
@@ -78,24 +86,24 @@ class PersonalInfo(BaseModel):
 
 
 class EducationItem(BaseModel):
-    school: str = ""
-    degree: str = ""
-    dates: str = ""
-    subtitle: Optional[str] = ""
-    description: Optional[str] = ""
+    school: str = Field(default="", max_length=300)
+    degree: str = Field(default="", max_length=300)
+    dates: str = Field(default="", max_length=100)
+    subtitle: Optional[str] = Field(default="", max_length=300)
+    description: Optional[str] = Field(default="", max_length=2000)
 
 
 class ExperienceItem(BaseModel):
-    title: str = ""
-    company: str = ""
-    dates: str = ""
-    highlights: List[str] = []
+    title: str = Field(default="", max_length=300)
+    company: str = Field(default="", max_length=300)
+    dates: str = Field(default="", max_length=100)
+    highlights: List[str] = Field(default_factory=list, max_length=50)
 
 
 class ProjectItem(BaseModel):
-    name: str = ""
-    year: Union[str, int] = ""
-    highlights: List[str] = []
+    name: str = Field(default="", max_length=300)
+    year: Union[str, int] = Field(default="", max_length=50)
+    highlights: List[str] = Field(default_factory=list, max_length=50)
 
     @field_validator('year', mode='before')
     @classmethod
@@ -104,22 +112,22 @@ class ProjectItem(BaseModel):
 
 
 class SkillsItem(BaseModel):
-    languages: str = ""
-    tools: str = ""
+    languages: str = Field(default="", max_length=2000)
+    tools: str = Field(default="", max_length=2000)
 
 
 class LeadershipItem(BaseModel):
-    role: str = ""
-    place: Optional[str] = ""
-    dates: str = ""
-    highlights: List[str] = []
+    role: str = Field(default="", max_length=300)
+    place: Optional[str] = Field(default="", max_length=300)
+    dates: str = Field(default="", max_length=100)
+    highlights: List[str] = Field(default_factory=list, max_length=50)
 
 
 class CustomItem(BaseModel):
-    title: str = ""
-    subtitle: Optional[str] = ""
-    dates: Optional[str] = ""
-    highlights: List[str] = []
+    title: str = Field(default="", max_length=300)
+    subtitle: Optional[str] = Field(default="", max_length=300)
+    dates: Optional[str] = Field(default="", max_length=100)
+    highlights: List[str] = Field(default_factory=list, max_length=50)
 
 
 # Types de sections supportés
@@ -128,9 +136,9 @@ SectionType = Literal['summary', 'education', 'experiences', 'projects', 'skills
 
 class CVSection(BaseModel):
     """Section du CV avec type, titre et contenu."""
-    id: str
+    id: str = Field(..., max_length=50)
     type: SectionType
-    title: str
+    title: str = Field(..., max_length=200)
     isVisible: bool = True
     items: Any  # Le type dépend du type de section
 
@@ -324,6 +332,7 @@ async def generate_cv(data: ResumeData):
     # Créer un dossier temporaire pour la compilation
     temp_dir = tempfile.mkdtemp(prefix="cv_")
     temp_path = Path(temp_dir)
+    pdf_content = None
 
     try:
         # Déterminer le template à utiliser (fallback sur harvard si invalide)
@@ -361,18 +370,29 @@ async def generate_cv(data: ResumeData):
         if not pdf_file.exists():
             raise HTTPException(status_code=500, detail="Échec de la génération du PDF")
 
-        # Retourner le PDF
-        return FileResponse(
-            path=str(pdf_file),
-            filename="cv.pdf",
-            media_type="application/pdf",
-            background=None
-        )
+        # SECURITY: Read PDF content before cleanup to ensure temp files are always deleted
+        pdf_content = pdf_file.read_bytes()
 
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=f"Erreur de compilation LaTeX: {e}")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur inattendue: {e}")
+    finally:
+        # SECURITY: Always clean up temporary files, even on exceptions
+        try:
+            shutil.rmtree(temp_path)
+        except Exception:
+            pass
+
+    # Return PDF from memory (temp files already cleaned up)
+    from io import BytesIO
+    return StreamingResponse(
+        BytesIO(pdf_content),
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=cv.pdf"}
+    )
 
 
 class OptimalSizeResponse(BaseModel):

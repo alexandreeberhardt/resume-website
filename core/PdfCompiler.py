@@ -15,9 +15,11 @@ class PdfCompiler:
         print(f"⚙️ Compiling {self.tex_file.name}...")
         
         # Using latexmk is standard for automation
+        # SECURITY: -no-shell-escape prevents \write18 and other shell command execution
         cmd = [
             "latexmk",
             "-pdf",
+            "-no-shell-escape",
             "-interaction=nonstopmode",
             "-outdir=" + str(self.tex_file.parent),
             str(self.tex_file)

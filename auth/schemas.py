@@ -1,5 +1,12 @@
 """Pydantic schemas for authentication."""
+import re
 from pydantic import BaseModel, EmailStr, field_validator
+
+
+# Minimum password length for security compliance
+MIN_PASSWORD_LENGTH = 12
+# Special characters required for password complexity
+SPECIAL_CHARS = r"!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?"
 
 
 class UserCreate(BaseModel):
@@ -10,15 +17,17 @@ class UserCreate(BaseModel):
     @field_validator("password")
     @classmethod
     def validate_password(cls, v: str) -> str:
-        """Validate password strength."""
-        if len(v) < 8:
-            raise ValueError("Password must be at least 8 characters long")
+        """Validate password strength with strict security requirements."""
+        if len(v) < MIN_PASSWORD_LENGTH:
+            raise ValueError(f"Password must be at least {MIN_PASSWORD_LENGTH} characters long")
         if not any(c.isupper() for c in v):
             raise ValueError("Password must contain at least one uppercase letter")
         if not any(c.islower() for c in v):
             raise ValueError("Password must contain at least one lowercase letter")
         if not any(c.isdigit() for c in v):
             raise ValueError("Password must contain at least one digit")
+        if not re.search(f"[{re.escape(SPECIAL_CHARS)}]", v):
+            raise ValueError("Password must contain at least one special character (!@#$%^&*...)")
         return v
 
 
