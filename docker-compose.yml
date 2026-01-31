@@ -17,12 +17,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-    # SECURITY: Resource limits to prevent DoS
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
 
   cv-generator:
     build:
@@ -47,12 +41,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    # SECURITY: Resource limits to prevent DoS attacks
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
 
 volumes:
   postgres_data:
