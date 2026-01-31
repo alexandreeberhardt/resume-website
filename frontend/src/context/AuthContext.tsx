@@ -14,9 +14,15 @@ import {
   setStoredToken,
   removeStoredToken,
   setOnUnauthorized,
+  api,
 } from '../api/client';
 import { loginUser, registerUser, decodeToken, isTokenExpired } from '../api/auth';
 import type { User, AuthState, LoginCredentials, RegisterCredentials } from '../types';
+
+interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -50,28 +56,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Initialize auth state from localStorage or URL (OAuth callback)
    */
   useEffect(() => {
-    const initAuth = () => {
-      // Check for token in URL (from OAuth callback)
+    const initAuth = async () => {
+      // Check for OAuth code in URL (from OAuth callback)
+      // SECURITY: We now receive a temporary code instead of the JWT directly
+      // This prevents the JWT from being exposed in browser history or logs
       const urlParams = new URLSearchParams(window.location.search);
-      const urlToken = urlParams.get('token');
+      const oauthCode = urlParams.get('code');
 
-      if (urlToken) {
-        // Remove token from URL
+      if (oauthCode) {
+        // Remove code from URL immediately
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Validate and store the token
-        if (!isTokenExpired(urlToken)) {
-          const decoded = decodeToken(urlToken);
-          if (decoded) {
-            setStoredToken(urlToken);
-            setToken(urlToken);
-            setUser({
-              id: parseInt(decoded.sub, 10),
-              email: decoded.email,
-            });
-            setIsLoading(false);
-            return;
+        try {
+          // Exchange the temporary code for a JWT token
+          const response = await api.post<TokenResponse>(
+            `/auth/google/exchange?code=${encodeURIComponent(oauthCode)}`
+          );
+          const urlToken = response.access_token;
+
+          // Validate and store the token
+          if (!isTokenExpired(urlToken)) {
+            const decoded = decodeToken(urlToken);
+            if (decoded) {
+              setStoredToken(urlToken);
+              setToken(urlToken);
+              setUser({
+                id: parseInt(decoded.sub, 10),
+                email: decoded.email,
+              });
+              setIsLoading(false);
+              return;
+            }
           }
+        } catch (error) {
+          console.error('OAuth code exchange failed:', error);
+          // Continue to check stored token
         }
       }
 

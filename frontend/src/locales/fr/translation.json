@@ -46,10 +46,11 @@
       "successMessage": "Connexion en cours..."
     },
     "passwordRules": {
-      "length": "Au moins 8 caractères",
+      "length": "Au moins 12 caractères",
       "uppercase": "Au moins une majuscule",
       "lowercase": "Au moins une minuscule",
-      "digit": "Au moins un chiffre"
+      "digit": "Au moins un chiffre",
+      "special": "Au moins un caractère spécial (!@#$...)"
     },
     "errors": {
       "invalidCredentials": "Email ou mot de passe incorrect",

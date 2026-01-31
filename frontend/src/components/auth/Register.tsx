@@ -26,12 +26,13 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  // Password validation
+  // Password validation - must match backend requirements (12 chars + special char)
   const passwordChecks = {
-    length: password.length >= 8,
+    length: password.length >= 12,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     digit: /\d/.test(password),
+    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
   };
   const isPasswordValid = Object.values(passwordChecks).every(Boolean);
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
@@ -236,6 +237,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
                 <PasswordCheck passed={passwordChecks.uppercase} label={t('auth.passwordRules.uppercase')} />
                 <PasswordCheck passed={passwordChecks.lowercase} label={t('auth.passwordRules.lowercase')} />
                 <PasswordCheck passed={passwordChecks.digit} label={t('auth.passwordRules.digit')} />
+                <PasswordCheck passed={passwordChecks.special} label={t('auth.passwordRules.special')} />
               </div>
             </div>
           )}
