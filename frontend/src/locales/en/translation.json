@@ -296,6 +296,15 @@
       "title": "Terms of Service"
     }
   },
+  "guest": {
+    "upgradeBannerTitle": "Save your work",
+    "upgradeBannerDesc": "Create a free account to keep your resumes and unlock more features.",
+    "createAccount": "Create free account",
+    "limitReached": "Guest accounts are limited to 3 resumes. Create a free account to save more.",
+    "upgradeSuccess": "Account created!",
+    "upgradeSuccessDesc": "Your resumes have been preserved. Enjoy the full experience!",
+    "upgradeModalSubtitle": "Keep your resumes safe"
+  },
   "account": {
     "title": "My Account",
     "profile": "Profile",

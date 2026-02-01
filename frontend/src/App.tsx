@@ -172,6 +172,7 @@ import ThemeToggle from './components/ThemeToggle';
 import CVPreview from './components/CVPreview';
 import AuthPage from './components/auth/AuthPage';
 import Footer from './components/Footer';
+import GuestUpgradeBanner from './components/GuestUpgradeBanner';
 import { useAuth } from './context/AuthContext';
 import { listResumes, createResume, updateResume, deleteResume } from './api/resumes';
 import { Link } from 'react-router-dom';
@@ -180,7 +181,7 @@ const API_URL = import.meta.env.DEV ? '/api' : '';
 
 function App() {
   const { t, i18n } = useTranslation();
-  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user, logout, loginAsGuest } = useAuth();
 
   const [data, setData] = useState<ResumeData>(emptyResumeData);
   const [loading, setLoading] = useState(false);
@@ -644,7 +645,7 @@ function App() {
 
   // Show auth page if not authenticated
   if (!isAuthenticated) {
-    return <AuthPage />;
+    return <AuthPage onContinueWithoutAuth={loginAsGuest} />;
   }
 
   // Landing Page
@@ -1575,6 +1576,9 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Guest Upgrade Banner */}
+      <GuestUpgradeBanner />
 
       {/* Mobile Preview Button - Fixed at bottom */}
       <button

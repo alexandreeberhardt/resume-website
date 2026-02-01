@@ -16,7 +16,7 @@ import {
   setOnUnauthorized,
   api,
 } from '../api/client';
-import { loginUser, registerUser, decodeToken, isTokenExpired } from '../api/auth';
+import { loginUser, registerUser, decodeToken, isTokenExpired, createGuestAccount, upgradeGuestAccount } from '../api/auth';
 import type { User, AuthState, LoginCredentials, RegisterCredentials } from '../types';
 
 interface TokenResponse {
@@ -28,6 +28,9 @@ interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
+  isGuest: boolean;
+  loginAsGuest: () => Promise<void>;
+  upgradeAccount: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,6 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
 
   const isAuthenticated = !!token && !!user;
 
@@ -50,6 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     removeStoredToken();
     setToken(null);
     setUser(null);
+    setIsGuest(false);
   }, []);
 
   /**
@@ -83,7 +88,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
               setUser({
                 id: parseInt(decoded.sub, 10),
                 email: decoded.email,
+                isGuest: decoded.is_guest,
               });
+              setIsGuest(decoded.is_guest || false);
               setIsLoading(false);
               return;
             }
@@ -109,7 +116,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             setUser({
               id: parseInt(decoded.sub, 10),
               email: decoded.email,
+              isGuest: decoded.is_guest,
             });
+            setIsGuest(decoded.is_guest || false);
           } else {
             logout();
           }
@@ -146,7 +155,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser({
         id: parseInt(decoded.sub, 10),
         email: decoded.email,
+        isGuest: decoded.is_guest,
       });
+      setIsGuest(decoded.is_guest || false);
     }
   };
 
@@ -158,6 +169,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // After registration, user needs to login
   };
 
+  /**
+   * Login as a guest (anonymous account)
+   */
+  const loginAsGuest = async (): Promise<void> => {
+    const response = await createGuestAccount();
+    const newToken = response.access_token;
+
+    // Store token
+    setStoredToken(newToken);
+    setToken(newToken);
+
+    // Decode token to get user info
+    const decoded = decodeToken(newToken);
+    if (decoded) {
+      setUser({
+        id: parseInt(decoded.sub, 10),
+        email: decoded.email,
+        isGuest: true,
+      });
+      setIsGuest(true);
+    }
+  };
+
+  /**
+   * Upgrade guest account to permanent account
+   */
+  const upgradeAccount = async (email: string, password: string): Promise<void> => {
+    const updatedUser = await upgradeGuestAccount(email, password);
+
+    // Update user state with new email and non-guest status
+    setUser({
+      id: updatedUser.id,
+      email: updatedUser.email,
+      isGuest: false,
+    });
+    setIsGuest(false);
+
+    // Re-login to get a new token without the is_guest claim
+    await login({ email, password });
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -166,6 +218,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     register,
     logout,
+    isGuest,
+    loginAsGuest,
+    upgradeAccount,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

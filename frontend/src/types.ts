@@ -5,6 +5,7 @@
 export interface User {
   id: number;
   email: string;
+  isGuest?: boolean;
 }
 
 export interface AuthState {

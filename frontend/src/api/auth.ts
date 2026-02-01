@@ -29,7 +29,7 @@ export async function loginUser(credentials: LoginCredentials): Promise<AuthResp
  * Decode JWT token to extract user info
  * Note: This is client-side decoding for convenience - the server still validates the token
  */
-export function decodeToken(token: string): { sub: string; email: string; exp: number } | null {
+export function decodeToken(token: string): { sub: string; email: string; exp: number; is_guest?: boolean } | null {
   try {
     const payload = token.split('.')[1];
     const decoded = JSON.parse(atob(payload));
@@ -83,4 +83,18 @@ export async function deleteUserAccount(): Promise<void> {
  */
 export async function getCurrentUser(): Promise<User> {
   return api.get<User>('/auth/me');
+}
+
+/**
+ * Create an anonymous guest account
+ */
+export async function createGuestAccount(): Promise<AuthResponse> {
+  return api.post<AuthResponse>('/auth/guest', {});
+}
+
+/**
+ * Upgrade a guest account to a permanent account
+ */
+export async function upgradeGuestAccount(email: string, password: string): Promise<User> {
+  return api.post<User>('/auth/upgrade', { email, password });
 }
