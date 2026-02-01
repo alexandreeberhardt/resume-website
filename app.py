@@ -28,7 +28,7 @@ from pydantic import BaseModel, field_validator, HttpUrl, Field
 import json
 import re
 from mistralai import Mistral
-from pypdf import PdfReader
+import pdfplumber
 
 from core.LatexRenderer import LatexRenderer
 from core.PdfCompiler import PdfCompiler
@@ -256,8 +256,8 @@ def generate_pdf_and_count_pages(data: ResumeData, template_id: str) -> tuple[Pa
         raise RuntimeError("Échec de la génération du PDF")
 
     # Compter les pages
-    reader = PdfReader(str(pdf_file))
-    page_count = len(reader.pages)
+    with pdfplumber.open(str(pdf_file)) as pdf:
+        page_count = len(pdf.pages)
 
     return pdf_file, page_count, temp_path
 
@@ -529,10 +529,10 @@ async def import_cv(file: UploadFile = File(...)):
         temp_pdf.close()
 
         try:
-            reader = PdfReader(temp_pdf.name)
-            text_content = ""
-            for page in reader.pages:
-                text_content += page.extract_text() + "\n"
+            with pdfplumber.open(temp_pdf.name) as pdf:
+                text_content = ""
+                for page in pdf.pages:
+                    text_content += (page.extract_text() or "") + "\n"
         finally:
             Path(temp_pdf.name).unlink()
 
@@ -690,10 +690,10 @@ async def import_cv_stream(file: UploadFile = File(...)):
             temp_pdf.close()
 
             try:
-                reader = PdfReader(temp_pdf.name)
-                text_content = ""
-                for page in reader.pages:
-                    text_content += page.extract_text() + "\n"
+                with pdfplumber.open(temp_pdf.name) as pdf:
+                    text_content = ""
+                    for page in pdf.pages:
+                        text_content += (page.extract_text() or "") + "\n"
             finally:
                 Path(temp_pdf.name).unlink()
 
