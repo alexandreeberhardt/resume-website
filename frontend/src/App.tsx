@@ -171,8 +171,10 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 import ThemeToggle from './components/ThemeToggle';
 import CVPreview from './components/CVPreview';
 import AuthPage from './components/auth/AuthPage';
+import Footer from './components/Footer';
 import { useAuth } from './context/AuthContext';
 import { listResumes, createResume, updateResume, deleteResume } from './api/resumes';
+import { Link } from 'react-router-dom';
 
 const API_URL = import.meta.env.DEV ? '/api' : '';
 
@@ -671,7 +673,16 @@ function App() {
               </button>
               <div className="w-px h-5 bg-primary-200/60 hidden sm:block" />
               <div className="flex items-center gap-1.5">
-                <span className="text-sm text-primary-500 hidden md:inline max-w-[140px] truncate">{user?.email}</span>
+                <span className="text-sm text-primary-500 hidden md:inline max-w-[140px] truncate">
+                  {user?.email}
+                </span>
+                <Link
+                  to="/account"
+                  className="btn-ghost !p-2 text-primary-500 hover:text-primary-700"
+                  title={t('account.title')}
+                >
+                  <User className="w-4 h-4" />
+                </Link>
                 <button
                   onClick={logout}
                   className="btn-ghost !p-2 text-primary-500 hover:text-error-600 hover:bg-error-50"
@@ -842,17 +853,7 @@ function App() {
         </section>
 
         {/* Footer */}
-        <footer className="py-6 sm:py-8 px-4 sm:px-6 bg-surface-0 border-t border-primary-100">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
-            <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary-400" />
-              <span className="text-sm text-primary-500">{t('landing.appName')}</span>
-            </div>
-            <p className="text-xs sm:text-sm text-primary-400">
-              {t('landing.madeWith')}
-            </p>
-          </div>
-        </footer>
+        <Footer />
 
       </div>
     );
@@ -1008,7 +1009,16 @@ function App() {
 
             {/* User menu */}
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-primary-500 hidden lg:inline max-w-[140px] truncate">{user?.email}</span>
+              <span className="text-sm text-primary-500 hidden lg:inline max-w-[140px] truncate">
+                {user?.email}
+              </span>
+              <Link
+                to="/account"
+                className="btn-ghost !p-2 text-primary-500 hover:text-primary-700"
+                title={t('account.title')}
+              >
+                <User className="w-4 h-4" />
+              </Link>
               <button
                 onClick={logout}
                 className="btn-ghost !p-2 text-primary-500 hover:text-error-600 hover:bg-error-50"
@@ -1056,6 +1066,16 @@ function App() {
               </div>
 
               <div className="h-px bg-primary-100/80 !my-2" />
+
+              {/* My Account */}
+              <Link
+                to="/account"
+                onClick={() => setShowMobileMenu(false)}
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
+              >
+                <User className="w-4 h-4 text-primary-500" />
+                {t('account.title')}
+              </Link>
 
               {/* My Resumes */}
               <button

@@ -60,7 +60,9 @@
       "generic": "An error occurred"
     },
     "loginWithGoogle": "Continue with Google",
-    "orContinueWith": "or continue with your email"
+    "orContinueWith": "or continue with your email",
+    "acceptTerms": "I accept the",
+    "and": "and the"
   },
   "resumes": {
     "myResumes": "My Resumes",
@@ -280,5 +282,39 @@
       "addItem": "Add item",
       "deleteItem": "Delete this item"
     }
+  },
+  "legal": {
+    "backToHome": "Back",
+    "lastUpdated": "Last updated",
+    "legalNotice": {
+      "title": "Legal Notice"
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy"
+    },
+    "termsOfService": {
+      "title": "Terms of Service"
+    }
+  },
+  "account": {
+    "title": "My Account",
+    "profile": "Profile",
+    "exportData": "Export my data",
+    "exportDataDesc": "Download a copy of all your personal data in JSON format (GDPR right to portability).",
+    "downloadData": "Download my data",
+    "exporting": "Exporting...",
+    "exportSuccess": "Data exported successfully",
+    "exportError": "Error during export",
+    "deleteAccount": "Delete my account",
+    "deleteAccountDesc": "Permanently delete your account and all associated data. This action is irreversible.",
+    "deleteAccountButton": "Delete my account",
+    "deleteWarning": "Warning: this action is irreversible. All your data will be permanently deleted.",
+    "deleteConfirmInstructions": "Type DELETE to confirm",
+    "deleteConfirmPlaceholder": "DELETE",
+    "deleteConfirmError": "Please type DELETE to confirm",
+    "confirmDelete": "Delete permanently",
+    "deleting": "Deleting...",
+    "deleteError": "Error during deletion",
+    "legalLinks": "Legal links"
   }
 }

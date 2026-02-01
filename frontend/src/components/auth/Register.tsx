@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Mail, Lock, UserPlus, AlertCircle, CheckCircle, Eye, EyeOff, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ApiError } from '../../api/client';
 import { loginWithGoogle } from '../../api/auth';
@@ -13,7 +14,7 @@ interface RegisterProps {
 }
 
 export default function Register({ onSwitchToLogin }: RegisterProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { register, login } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -21,9 +22,11 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isFrench = i18n.language.startsWith('fr');
 
   // Password validation - must match backend requirements (12 chars + special char)
   const passwordChecks = {
@@ -35,7 +38,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   };
   const isPasswordValid = Object.values(passwordChecks).every(Boolean);
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
-  const allChecksValid = isPasswordValid && passwordsMatch;
+  const allChecksValid = isPasswordValid && passwordsMatch && acceptedTerms;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,6 +270,68 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
               {t('auth.passwordsMatch') || 'Les mots de passe correspondent'}
             </p>
           )}
+        </div>
+
+        {/* Terms acceptance checkbox */}
+        <div className="form-group">
+          <label className="flex items-start gap-3 cursor-pointer group">
+            <div className="relative flex-shrink-0 mt-0.5">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                acceptedTerms
+                  ? 'bg-brand border-brand'
+                  : 'border-primary-300 dark:border-primary-600 group-hover:border-primary-400'
+              }`}>
+                {acceptedTerms && <Check className="w-3.5 h-3.5 text-white" />}
+              </div>
+            </div>
+            <span className="text-sm text-primary-700 dark:text-white leading-relaxed">
+              {isFrench ? (
+                <>
+                  J'accepte les{' '}
+                  <Link
+                    to="/cgu"
+                    className="text-brand hover:underline"
+                    target="_blank"
+                  >
+                    conditions d'utilisation
+                  </Link>
+                  {' '}et la{' '}
+                  <Link
+                    to="/politique-confidentialite"
+                    className="text-brand hover:underline"
+                    target="_blank"
+                  >
+                    politique de confidentialité
+                  </Link>
+                </>
+              ) : (
+                <>
+                  I accept the{' '}
+                  <Link
+                    to="/terms"
+                    className="text-brand hover:underline"
+                    target="_blank"
+                  >
+                    Terms of Service
+                  </Link>
+                  {' '}and{' '}
+                  <Link
+                    to="/privacy-policy"
+                    className="text-brand hover:underline"
+                    target="_blank"
+                  >
+                    Privacy Policy
+                  </Link>
+                </>
+              )}
+            </span>
+          </label>
         </div>
 
         {/* Submit button - CV brand button style */}

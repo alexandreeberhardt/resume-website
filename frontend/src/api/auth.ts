@@ -63,3 +63,24 @@ export function getGoogleLoginUrl(): string {
 export function loginWithGoogle(): void {
   window.location.href = getGoogleLoginUrl();
 }
+
+/**
+ * Export all user data (GDPR right to portability)
+ */
+export async function exportUserData(): Promise<Record<string, unknown>> {
+  return api.get<Record<string, unknown>>('/auth/me/export');
+}
+
+/**
+ * Delete user account (GDPR right to erasure)
+ */
+export async function deleteUserAccount(): Promise<void> {
+  return api.delete<void>('/auth/me');
+}
+
+/**
+ * Get current user info
+ */
+export async function getCurrentUser(): Promise<User> {
+  return api.get<User>('/auth/me');
+}
