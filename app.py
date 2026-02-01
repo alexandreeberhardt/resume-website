@@ -27,7 +27,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator, HttpUrl, Field
 import json
 import re
-from openai import OpenAI, AsyncOpenAI
+from mistralai import Mistral
 from pypdf import PdfReader
 
 from core.LatexRenderer import LatexRenderer
@@ -498,7 +498,7 @@ async def import_cv(file: UploadFile = File(...)):
     """
     Importe un CV depuis un fichier PDF.
 
-    Extrait le texte du PDF et utilise l'API OpenAI pour mapper
+    Extrait le texte du PDF et utilise l'API Mistral pour mapper
     le contenu vers la structure ResumeData.
 
     Args:
@@ -511,12 +511,12 @@ async def import_cv(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
 
-    # Vérifier la clé API OpenAI
-    api_key = os.environ.get("OPENAI_API_KEY")
+    # Vérifier la clé API Mistral
+    api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         raise HTTPException(
             status_code=500,
-            detail="Clé API OpenAI non configurée (OPENAI_API_KEY)"
+            detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
         )
 
     try:
@@ -551,8 +551,8 @@ async def import_cv(file: UploadFile = File(...)):
                        "Veuillez fournir un CV plus concis."
             )
 
-        # Appeler OpenAI pour structurer les données
-        client = OpenAI(api_key=api_key)
+        # Appeler Mistral pour structurer les données
+        client = Mistral(api_key=api_key)
 
         system_prompt = """Tu es un assistant spécialisé dans l'extraction de données de CV.
 Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suivante:
@@ -638,8 +638,8 @@ IMPORTANT:
 - Si une info n'est pas dans le CV, utilise une chaîne vide "" ou un array vide []
 - N'invente pas d'informations, extrais uniquement ce qui est présent"""
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
+        response = client.chat.complete(
+            model="mistral-small-latest",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"}
@@ -647,7 +647,6 @@ IMPORTANT:
             response_format={"type": "json_object"}
         )
 
-        import json
         result = json.loads(response.choices[0].message.content)
 
         return result
@@ -668,12 +667,12 @@ async def import_cv_stream(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
 
-    # Vérifier la clé API OpenAI
-    api_key = os.environ.get("OPENAI_API_KEY")
+    # Vérifier la clé API Mistral
+    api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         raise HTTPException(
             status_code=500,
-            detail="Clé API OpenAI non configurée (OPENAI_API_KEY)"
+            detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
         )
 
     # Lire le PDF avant de commencer le streaming
@@ -715,8 +714,8 @@ async def import_cv_stream(file: UploadFile = File(...)):
             yield f"data: {json.dumps({'type': 'status', 'message': 'processing'})}\n\n"
             await asyncio.sleep(0)
 
-            # Appeler OpenAI avec streaming (client async)
-            client = AsyncOpenAI(api_key=api_key)
+            # Appeler Mistral avec streaming
+            client = Mistral(api_key=api_key)
 
             system_prompt = """Tu es un assistant spécialisé dans l'extraction de données de CV.
 Analyse le texte du CV fourni et retourne un JSON avec la structure exacte suivante:
@@ -816,15 +815,14 @@ IMPORTANT:
 - N'invente pas d'informations, extrais uniquement ce qui est présent
 - EXTRAIS TOUTES les sections présentes dans le CV, même celles qui ne correspondent pas aux types standards"""
 
-            # Streaming depuis OpenAI (async)
-            stream = await client.chat.completions.create(
-                model="gpt-4o-mini",
+            # Streaming depuis Mistral (async)
+            stream = await client.chat.stream_async(
+                model="mistral-small-latest",
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"}
                 ],
-                response_format={"type": "json_object"},
-                stream=True
+                response_format={"type": "json_object"}
             )
 
             accumulated_json = ""
@@ -892,9 +890,9 @@ IMPORTANT:
 
                 return None, -1
 
-            async for chunk in stream:
-                if chunk.choices[0].delta.content:
-                    accumulated_json += chunk.choices[0].delta.content
+            async for event in stream:
+                if event.data.choices[0].delta.content:
+                    accumulated_json += event.data.choices[0].delta.content
 
                     # Extraire personal dès qu'il est complet
                     if not sent_personal and '"personal"' in accumulated_json:
