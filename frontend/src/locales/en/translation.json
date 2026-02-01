@@ -61,6 +61,8 @@
     },
     "loginWithGoogle": "Continue with Google",
     "orContinueWith": "or continue with your email",
+    "or": "or",
+    "continueWithoutAccount": "Continue without an account",
     "acceptTerms": "I accept the",
     "and": "and the"
   },

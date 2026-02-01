@@ -136,14 +136,14 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
                     <div className="w-full border-t border-primary-200/50 dark:border-primary-700/50" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-3 bg-surface-50 dark:bg-surface-200 text-primary-400 dark:text-primary-500 text-xs">
+                    <span className="px-3 bg-surface-50 dark:bg-surface-200 text-primary-400 dark:text-white text-xs">
                       {t('auth.or') || 'ou'}
                     </span>
                   </div>
                 </div>
                 <button
                   onClick={onContinueWithoutAuth}
-                  className="mt-3 text-sm text-primary-500 dark:text-primary-400 hover:text-brand transition-colors font-medium"
+                  className="mt-3 text-sm text-primary-500 dark:text-white hover:text-brand transition-colors font-medium"
                 >
                   {t('auth.continueWithoutAccount') || 'Continuer sans compte'}
                 </button>
