@@ -1,0 +1,545 @@
+
+  541 failed
+    [chromium] › e2e/accessibility.spec.ts:50:5 › Accessibilité › Navigation au clavier › les boutons sont activables avec Space
+    [chromium] › e2e/accessibility.spec.ts:67:5 › Accessibilité › Navigation au clavier › permet de fermer les modals avec Escape
+    [chromium] › e2e/accessibility.spec.ts:89:5 › Accessibilité › Navigation au clavier › le focus est piégé dans les modals
+    [chromium] › e2e/accessibility.spec.ts:173:5 › Accessibilité › Attributs ARIA › les modals ont le role="dialog"
+    [chromium] › e2e/accessibility.spec.ts:194:5 › Accessibilité › Attributs ARIA › les erreurs sont annoncées correctement
+    [chromium] › e2e/accessibility.spec.ts:362:5 › Accessibilité › Structure du document › les landmarks sont présents
+    [chromium] › e2e/account.spec.ts:18:5 › Page Compte › Affichage général › affiche le titre de la page
+    [chromium] › e2e/account.spec.ts:23:5 › Page Compte › Affichage général › affiche l'email de l'utilisateur
+    [chromium] › e2e/account.spec.ts:31:5 › Page Compte › Affichage général › affiche le bouton retour
+    [chromium] › e2e/account.spec.ts:35:5 › Page Compte › Affichage général › permet de retourner à l'accueil
+    [chromium] › e2e/account.spec.ts:50:5 › Page Compte › Export des données (GDPR) › affiche le bouton d'export des données
+    [chromium] › e2e/account.spec.ts:74:5 › Page Compte › Suppression de compte (GDPR) › affiche le bouton de suppression de compte
+    [chromium] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [chromium] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+    [chromium] › e2e/editor.spec.ts:25:5 › Éditeur de CV › Section Informations Personnelles › affiche tous les champs personnels
+    [chromium] › e2e/editor.spec.ts:33:5 › Éditeur de CV › Section Informations Personnelles › permet de remplir les informations personnelles
+    [chromium] › e2e/editor.spec.ts:55:5 › Éditeur de CV › Section Informations Personnelles › affiche le bouton Suivant
+    [chromium] › e2e/editor.spec.ts:59:5 › Éditeur de CV › Section Informations Personnelles › passe à l'étape suivante au clic sur Suivant
+    [chromium] › e2e/editor.spec.ts:72:5 › Éditeur de CV › Gestion des sections › permet d'ajouter une section
+    [chromium] › e2e/editor.spec.ts:91:5 › Éditeur de CV › Gestion des sections › permet de supprimer une section
+    [chromium] › e2e/editor.spec.ts:119:5 › Éditeur de CV › Gestion des sections › permet de réorganiser les sections par drag & drop
+    [chromium] › e2e/editor.spec.ts:141:5 › Éditeur de CV › Gestion des sections › permet de masquer/afficher une section
+    [chromium] › e2e/editor.spec.ts:180:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter une expérience
+    [chromium] › e2e/editor.spec.ts:192:5 › Éditeur de CV › Éditeur de section Experience › permet de remplir une expérience complète
+    [chromium] › e2e/editor.spec.ts:211:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter des points clés (highlights)
+    [chromium] › e2e/editor.spec.ts:239:5 › Éditeur de CV › Éditeur de section Éducation › permet d'ajouter une formation
+    [chromium] › e2e/editor.spec.ts:250:5 › Éditeur de CV › Éditeur de section Éducation › permet de remplir une formation complète
+    [chromium] › e2e/editor.spec.ts:279:5 › Éditeur de CV › Éditeur de section Compétences › permet de remplir les langages et outils
+    [chromium] › e2e/editor.spec.ts:298:5 › Éditeur de CV › Preview du CV › affiche le panel de preview sur desktop
+    [chromium] › e2e/editor.spec.ts:305:5 › Éditeur de CV › Preview du CV › met à jour le preview en temps réel
+    [chromium] › e2e/editor.spec.ts:333:5 › Éditeur de CV › Sélection de template › affiche les templates disponibles
+    [chromium] › e2e/editor.spec.ts:377:5 › Éditeur de CV › Sélection de template › le mode Auto-size est disponible
+    [chromium] › e2e/editor.spec.ts:386:5 › Éditeur de CV › Sauvegarde › affiche le bouton de sauvegarde
+    [chromium] › e2e/editor.spec.ts:390:5 › Éditeur de CV › Sauvegarde › ouvre le modal de sauvegarde pour un nouveau CV
+    [chromium] › e2e/editor.spec.ts:400:5 › Éditeur de CV › Sauvegarde › permet de nommer et sauvegarder un CV
+    [chromium] › e2e/editor.spec.ts:418:5 › Éditeur de CV › Navigation dans l'éditeur › permet de naviguer avec Précédent/Suivant
+    [chromium] › e2e/editor.spec.ts:442:5 › Éditeur de CV › Validation des données › accepte un CV minimal
+    [chromium] › e2e/editor.spec.ts:450:5 › Éditeur de CV › Validation des données › affiche les erreurs de validation
+    [chromium] › e2e/editor.spec.ts:464:5 › Éditeur de CV › Section personnalisée (Custom) › permet d'ajouter une section personnalisée
+    [chromium] › e2e/editor.spec.ts:483:5 › Éditeur de CV › Section personnalisée (Custom) › permet de modifier le titre d'une section personnalisée
+    [chromium] › e2e/export.spec.ts:23:5 › Export PDF › Génération de PDF › exporte un CV minimal en PDF
+    [chromium] › e2e/export.spec.ts:42:5 › Export PDF › Génération de PDF › le nom du fichier contient le nom de l'utilisateur
+    [chromium] › e2e/export.spec.ts:56:5 › Export PDF › Génération de PDF › exporte avec le template sélectionné
+    [chromium] › e2e/export.spec.ts:76:5 › Export PDF › Génération de PDF › exporte avec la taille de template sélectionnée
+    [chromium] › e2e/export.spec.ts:96:5 › Export PDF › Génération de PDF › affiche un indicateur de chargement pendant l'export
+    [chromium] › e2e/export.spec.ts:110:5 › Export PDF › Génération de PDF › gère les erreurs de génération gracieusement
+    [chromium] › e2e/export.spec.ts:128:5 › Export PDF › Export avec contenu complet › exporte un CV avec toutes les sections
+    [chromium] › e2e/export.spec.ts:166:5 › Import PDF › Interface d'import › affiche le bouton d'import sur la landing page
+    [chromium] › e2e/export.spec.ts:173:5 › Import PDF › Interface d'import › ouvre le sélecteur de fichier au clic
+    [chromium] › e2e/export.spec.ts:185:5 › Import PDF › Interface d'import › accepte uniquement les fichiers PDF
+    [chromium] › e2e/export.spec.ts:231:5 › Import PDF › Processus d'import › affiche un indicateur de progression pendant l'import
+    [chromium] › e2e/export.spec.ts:293:3 › Export dans l'éditeur › le bouton export est toujours visible dans le header
+    [chromium] › e2e/export.spec.ts:305:3 › Export dans l'éditeur › exporte depuis le bouton du formulaire
+    [chromium] › e2e/export.spec.ts:334:3 › Export mobile › permet d'exporter sur mobile ───────────
+    [chromium] › e2e/i18n.spec.ts:26:5 › Internationalisation › Détection de langue › utilise l'anglais pour un navigateur EN
+    [chromium] › e2e/i18n.spec.ts:102:5 › Internationalisation › Changement de langue › persiste le choix de langue après rechargement
+    [chromium] › e2e/i18n.spec.ts:132:7 › Internationalisation › Traduction de l'interface › Français › traduit la landing page
+    [chromium] › e2e/i18n.spec.ts:180:7 › Internationalisation › Traduction de l'interface › Français › traduit les noms de sections
+    [chromium] › e2e/i18n.spec.ts:218:7 › Internationalisation › Traduction de l'interface › Anglais › traduit la landing page
+    [chromium] › e2e/i18n.spec.ts:266:7 › Internationalisation › Traduction de l'interface › Anglais › traduit les noms de sections
+    [chromium] › e2e/i18n.spec.ts:357:5 › Internationalisation › Contenu dynamique › les sections de CV conservent leur titre personnalisé lors du changement de langue
+    [chromium] › e2e/i18n.spec.ts:394:5 › Internationalisation › Contenu dynamique › les sections par défaut changent de langue
+    [chromium] › e2e/landing.spec.ts:23:5 › Landing Page › Affichage général › affiche les boutons d'action principaux
+    [chromium] › e2e/landing.spec.ts:28:5 › Landing Page › Affichage général › affiche la navigation
+    [chromium] › e2e/landing.spec.ts:34:5 › Landing Page › Affichage général › affiche le footer avec les liens légaux
+    [chromium] › e2e/landing.spec.ts:42:5 › Landing Page › Affichage général › affiche les templates disponibles
+    [chromium] › e2e/landing.spec.ts:52:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur "Créer un CV"
+    [chromium] › e2e/landing.spec.ts:63:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur un template
+    [chromium] › e2e/landing.spec.ts:72:5 › Landing Page › Navigation › navigue vers "Mes CV" ──────
+    [chromium] › e2e/landing.spec.ts:81:5 › Landing Page › Navigation › permet de revenir à la landing depuis l'éditeur
+    [chromium] › e2e/landing.spec.ts:96:5 › Landing Page › Templates › affiche une prévisualisation de chaque template
+    [chromium] › e2e/landing.spec.ts:109:5 › Landing Page › Templates › permet de sélectionner un template spécifique
+    [chromium] › e2e/landing.spec.ts:136:5 › Landing Page › Section Features › affiche au moins 3 fonctionnalités
+    [chromium] › e2e/landing.spec.ts:147:5 › Landing Page › Call to Action › affiche une section CTA
+    [chromium] › e2e/landing.spec.ts:173:5 › Landing Page › Import PDF › le bouton d'import est visible
+    [chromium] › e2e/landing.spec.ts:177:5 › Landing Page › Import PDF › le bouton d'import déclenche le sélecteur de fichier
+    [chromium] › e2e/landing.spec.ts:196:5 › Landing Page › Responsive › adapte l'affichage sur tablette
+    [chromium] › e2e/landing.spec.ts:204:5 › Landing Page › Responsive › adapte l'affichage sur mobile
+    [chromium] › e2e/mobile.spec.ts:20:5 › Expérience Mobile › Landing Page Mobile › affiche correctement le header sur mobile
+    [chromium] › e2e/mobile.spec.ts:33:5 › Expérience Mobile › Landing Page Mobile › le titre hero est lisible sur mobile
+    [chromium] › e2e/mobile.spec.ts:43:5 › Expérience Mobile › Landing Page Mobile › les boutons d'action sont accessibles sur mobile
+    [chromium] › e2e/mobile.spec.ts:54:5 › Expérience Mobile › Landing Page Mobile › les templates sont affichés en grille adaptative
+    [chromium] › e2e/mobile.spec.ts:109:5 › Expérience Mobile › Éditeur Mobile › ouvre le preview en plein écran au clic sur le bouton
+    [chromium] › e2e/mobile.spec.ts:145:5 › Expérience Mobile › Éditeur Mobile › les champs de formulaire sont utilisables au toucher
+    [chromium] › e2e/mobile.spec.ts:155:5 › Expérience Mobile › Éditeur Mobile › les boutons Suivant/Précédent sont accessibles
+    [chromium] › e2e/mobile.spec.ts:178:5 › Expérience Mobile › Menu Mobile › affiche le menu hamburger
+    [chromium] › e2e/mobile.spec.ts:243:5 › Expérience Mobile › Responsive Tablet › affiche un layout adapté sur tablette
+    [chromium] › e2e/mobile.spec.ts:303:5 › Expérience Mobile › Touch Interactions › les formulaires sont scrollables verticalement
+    [chromium] › e2e/mobile.spec.ts:322:5 › Expérience Mobile › Export Mobile › permet d'exporter sur mobile
+    [chromium] › e2e/mobile.spec.ts:346:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (portrait → paysage)
+    [chromium] › e2e/mobile.spec.ts:361:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (paysage → portrait)
+    [chromium] › e2e/resumes.spec.ts:20:5 › Gestion des CV › Page Mes CV › est accessible depuis la landing page
+    [chromium] › e2e/resumes.spec.ts:27:5 › Gestion des CV › Page Mes CV › affiche un état vide quand aucun CV n'est sauvegardé
+    [chromium] › e2e/resumes.spec.ts:39:5 › Gestion des CV › Page Mes CV › permet de créer un nouveau CV depuis cette page
+    [chromium] › e2e/resumes.spec.ts:49:5 › Gestion des CV › Page Mes CV › permet de retourner à la landing
+    [chromium] › e2e/resumes.spec.ts:64:5 › Gestion des CV › Sauvegarde d'un CV › sauvegarde un nouveau CV avec un nom
+    [chromium] › e2e/resumes.spec.ts:90:5 › Gestion des CV › Sauvegarde d'un CV › met à jour un CV existant
+    [chromium] › e2e/resumes.spec.ts:124:5 › Gestion des CV › Chargement d'un CV › charge un CV sauvegardé
+    [chromium] › e2e/resumes.spec.ts:153:5 › Gestion des CV › Chargement d'un CV › charge les sections sauvegardées
+    [chromium] › e2e/resumes.spec.ts:191:5 › Gestion des CV › Suppression d'un CV › demande confirmation avant suppression
+    [chromium] › e2e/resumes.spec.ts:223:5 › Gestion des CV › Suppression d'un CV › supprime le CV après confirmation
+    [chromium] › e2e/resumes.spec.ts:265:5 › Gestion des CV › Suppression d'un CV › annule la suppression
+    [chromium] › e2e/resumes.spec.ts:309:5 › Gestion des CV › Affichage des CV › affiche le nom du CV
+    [chromium] › e2e/resumes.spec.ts:323:5 › Gestion des CV › Affichage des CV › affiche la date de création/modification
+    [chromium] › e2e/resumes.spec.ts:340:5 › Gestion des CV › Affichage des CV › affiche le template utilisé
+    [chromium] › e2e/resumes.spec.ts:358:5 › Gestion des CV › Affichage des CV › affiche une prévisualisation du CV
+    [chromium] › e2e/resumes.spec.ts:375:5 › Gestion des CV › Limites utilisateur › limite les invités à 3 CV
+    [firefox] › e2e/accessibility.spec.ts:50:5 › Accessibilité › Navigation au clavier › les boutons sont activables avec Space
+    [firefox] › e2e/accessibility.spec.ts:67:5 › Accessibilité › Navigation au clavier › permet de fermer les modals avec Escape
+    [firefox] › e2e/accessibility.spec.ts:89:5 › Accessibilité › Navigation au clavier › le focus est piégé dans les modals
+    [firefox] › e2e/accessibility.spec.ts:173:5 › Accessibilité › Attributs ARIA › les modals ont le role="dialog"
+    [firefox] › e2e/accessibility.spec.ts:194:5 › Accessibilité › Attributs ARIA › les erreurs sont annoncées correctement
+    [firefox] › e2e/accessibility.spec.ts:362:5 › Accessibilité › Structure du document › les landmarks sont présents
+    [firefox] › e2e/account.spec.ts:18:5 › Page Compte › Affichage général › affiche le titre de la page
+    [firefox] › e2e/account.spec.ts:23:5 › Page Compte › Affichage général › affiche l'email de l'utilisateur
+    [firefox] › e2e/account.spec.ts:31:5 › Page Compte › Affichage général › affiche le bouton retour
+    [firefox] › e2e/account.spec.ts:35:5 › Page Compte › Affichage général › permet de retourner à l'accueil
+    [firefox] › e2e/account.spec.ts:50:5 › Page Compte › Export des données (GDPR) › affiche le bouton d'export des données
+    [firefox] › e2e/account.spec.ts:74:5 › Page Compte › Suppression de compte (GDPR) › affiche le bouton de suppression de compte
+    [firefox] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [firefox] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+    [firefox] › e2e/editor.spec.ts:25:5 › Éditeur de CV › Section Informations Personnelles › affiche tous les champs personnels
+    [firefox] › e2e/editor.spec.ts:33:5 › Éditeur de CV › Section Informations Personnelles › permet de remplir les informations personnelles
+    [firefox] › e2e/editor.spec.ts:55:5 › Éditeur de CV › Section Informations Personnelles › affiche le bouton Suivant
+    [firefox] › e2e/editor.spec.ts:59:5 › Éditeur de CV › Section Informations Personnelles › passe à l'étape suivante au clic sur Suivant
+    [firefox] › e2e/editor.spec.ts:72:5 › Éditeur de CV › Gestion des sections › permet d'ajouter une section
+    [firefox] › e2e/editor.spec.ts:91:5 › Éditeur de CV › Gestion des sections › permet de supprimer une section
+    [firefox] › e2e/editor.spec.ts:119:5 › Éditeur de CV › Gestion des sections › permet de réorganiser les sections par drag & drop
+    [firefox] › e2e/editor.spec.ts:141:5 › Éditeur de CV › Gestion des sections › permet de masquer/afficher une section
+    [firefox] › e2e/editor.spec.ts:180:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter une expérience
+    [firefox] › e2e/editor.spec.ts:192:5 › Éditeur de CV › Éditeur de section Experience › permet de remplir une expérience complète
+    [firefox] › e2e/editor.spec.ts:211:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter des points clés (highlights)
+    [firefox] › e2e/editor.spec.ts:239:5 › Éditeur de CV › Éditeur de section Éducation › permet d'ajouter une formation
+    [firefox] › e2e/editor.spec.ts:250:5 › Éditeur de CV › Éditeur de section Éducation › permet de remplir une formation complète
+    [firefox] › e2e/editor.spec.ts:279:5 › Éditeur de CV › Éditeur de section Compétences › permet de remplir les langages et outils
+    [firefox] › e2e/editor.spec.ts:298:5 › Éditeur de CV › Preview du CV › affiche le panel de preview sur desktop
+    [firefox] › e2e/editor.spec.ts:305:5 › Éditeur de CV › Preview du CV › met à jour le preview en temps réel
+    [firefox] › e2e/editor.spec.ts:333:5 › Éditeur de CV › Sélection de template › affiche les templates disponibles
+    [firefox] › e2e/editor.spec.ts:377:5 › Éditeur de CV › Sélection de template › le mode Auto-size est disponible
+    [firefox] › e2e/editor.spec.ts:386:5 › Éditeur de CV › Sauvegarde › affiche le bouton de sauvegarde
+    [firefox] › e2e/editor.spec.ts:390:5 › Éditeur de CV › Sauvegarde › ouvre le modal de sauvegarde pour un nouveau CV
+    [firefox] › e2e/editor.spec.ts:400:5 › Éditeur de CV › Sauvegarde › permet de nommer et sauvegarder un CV
+    [firefox] › e2e/editor.spec.ts:418:5 › Éditeur de CV › Navigation dans l'éditeur › permet de naviguer avec Précédent/Suivant
+    [firefox] › e2e/editor.spec.ts:442:5 › Éditeur de CV › Validation des données › accepte un CV minimal
+    [firefox] › e2e/editor.spec.ts:450:5 › Éditeur de CV › Validation des données › affiche les erreurs de validation
+    [firefox] › e2e/editor.spec.ts:464:5 › Éditeur de CV › Section personnalisée (Custom) › permet d'ajouter une section personnalisée
+    [firefox] › e2e/editor.spec.ts:483:5 › Éditeur de CV › Section personnalisée (Custom) › permet de modifier le titre d'une section personnalisée
+    [firefox] › e2e/export.spec.ts:23:5 › Export PDF › Génération de PDF › exporte un CV minimal en PDF
+    [firefox] › e2e/export.spec.ts:42:5 › Export PDF › Génération de PDF › le nom du fichier contient le nom de l'utilisateur
+    [firefox] › e2e/export.spec.ts:56:5 › Export PDF › Génération de PDF › exporte avec le template sélectionné
+    [firefox] › e2e/export.spec.ts:76:5 › Export PDF › Génération de PDF › exporte avec la taille de template sélectionnée
+    [firefox] › e2e/export.spec.ts:96:5 › Export PDF › Génération de PDF › affiche un indicateur de chargement pendant l'export
+    [firefox] › e2e/export.spec.ts:110:5 › Export PDF › Génération de PDF › gère les erreurs de génération gracieusement
+    [firefox] › e2e/export.spec.ts:128:5 › Export PDF › Export avec contenu complet › exporte un CV avec toutes les sections
+    [firefox] › e2e/export.spec.ts:166:5 › Import PDF › Interface d'import › affiche le bouton d'import sur la landing page
+    [firefox] › e2e/export.spec.ts:173:5 › Import PDF › Interface d'import › ouvre le sélecteur de fichier au clic
+    [firefox] › e2e/export.spec.ts:185:5 › Import PDF › Interface d'import › accepte uniquement les fichiers PDF
+    [firefox] › e2e/export.spec.ts:231:5 › Import PDF › Processus d'import › affiche un indicateur de progression pendant l'import
+    [firefox] › e2e/export.spec.ts:293:3 › Export dans l'éditeur › le bouton export est toujours visible dans le header
+    [firefox] › e2e/export.spec.ts:305:3 › Export dans l'éditeur › exporte depuis le bouton du formulaire
+    [firefox] › e2e/export.spec.ts:334:3 › Export mobile › permet d'exporter sur mobile ────────────
+    [firefox] › e2e/i18n.spec.ts:26:5 › Internationalisation › Détection de langue › utilise l'anglais pour un navigateur EN
+    [firefox] › e2e/i18n.spec.ts:102:5 › Internationalisation › Changement de langue › persiste le choix de langue après rechargement
+    [firefox] › e2e/i18n.spec.ts:132:7 › Internationalisation › Traduction de l'interface › Français › traduit la landing page
+    [firefox] › e2e/i18n.spec.ts:180:7 › Internationalisation › Traduction de l'interface › Français › traduit les noms de sections
+    [firefox] › e2e/i18n.spec.ts:218:7 › Internationalisation › Traduction de l'interface › Anglais › traduit la landing page
+    [firefox] › e2e/i18n.spec.ts:266:7 › Internationalisation › Traduction de l'interface › Anglais › traduit les noms de sections
+    [firefox] › e2e/i18n.spec.ts:357:5 › Internationalisation › Contenu dynamique › les sections de CV conservent leur titre personnalisé lors du changement de langue
+    [firefox] › e2e/i18n.spec.ts:394:5 › Internationalisation › Contenu dynamique › les sections par défaut changent de langue
+    [firefox] › e2e/landing.spec.ts:23:5 › Landing Page › Affichage général › affiche les boutons d'action principaux
+    [firefox] › e2e/landing.spec.ts:28:5 › Landing Page › Affichage général › affiche la navigation
+    [firefox] › e2e/landing.spec.ts:34:5 › Landing Page › Affichage général › affiche le footer avec les liens légaux
+    [firefox] › e2e/landing.spec.ts:42:5 › Landing Page › Affichage général › affiche les templates disponibles
+    [firefox] › e2e/landing.spec.ts:52:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur "Créer un CV"
+    [firefox] › e2e/landing.spec.ts:63:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur un template
+    [firefox] › e2e/landing.spec.ts:72:5 › Landing Page › Navigation › navigue vers "Mes CV" ───────
+    [firefox] › e2e/landing.spec.ts:81:5 › Landing Page › Navigation › permet de revenir à la landing depuis l'éditeur
+    [firefox] › e2e/landing.spec.ts:96:5 › Landing Page › Templates › affiche une prévisualisation de chaque template
+    [firefox] › e2e/landing.spec.ts:109:5 › Landing Page › Templates › permet de sélectionner un template spécifique
+    [firefox] › e2e/landing.spec.ts:136:5 › Landing Page › Section Features › affiche au moins 3 fonctionnalités
+    [firefox] › e2e/landing.spec.ts:147:5 › Landing Page › Call to Action › affiche une section CTA
+    [firefox] › e2e/landing.spec.ts:173:5 › Landing Page › Import PDF › le bouton d'import est visible
+    [firefox] › e2e/landing.spec.ts:177:5 › Landing Page › Import PDF › le bouton d'import déclenche le sélecteur de fichier
+    [firefox] › e2e/landing.spec.ts:196:5 › Landing Page › Responsive › adapte l'affichage sur tablette
+    [firefox] › e2e/landing.spec.ts:204:5 › Landing Page › Responsive › adapte l'affichage sur mobile
+    [firefox] › e2e/mobile.spec.ts:20:5 › Expérience Mobile › Landing Page Mobile › affiche correctement le header sur mobile
+    [firefox] › e2e/mobile.spec.ts:33:5 › Expérience Mobile › Landing Page Mobile › le titre hero est lisible sur mobile
+    [firefox] › e2e/mobile.spec.ts:43:5 › Expérience Mobile › Landing Page Mobile › les boutons d'action sont accessibles sur mobile
+    [firefox] › e2e/mobile.spec.ts:54:5 › Expérience Mobile › Landing Page Mobile › les templates sont affichés en grille adaptative
+    [firefox] › e2e/mobile.spec.ts:109:5 › Expérience Mobile › Éditeur Mobile › ouvre le preview en plein écran au clic sur le bouton
+    [firefox] › e2e/mobile.spec.ts:145:5 › Expérience Mobile › Éditeur Mobile › les champs de formulaire sont utilisables au toucher
+    [firefox] › e2e/mobile.spec.ts:155:5 › Expérience Mobile › Éditeur Mobile › les boutons Suivant/Précédent sont accessibles
+    [firefox] › e2e/mobile.spec.ts:178:5 › Expérience Mobile › Menu Mobile › affiche le menu hamburger
+    [firefox] › e2e/mobile.spec.ts:243:5 › Expérience Mobile › Responsive Tablet › affiche un layout adapté sur tablette
+    [firefox] › e2e/mobile.spec.ts:303:5 › Expérience Mobile › Touch Interactions › les formulaires sont scrollables verticalement
+    [firefox] › e2e/mobile.spec.ts:322:5 › Expérience Mobile › Export Mobile › permet d'exporter sur mobile
+    [firefox] › e2e/mobile.spec.ts:346:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (portrait → paysage)
+    [firefox] › e2e/mobile.spec.ts:361:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (paysage → portrait)
+    [firefox] › e2e/resumes.spec.ts:20:5 › Gestion des CV › Page Mes CV › est accessible depuis la landing page
+    [firefox] › e2e/resumes.spec.ts:27:5 › Gestion des CV › Page Mes CV › affiche un état vide quand aucun CV n'est sauvegardé
+    [firefox] › e2e/resumes.spec.ts:39:5 › Gestion des CV › Page Mes CV › permet de créer un nouveau CV depuis cette page
+    [firefox] › e2e/resumes.spec.ts:49:5 › Gestion des CV › Page Mes CV › permet de retourner à la landing
+    [firefox] › e2e/resumes.spec.ts:64:5 › Gestion des CV › Sauvegarde d'un CV › sauvegarde un nouveau CV avec un nom
+    [firefox] › e2e/resumes.spec.ts:90:5 › Gestion des CV › Sauvegarde d'un CV › met à jour un CV existant
+    [firefox] › e2e/resumes.spec.ts:124:5 › Gestion des CV › Chargement d'un CV › charge un CV sauvegardé
+    [firefox] › e2e/resumes.spec.ts:153:5 › Gestion des CV › Chargement d'un CV › charge les sections sauvegardées
+    [firefox] › e2e/resumes.spec.ts:191:5 › Gestion des CV › Suppression d'un CV › demande confirmation avant suppression
+    [firefox] › e2e/resumes.spec.ts:223:5 › Gestion des CV › Suppression d'un CV › supprime le CV après confirmation
+    [firefox] › e2e/resumes.spec.ts:265:5 › Gestion des CV › Suppression d'un CV › annule la suppression
+    [firefox] › e2e/resumes.spec.ts:309:5 › Gestion des CV › Affichage des CV › affiche le nom du CV
+    [firefox] › e2e/resumes.spec.ts:323:5 › Gestion des CV › Affichage des CV › affiche la date de création/modification
+    [firefox] › e2e/resumes.spec.ts:340:5 › Gestion des CV › Affichage des CV › affiche le template utilisé
+    [firefox] › e2e/resumes.spec.ts:358:5 › Gestion des CV › Affichage des CV › affiche une prévisualisation du CV
+    [firefox] › e2e/resumes.spec.ts:375:5 › Gestion des CV › Limites utilisateur › limite les invités à 3 CV
+    [webkit] › e2e/accessibility.spec.ts:50:5 › Accessibilité › Navigation au clavier › les boutons sont activables avec Space
+    [webkit] › e2e/accessibility.spec.ts:67:5 › Accessibilité › Navigation au clavier › permet de fermer les modals avec Escape
+    [webkit] › e2e/accessibility.spec.ts:89:5 › Accessibilité › Navigation au clavier › le focus est piégé dans les modals
+    [webkit] › e2e/accessibility.spec.ts:173:5 › Accessibilité › Attributs ARIA › les modals ont le role="dialog"
+    [webkit] › e2e/accessibility.spec.ts:194:5 › Accessibilité › Attributs ARIA › les erreurs sont annoncées correctement
+    [webkit] › e2e/accessibility.spec.ts:362:5 › Accessibilité › Structure du document › les landmarks sont présents
+    [webkit] › e2e/account.spec.ts:18:5 › Page Compte › Affichage général › affiche le titre de la page
+    [webkit] › e2e/account.spec.ts:23:5 › Page Compte › Affichage général › affiche l'email de l'utilisateur
+    [webkit] › e2e/account.spec.ts:31:5 › Page Compte › Affichage général › affiche le bouton retour
+    [webkit] › e2e/account.spec.ts:35:5 › Page Compte › Affichage général › permet de retourner à l'accueil
+    [webkit] › e2e/account.spec.ts:50:5 › Page Compte › Export des données (GDPR) › affiche le bouton d'export des données
+    [webkit] › e2e/account.spec.ts:74:5 › Page Compte › Suppression de compte (GDPR) › affiche le bouton de suppression de compte
+    [webkit] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [webkit] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+    [webkit] › e2e/editor.spec.ts:25:5 › Éditeur de CV › Section Informations Personnelles › affiche tous les champs personnels
+    [webkit] › e2e/editor.spec.ts:33:5 › Éditeur de CV › Section Informations Personnelles › permet de remplir les informations personnelles
+    [webkit] › e2e/editor.spec.ts:55:5 › Éditeur de CV › Section Informations Personnelles › affiche le bouton Suivant
+    [webkit] › e2e/editor.spec.ts:59:5 › Éditeur de CV › Section Informations Personnelles › passe à l'étape suivante au clic sur Suivant
+    [webkit] › e2e/editor.spec.ts:72:5 › Éditeur de CV › Gestion des sections › permet d'ajouter une section
+    [webkit] › e2e/editor.spec.ts:91:5 › Éditeur de CV › Gestion des sections › permet de supprimer une section
+    [webkit] › e2e/editor.spec.ts:119:5 › Éditeur de CV › Gestion des sections › permet de réorganiser les sections par drag & drop
+    [webkit] › e2e/editor.spec.ts:141:5 › Éditeur de CV › Gestion des sections › permet de masquer/afficher une section
+    [webkit] › e2e/editor.spec.ts:180:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter une expérience
+    [webkit] › e2e/editor.spec.ts:192:5 › Éditeur de CV › Éditeur de section Experience › permet de remplir une expérience complète
+    [webkit] › e2e/editor.spec.ts:211:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter des points clés (highlights)
+    [webkit] › e2e/editor.spec.ts:239:5 › Éditeur de CV › Éditeur de section Éducation › permet d'ajouter une formation
+    [webkit] › e2e/editor.spec.ts:250:5 › Éditeur de CV › Éditeur de section Éducation › permet de remplir une formation complète
+    [webkit] › e2e/editor.spec.ts:279:5 › Éditeur de CV › Éditeur de section Compétences › permet de remplir les langages et outils
+    [webkit] › e2e/editor.spec.ts:298:5 › Éditeur de CV › Preview du CV › affiche le panel de preview sur desktop
+    [webkit] › e2e/editor.spec.ts:305:5 › Éditeur de CV › Preview du CV › met à jour le preview en temps réel
+    [webkit] › e2e/editor.spec.ts:333:5 › Éditeur de CV › Sélection de template › affiche les templates disponibles
+    [webkit] › e2e/editor.spec.ts:377:5 › Éditeur de CV › Sélection de template › le mode Auto-size est disponible
+    [webkit] › e2e/editor.spec.ts:386:5 › Éditeur de CV › Sauvegarde › affiche le bouton de sauvegarde
+    [webkit] › e2e/editor.spec.ts:390:5 › Éditeur de CV › Sauvegarde › ouvre le modal de sauvegarde pour un nouveau CV
+    [webkit] › e2e/editor.spec.ts:400:5 › Éditeur de CV › Sauvegarde › permet de nommer et sauvegarder un CV
+    [webkit] › e2e/editor.spec.ts:418:5 › Éditeur de CV › Navigation dans l'éditeur › permet de naviguer avec Précédent/Suivant
+    [webkit] › e2e/editor.spec.ts:442:5 › Éditeur de CV › Validation des données › accepte un CV minimal
+    [webkit] › e2e/editor.spec.ts:450:5 › Éditeur de CV › Validation des données › affiche les erreurs de validation
+    [webkit] › e2e/editor.spec.ts:464:5 › Éditeur de CV › Section personnalisée (Custom) › permet d'ajouter une section personnalisée
+    [webkit] › e2e/editor.spec.ts:483:5 › Éditeur de CV › Section personnalisée (Custom) › permet de modifier le titre d'une section personnalisée
+    [webkit] › e2e/export.spec.ts:23:5 › Export PDF › Génération de PDF › exporte un CV minimal en PDF
+    [webkit] › e2e/export.spec.ts:42:5 › Export PDF › Génération de PDF › le nom du fichier contient le nom de l'utilisateur
+    [webkit] › e2e/export.spec.ts:56:5 › Export PDF › Génération de PDF › exporte avec le template sélectionné
+    [webkit] › e2e/export.spec.ts:76:5 › Export PDF › Génération de PDF › exporte avec la taille de template sélectionnée
+    [webkit] › e2e/export.spec.ts:96:5 › Export PDF › Génération de PDF › affiche un indicateur de chargement pendant l'export
+    [webkit] › e2e/export.spec.ts:110:5 › Export PDF › Génération de PDF › gère les erreurs de génération gracieusement
+    [webkit] › e2e/export.spec.ts:128:5 › Export PDF › Export avec contenu complet › exporte un CV avec toutes les sections
+    [webkit] › e2e/export.spec.ts:166:5 › Import PDF › Interface d'import › affiche le bouton d'import sur la landing page
+    [webkit] › e2e/export.spec.ts:173:5 › Import PDF › Interface d'import › ouvre le sélecteur de fichier au clic
+    [webkit] › e2e/export.spec.ts:185:5 › Import PDF › Interface d'import › accepte uniquement les fichiers PDF
+    [webkit] › e2e/export.spec.ts:231:5 › Import PDF › Processus d'import › affiche un indicateur de progression pendant l'import
+    [webkit] › e2e/export.spec.ts:293:3 › Export dans l'éditeur › le bouton export est toujours visible dans le header
+    [webkit] › e2e/export.spec.ts:305:3 › Export dans l'éditeur › exporte depuis le bouton du formulaire
+    [webkit] › e2e/export.spec.ts:334:3 › Export mobile › permet d'exporter sur mobile ─────────────
+    [webkit] › e2e/i18n.spec.ts:26:5 › Internationalisation › Détection de langue › utilise l'anglais pour un navigateur EN
+    [webkit] › e2e/i18n.spec.ts:102:5 › Internationalisation › Changement de langue › persiste le choix de langue après rechargement
+    [webkit] › e2e/i18n.spec.ts:132:7 › Internationalisation › Traduction de l'interface › Français › traduit la landing page
+    [webkit] › e2e/i18n.spec.ts:180:7 › Internationalisation › Traduction de l'interface › Français › traduit les noms de sections
+    [webkit] › e2e/i18n.spec.ts:218:7 › Internationalisation › Traduction de l'interface › Anglais › traduit la landing page
+    [webkit] › e2e/i18n.spec.ts:266:7 › Internationalisation › Traduction de l'interface › Anglais › traduit les noms de sections
+    [webkit] › e2e/i18n.spec.ts:357:5 › Internationalisation › Contenu dynamique › les sections de CV conservent leur titre personnalisé lors du changement de langue
+    [webkit] › e2e/i18n.spec.ts:394:5 › Internationalisation › Contenu dynamique › les sections par défaut changent de langue
+    [webkit] › e2e/landing.spec.ts:23:5 › Landing Page › Affichage général › affiche les boutons d'action principaux
+    [webkit] › e2e/landing.spec.ts:28:5 › Landing Page › Affichage général › affiche la navigation ─
+    [webkit] › e2e/landing.spec.ts:34:5 › Landing Page › Affichage général › affiche le footer avec les liens légaux
+    [webkit] › e2e/landing.spec.ts:42:5 › Landing Page › Affichage général › affiche les templates disponibles
+    [webkit] › e2e/landing.spec.ts:52:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur "Créer un CV"
+    [webkit] › e2e/landing.spec.ts:63:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur un template
+    [webkit] › e2e/landing.spec.ts:72:5 › Landing Page › Navigation › navigue vers "Mes CV" ────────
+    [webkit] › e2e/landing.spec.ts:81:5 › Landing Page › Navigation › permet de revenir à la landing depuis l'éditeur
+    [webkit] › e2e/landing.spec.ts:96:5 › Landing Page › Templates › affiche une prévisualisation de chaque template
+    [webkit] › e2e/landing.spec.ts:109:5 › Landing Page › Templates › permet de sélectionner un template spécifique
+    [webkit] › e2e/landing.spec.ts:136:5 › Landing Page › Section Features › affiche au moins 3 fonctionnalités
+    [webkit] › e2e/landing.spec.ts:147:5 › Landing Page › Call to Action › affiche une section CTA ─
+    [webkit] › e2e/landing.spec.ts:173:5 › Landing Page › Import PDF › le bouton d'import est visible
+    [webkit] › e2e/landing.spec.ts:177:5 › Landing Page › Import PDF › le bouton d'import déclenche le sélecteur de fichier
+    [webkit] › e2e/landing.spec.ts:196:5 › Landing Page › Responsive › adapte l'affichage sur tablette
+    [webkit] › e2e/landing.spec.ts:204:5 › Landing Page › Responsive › adapte l'affichage sur mobile
+    [webkit] › e2e/mobile.spec.ts:20:5 › Expérience Mobile › Landing Page Mobile › affiche correctement le header sur mobile
+    [webkit] › e2e/mobile.spec.ts:33:5 › Expérience Mobile › Landing Page Mobile › le titre hero est lisible sur mobile
+    [webkit] › e2e/mobile.spec.ts:43:5 › Expérience Mobile › Landing Page Mobile › les boutons d'action sont accessibles sur mobile
+    [webkit] › e2e/mobile.spec.ts:54:5 › Expérience Mobile › Landing Page Mobile › les templates sont affichés en grille adaptative
+    [webkit] › e2e/mobile.spec.ts:109:5 › Expérience Mobile › Éditeur Mobile › ouvre le preview en plein écran au clic sur le bouton
+    [webkit] › e2e/mobile.spec.ts:145:5 › Expérience Mobile › Éditeur Mobile › les champs de formulaire sont utilisables au toucher
+    [webkit] › e2e/mobile.spec.ts:155:5 › Expérience Mobile › Éditeur Mobile › les boutons Suivant/Précédent sont accessibles
+    [webkit] › e2e/mobile.spec.ts:178:5 › Expérience Mobile › Menu Mobile › affiche le menu hamburger
+    [webkit] › e2e/mobile.spec.ts:243:5 › Expérience Mobile › Responsive Tablet › affiche un layout adapté sur tablette
+    [webkit] › e2e/mobile.spec.ts:303:5 › Expérience Mobile › Touch Interactions › les formulaires sont scrollables verticalement
+    [webkit] › e2e/mobile.spec.ts:322:5 › Expérience Mobile › Export Mobile › permet d'exporter sur mobile
+    [webkit] › e2e/mobile.spec.ts:346:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (portrait → paysage)
+    [webkit] › e2e/mobile.spec.ts:361:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (paysage → portrait)
+    [webkit] › e2e/resumes.spec.ts:20:5 › Gestion des CV › Page Mes CV › est accessible depuis la landing page
+    [webkit] › e2e/resumes.spec.ts:27:5 › Gestion des CV › Page Mes CV › affiche un état vide quand aucun CV n'est sauvegardé
+    [webkit] › e2e/resumes.spec.ts:39:5 › Gestion des CV › Page Mes CV › permet de créer un nouveau CV depuis cette page
+    [webkit] › e2e/resumes.spec.ts:49:5 › Gestion des CV › Page Mes CV › permet de retourner à la landing
+    [webkit] › e2e/resumes.spec.ts:64:5 › Gestion des CV › Sauvegarde d'un CV › sauvegarde un nouveau CV avec un nom
+    [webkit] › e2e/resumes.spec.ts:90:5 › Gestion des CV › Sauvegarde d'un CV › met à jour un CV existant
+    [webkit] › e2e/resumes.spec.ts:124:5 › Gestion des CV › Chargement d'un CV › charge un CV sauvegardé
+    [webkit] › e2e/resumes.spec.ts:153:5 › Gestion des CV › Chargement d'un CV › charge les sections sauvegardées
+    [webkit] › e2e/resumes.spec.ts:191:5 › Gestion des CV › Suppression d'un CV › demande confirmation avant suppression
+    [webkit] › e2e/resumes.spec.ts:223:5 › Gestion des CV › Suppression d'un CV › supprime le CV après confirmation
+    [webkit] › e2e/resumes.spec.ts:265:5 › Gestion des CV › Suppression d'un CV › annule la suppression
+    [webkit] › e2e/resumes.spec.ts:309:5 › Gestion des CV › Affichage des CV › affiche le nom du CV
+    [webkit] › e2e/resumes.spec.ts:323:5 › Gestion des CV › Affichage des CV › affiche la date de création/modification
+    [webkit] › e2e/resumes.spec.ts:340:5 › Gestion des CV › Affichage des CV › affiche le template utilisé
+    [webkit] › e2e/resumes.spec.ts:358:5 › Gestion des CV › Affichage des CV › affiche une prévisualisation du CV
+    [webkit] › e2e/resumes.spec.ts:375:5 › Gestion des CV › Limites utilisateur › limite les invités à 3 CV
+    [mobile-chrome] › e2e/accessibility.spec.ts:50:5 › Accessibilité › Navigation au clavier › les boutons sont activables avec Space
+    [mobile-chrome] › e2e/accessibility.spec.ts:67:5 › Accessibilité › Navigation au clavier › permet de fermer les modals avec Escape
+    [mobile-chrome] › e2e/accessibility.spec.ts:89:5 › Accessibilité › Navigation au clavier › le focus est piégé dans les modals
+    [mobile-chrome] › e2e/accessibility.spec.ts:173:5 › Accessibilité › Attributs ARIA › les modals ont le role="dialog"
+    [mobile-chrome] › e2e/accessibility.spec.ts:194:5 › Accessibilité › Attributs ARIA › les erreurs sont annoncées correctement
+    [mobile-chrome] › e2e/accessibility.spec.ts:362:5 › Accessibilité › Structure du document › les landmarks sont présents
+    [mobile-chrome] › e2e/account.spec.ts:18:5 › Page Compte › Affichage général › affiche le titre de la page
+    [mobile-chrome] › e2e/account.spec.ts:23:5 › Page Compte › Affichage général › affiche l'email de l'utilisateur
+    [mobile-chrome] › e2e/account.spec.ts:31:5 › Page Compte › Affichage général › affiche le bouton retour
+    [mobile-chrome] › e2e/account.spec.ts:35:5 › Page Compte › Affichage général › permet de retourner à l'accueil
+    [mobile-chrome] › e2e/account.spec.ts:50:5 › Page Compte › Export des données (GDPR) › affiche le bouton d'export des données
+    [mobile-chrome] › e2e/account.spec.ts:74:5 › Page Compte › Suppression de compte (GDPR) › affiche le bouton de suppression de compte
+    [mobile-chrome] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [mobile-chrome] › e2e/auth.unauth.spec.ts:193:5 › Authentification › Déconnexion › permet de se déconnecter après connexion invité
+    [mobile-chrome] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+    [mobile-chrome] › e2e/editor.spec.ts:25:5 › Éditeur de CV › Section Informations Personnelles › affiche tous les champs personnels
+    [mobile-chrome] › e2e/editor.spec.ts:33:5 › Éditeur de CV › Section Informations Personnelles › permet de remplir les informations personnelles
+    [mobile-chrome] › e2e/editor.spec.ts:55:5 › Éditeur de CV › Section Informations Personnelles › affiche le bouton Suivant
+    [mobile-chrome] › e2e/editor.spec.ts:59:5 › Éditeur de CV › Section Informations Personnelles › passe à l'étape suivante au clic sur Suivant
+    [mobile-chrome] › e2e/editor.spec.ts:72:5 › Éditeur de CV › Gestion des sections › permet d'ajouter une section
+    [mobile-chrome] › e2e/editor.spec.ts:91:5 › Éditeur de CV › Gestion des sections › permet de supprimer une section
+    [mobile-chrome] › e2e/editor.spec.ts:119:5 › Éditeur de CV › Gestion des sections › permet de réorganiser les sections par drag & drop
+    [mobile-chrome] › e2e/editor.spec.ts:141:5 › Éditeur de CV › Gestion des sections › permet de masquer/afficher une section
+    [mobile-chrome] › e2e/editor.spec.ts:180:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter une expérience
+    [mobile-chrome] › e2e/editor.spec.ts:192:5 › Éditeur de CV › Éditeur de section Experience › permet de remplir une expérience complète
+    [mobile-chrome] › e2e/editor.spec.ts:211:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter des points clés (highlights)
+    [mobile-chrome] › e2e/editor.spec.ts:239:5 › Éditeur de CV › Éditeur de section Éducation › permet d'ajouter une formation
+    [mobile-chrome] › e2e/editor.spec.ts:250:5 › Éditeur de CV › Éditeur de section Éducation › permet de remplir une formation complète
+    [mobile-chrome] › e2e/editor.spec.ts:279:5 › Éditeur de CV › Éditeur de section Compétences › permet de remplir les langages et outils
+    [mobile-chrome] › e2e/editor.spec.ts:298:5 › Éditeur de CV › Preview du CV › affiche le panel de preview sur desktop
+    [mobile-chrome] › e2e/editor.spec.ts:305:5 › Éditeur de CV › Preview du CV › met à jour le preview en temps réel
+    [mobile-chrome] › e2e/editor.spec.ts:333:5 › Éditeur de CV › Sélection de template › affiche les templates disponibles
+    [mobile-chrome] › e2e/editor.spec.ts:377:5 › Éditeur de CV › Sélection de template › le mode Auto-size est disponible
+    [mobile-chrome] › e2e/editor.spec.ts:386:5 › Éditeur de CV › Sauvegarde › affiche le bouton de sauvegarde
+    [mobile-chrome] › e2e/editor.spec.ts:390:5 › Éditeur de CV › Sauvegarde › ouvre le modal de sauvegarde pour un nouveau CV
+    [mobile-chrome] › e2e/editor.spec.ts:400:5 › Éditeur de CV › Sauvegarde › permet de nommer et sauvegarder un CV
+    [mobile-chrome] › e2e/editor.spec.ts:418:5 › Éditeur de CV › Navigation dans l'éditeur › permet de naviguer avec Précédent/Suivant
+    [mobile-chrome] › e2e/editor.spec.ts:442:5 › Éditeur de CV › Validation des données › accepte un CV minimal
+    [mobile-chrome] › e2e/editor.spec.ts:450:5 › Éditeur de CV › Validation des données › affiche les erreurs de validation
+    [mobile-chrome] › e2e/editor.spec.ts:464:5 › Éditeur de CV › Section personnalisée (Custom) › permet d'ajouter une section personnalisée
+    [mobile-chrome] › e2e/editor.spec.ts:483:5 › Éditeur de CV › Section personnalisée (Custom) › permet de modifier le titre d'une section personnalisée
+    [mobile-chrome] › e2e/export.spec.ts:23:5 › Export PDF › Génération de PDF › exporte un CV minimal en PDF
+    [mobile-chrome] › e2e/export.spec.ts:42:5 › Export PDF › Génération de PDF › le nom du fichier contient le nom de l'utilisateur
+    [mobile-chrome] › e2e/export.spec.ts:56:5 › Export PDF › Génération de PDF › exporte avec le template sélectionné
+    [mobile-chrome] › e2e/export.spec.ts:76:5 › Export PDF › Génération de PDF › exporte avec la taille de template sélectionnée
+    [mobile-chrome] › e2e/export.spec.ts:96:5 › Export PDF › Génération de PDF › affiche un indicateur de chargement pendant l'export
+    [mobile-chrome] › e2e/export.spec.ts:110:5 › Export PDF › Génération de PDF › gère les erreurs de génération gracieusement
+    [mobile-chrome] › e2e/export.spec.ts:128:5 › Export PDF › Export avec contenu complet › exporte un CV avec toutes les sections
+    [mobile-chrome] › e2e/export.spec.ts:166:5 › Import PDF › Interface d'import › affiche le bouton d'import sur la landing page
+    [mobile-chrome] › e2e/export.spec.ts:173:5 › Import PDF › Interface d'import › ouvre le sélecteur de fichier au clic
+    [mobile-chrome] › e2e/export.spec.ts:185:5 › Import PDF › Interface d'import › accepte uniquement les fichiers PDF
+    [mobile-chrome] › e2e/export.spec.ts:231:5 › Import PDF › Processus d'import › affiche un indicateur de progression pendant l'import
+    [mobile-chrome] › e2e/export.spec.ts:293:3 › Export dans l'éditeur › le bouton export est toujours visible dans le header
+    [mobile-chrome] › e2e/export.spec.ts:305:3 › Export dans l'éditeur › exporte depuis le bouton du formulaire
+    [mobile-chrome] › e2e/export.spec.ts:334:3 › Export mobile › permet d'exporter sur mobile ──────
+    [mobile-chrome] › e2e/i18n.spec.ts:11:5 › Internationalisation › Détection de langue › utilise le français par défaut pour un navigateur FR
+    [mobile-chrome] › e2e/i18n.spec.ts:26:5 › Internationalisation › Détection de langue › utilise l'anglais pour un navigateur EN
+    [mobile-chrome] › e2e/i18n.spec.ts:102:5 › Internationalisation › Changement de langue › persiste le choix de langue après rechargement
+    [mobile-chrome] › e2e/i18n.spec.ts:132:7 › Internationalisation › Traduction de l'interface › Français › traduit la landing page
+    [mobile-chrome] › e2e/i18n.spec.ts:180:7 › Internationalisation › Traduction de l'interface › Français › traduit les noms de sections
+    [mobile-chrome] › e2e/i18n.spec.ts:218:7 › Internationalisation › Traduction de l'interface › Anglais › traduit la landing page
+    [mobile-chrome] › e2e/i18n.spec.ts:266:7 › Internationalisation › Traduction de l'interface › Anglais › traduit les noms de sections
+    [mobile-chrome] › e2e/i18n.spec.ts:357:5 › Internationalisation › Contenu dynamique › les sections de CV conservent leur titre personnalisé lors du changement de langue
+    [mobile-chrome] › e2e/i18n.spec.ts:394:5 › Internationalisation › Contenu dynamique › les sections par défaut changent de langue
+    [mobile-chrome] › e2e/landing.spec.ts:18:5 › Landing Page › Affichage général › affiche le titre principal
+    [mobile-chrome] › e2e/landing.spec.ts:23:5 › Landing Page › Affichage général › affiche les boutons d'action principaux
+    [mobile-chrome] › e2e/landing.spec.ts:28:5 › Landing Page › Affichage général › affiche la navigation
+    [mobile-chrome] › e2e/landing.spec.ts:34:5 › Landing Page › Affichage général › affiche le footer avec les liens légaux
+    [mobile-chrome] › e2e/landing.spec.ts:42:5 › Landing Page › Affichage général › affiche les templates disponibles
+    [mobile-chrome] › e2e/landing.spec.ts:52:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur "Créer un CV"
+    [mobile-chrome] › e2e/landing.spec.ts:63:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur un template
+    [mobile-chrome] › e2e/landing.spec.ts:72:5 › Landing Page › Navigation › navigue vers "Mes CV" ─
+    [mobile-chrome] › e2e/landing.spec.ts:81:5 › Landing Page › Navigation › permet de revenir à la landing depuis l'éditeur
+    [mobile-chrome] › e2e/landing.spec.ts:96:5 › Landing Page › Templates › affiche une prévisualisation de chaque template
+    [mobile-chrome] › e2e/landing.spec.ts:109:5 › Landing Page › Templates › permet de sélectionner un template spécifique
+    [mobile-chrome] › e2e/landing.spec.ts:136:5 › Landing Page › Section Features › affiche au moins 3 fonctionnalités
+    [mobile-chrome] › e2e/landing.spec.ts:147:5 › Landing Page › Call to Action › affiche une section CTA
+    [mobile-chrome] › e2e/landing.spec.ts:173:5 › Landing Page › Import PDF › le bouton d'import est visible
+    [mobile-chrome] › e2e/landing.spec.ts:177:5 › Landing Page › Import PDF › le bouton d'import déclenche le sélecteur de fichier
+    [mobile-chrome] › e2e/landing.spec.ts:196:5 › Landing Page › Responsive › adapte l'affichage sur tablette
+    [mobile-chrome] › e2e/landing.spec.ts:204:5 › Landing Page › Responsive › adapte l'affichage sur mobile
+    [mobile-chrome] › e2e/mobile.spec.ts:20:5 › Expérience Mobile › Landing Page Mobile › affiche correctement le header sur mobile
+    [mobile-chrome] › e2e/mobile.spec.ts:33:5 › Expérience Mobile › Landing Page Mobile › le titre hero est lisible sur mobile
+    [mobile-chrome] › e2e/mobile.spec.ts:43:5 › Expérience Mobile › Landing Page Mobile › les boutons d'action sont accessibles sur mobile
+    [mobile-chrome] › e2e/mobile.spec.ts:54:5 › Expérience Mobile › Landing Page Mobile › les templates sont affichés en grille adaptative
+    [mobile-chrome] › e2e/mobile.spec.ts:109:5 › Expérience Mobile › Éditeur Mobile › ouvre le preview en plein écran au clic sur le bouton
+    [mobile-chrome] › e2e/mobile.spec.ts:155:5 › Expérience Mobile › Éditeur Mobile › les boutons Suivant/Précédent sont accessibles
+    [mobile-chrome] › e2e/mobile.spec.ts:178:5 › Expérience Mobile › Menu Mobile › affiche le menu hamburger
+    [mobile-chrome] › e2e/mobile.spec.ts:243:5 › Expérience Mobile › Responsive Tablet › affiche un layout adapté sur tablette
+    [mobile-chrome] › e2e/mobile.spec.ts:303:5 › Expérience Mobile › Touch Interactions › les formulaires sont scrollables verticalement
+    [mobile-chrome] › e2e/mobile.spec.ts:322:5 › Expérience Mobile › Export Mobile › permet d'exporter sur mobile
+    [mobile-chrome] › e2e/mobile.spec.ts:346:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (portrait → paysage)
+    [mobile-chrome] › e2e/mobile.spec.ts:361:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (paysage → portrait)
+    [mobile-chrome] › e2e/resumes.spec.ts:20:5 › Gestion des CV › Page Mes CV › est accessible depuis la landing page
+    [mobile-chrome] › e2e/resumes.spec.ts:27:5 › Gestion des CV › Page Mes CV › affiche un état vide quand aucun CV n'est sauvegardé
+    [mobile-chrome] › e2e/resumes.spec.ts:39:5 › Gestion des CV › Page Mes CV › permet de créer un nouveau CV depuis cette page
+    [mobile-chrome] › e2e/resumes.spec.ts:49:5 › Gestion des CV › Page Mes CV › permet de retourner à la landing
+    [mobile-chrome] › e2e/resumes.spec.ts:64:5 › Gestion des CV › Sauvegarde d'un CV › sauvegarde un nouveau CV avec un nom
+    [mobile-chrome] › e2e/resumes.spec.ts:90:5 › Gestion des CV › Sauvegarde d'un CV › met à jour un CV existant
+    [mobile-chrome] › e2e/resumes.spec.ts:124:5 › Gestion des CV › Chargement d'un CV › charge un CV sauvegardé
+    [mobile-chrome] › e2e/resumes.spec.ts:153:5 › Gestion des CV › Chargement d'un CV › charge les sections sauvegardées
+    [mobile-chrome] › e2e/resumes.spec.ts:191:5 › Gestion des CV › Suppression d'un CV › demande confirmation avant suppression
+    [mobile-chrome] › e2e/resumes.spec.ts:223:5 › Gestion des CV › Suppression d'un CV › supprime le CV après confirmation
+    [mobile-chrome] › e2e/resumes.spec.ts:265:5 › Gestion des CV › Suppression d'un CV › annule la suppression
+    [mobile-chrome] › e2e/resumes.spec.ts:309:5 › Gestion des CV › Affichage des CV › affiche le nom du CV
+    [mobile-chrome] › e2e/resumes.spec.ts:323:5 › Gestion des CV › Affichage des CV › affiche la date de création/modification
+    [mobile-chrome] › e2e/resumes.spec.ts:340:5 › Gestion des CV › Affichage des CV › affiche le template utilisé
+    [mobile-chrome] › e2e/resumes.spec.ts:358:5 › Gestion des CV › Affichage des CV › affiche une prévisualisation du CV
+    [mobile-chrome] › e2e/resumes.spec.ts:375:5 › Gestion des CV › Limites utilisateur › limite les invités à 3 CV
+    [mobile-safari] › e2e/accessibility.spec.ts:50:5 › Accessibilité › Navigation au clavier › les boutons sont activables avec Space
+    [mobile-safari] › e2e/accessibility.spec.ts:67:5 › Accessibilité › Navigation au clavier › permet de fermer les modals avec Escape
+    [mobile-safari] › e2e/accessibility.spec.ts:89:5 › Accessibilité › Navigation au clavier › le focus est piégé dans les modals
+    [mobile-safari] › e2e/accessibility.spec.ts:173:5 › Accessibilité › Attributs ARIA › les modals ont le role="dialog"
+    [mobile-safari] › e2e/accessibility.spec.ts:194:5 › Accessibilité › Attributs ARIA › les erreurs sont annoncées correctement
+    [mobile-safari] › e2e/accessibility.spec.ts:362:5 › Accessibilité › Structure du document › les landmarks sont présents
+    [mobile-safari] › e2e/account.spec.ts:18:5 › Page Compte › Affichage général › affiche le titre de la page
+    [mobile-safari] › e2e/account.spec.ts:23:5 › Page Compte › Affichage général › affiche l'email de l'utilisateur
+    [mobile-safari] › e2e/account.spec.ts:31:5 › Page Compte › Affichage général › affiche le bouton retour
+    [mobile-safari] › e2e/account.spec.ts:35:5 › Page Compte › Affichage général › permet de retourner à l'accueil
+    [mobile-safari] › e2e/account.spec.ts:50:5 › Page Compte › Export des données (GDPR) › affiche le bouton d'export des données
+    [mobile-safari] › e2e/account.spec.ts:74:5 › Page Compte › Suppression de compte (GDPR) › affiche le bouton de suppression de compte
+    [mobile-safari] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [mobile-safari] › e2e/auth.unauth.spec.ts:193:5 › Authentification › Déconnexion › permet de se déconnecter après connexion invité
+    [mobile-safari] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+    [mobile-safari] › e2e/editor.spec.ts:25:5 › Éditeur de CV › Section Informations Personnelles › affiche tous les champs personnels
+    [mobile-safari] › e2e/editor.spec.ts:33:5 › Éditeur de CV › Section Informations Personnelles › permet de remplir les informations personnelles
+    [mobile-safari] › e2e/editor.spec.ts:55:5 › Éditeur de CV › Section Informations Personnelles › affiche le bouton Suivant
+    [mobile-safari] › e2e/editor.spec.ts:59:5 › Éditeur de CV › Section Informations Personnelles › passe à l'étape suivante au clic sur Suivant
+    [mobile-safari] › e2e/editor.spec.ts:72:5 › Éditeur de CV › Gestion des sections › permet d'ajouter une section
+    [mobile-safari] › e2e/editor.spec.ts:91:5 › Éditeur de CV › Gestion des sections › permet de supprimer une section
+    [mobile-safari] › e2e/editor.spec.ts:119:5 › Éditeur de CV › Gestion des sections › permet de réorganiser les sections par drag & drop
+    [mobile-safari] › e2e/editor.spec.ts:141:5 › Éditeur de CV › Gestion des sections › permet de masquer/afficher une section
+    [mobile-safari] › e2e/editor.spec.ts:180:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter une expérience
+    [mobile-safari] › e2e/editor.spec.ts:192:5 › Éditeur de CV › Éditeur de section Experience › permet de remplir une expérience complète
+    [mobile-safari] › e2e/editor.spec.ts:211:5 › Éditeur de CV › Éditeur de section Experience › permet d'ajouter des points clés (highlights)
+    [mobile-safari] › e2e/editor.spec.ts:239:5 › Éditeur de CV › Éditeur de section Éducation › permet d'ajouter une formation
+    [mobile-safari] › e2e/editor.spec.ts:250:5 › Éditeur de CV › Éditeur de section Éducation › permet de remplir une formation complète
+    [mobile-safari] › e2e/editor.spec.ts:279:5 › Éditeur de CV › Éditeur de section Compétences › permet de remplir les langages et outils
+    [mobile-safari] › e2e/editor.spec.ts:298:5 › Éditeur de CV › Preview du CV › affiche le panel de preview sur desktop
+    [mobile-safari] › e2e/editor.spec.ts:305:5 › Éditeur de CV › Preview du CV › met à jour le preview en temps réel
+    [mobile-safari] › e2e/editor.spec.ts:333:5 › Éditeur de CV › Sélection de template › affiche les templates disponibles
+    [mobile-safari] › e2e/editor.spec.ts:377:5 › Éditeur de CV › Sélection de template › le mode Auto-size est disponible
+    [mobile-safari] › e2e/editor.spec.ts:386:5 › Éditeur de CV › Sauvegarde › affiche le bouton de sauvegarde
+    [mobile-safari] › e2e/editor.spec.ts:390:5 › Éditeur de CV › Sauvegarde › ouvre le modal de sauvegarde pour un nouveau CV
+    [mobile-safari] › e2e/editor.spec.ts:400:5 › Éditeur de CV › Sauvegarde › permet de nommer et sauvegarder un CV
+    [mobile-safari] › e2e/editor.spec.ts:418:5 › Éditeur de CV › Navigation dans l'éditeur › permet de naviguer avec Précédent/Suivant
+    [mobile-safari] › e2e/editor.spec.ts:442:5 › Éditeur de CV › Validation des données › accepte un CV minimal
+    [mobile-safari] › e2e/editor.spec.ts:450:5 › Éditeur de CV › Validation des données › affiche les erreurs de validation
+    [mobile-safari] › e2e/editor.spec.ts:464:5 › Éditeur de CV › Section personnalisée (Custom) › permet d'ajouter une section personnalisée
+    [mobile-safari] › e2e/editor.spec.ts:483:5 › Éditeur de CV › Section personnalisée (Custom) › permet de modifier le titre d'une section personnalisée
+    [mobile-safari] › e2e/export.spec.ts:23:5 › Export PDF › Génération de PDF › exporte un CV minimal en PDF
+    [mobile-safari] › e2e/export.spec.ts:42:5 › Export PDF › Génération de PDF › le nom du fichier contient le nom de l'utilisateur
+    [mobile-safari] › e2e/export.spec.ts:56:5 › Export PDF › Génération de PDF › exporte avec le template sélectionné
+    [mobile-safari] › e2e/export.spec.ts:76:5 › Export PDF › Génération de PDF › exporte avec la taille de template sélectionnée
+    [mobile-safari] › e2e/export.spec.ts:96:5 › Export PDF › Génération de PDF › affiche un indicateur de chargement pendant l'export
+    [mobile-safari] › e2e/export.spec.ts:110:5 › Export PDF › Génération de PDF › gère les erreurs de génération gracieusement
+    [mobile-safari] › e2e/export.spec.ts:128:5 › Export PDF › Export avec contenu complet › exporte un CV avec toutes les sections
+    [mobile-safari] › e2e/export.spec.ts:166:5 › Import PDF › Interface d'import › affiche le bouton d'import sur la landing page
+    [mobile-safari] › e2e/export.spec.ts:173:5 › Import PDF › Interface d'import › ouvre le sélecteur de fichier au clic
+    [mobile-safari] › e2e/export.spec.ts:185:5 › Import PDF › Interface d'import › accepte uniquement les fichiers PDF
+    [mobile-safari] › e2e/export.spec.ts:231:5 › Import PDF › Processus d'import › affiche un indicateur de progression pendant l'import
+    [mobile-safari] › e2e/export.spec.ts:293:3 › Export dans l'éditeur › le bouton export est toujours visible dans le header
+    [mobile-safari] › e2e/export.spec.ts:305:3 › Export dans l'éditeur › exporte depuis le bouton du formulaire
+    [mobile-safari] › e2e/export.spec.ts:334:3 › Export mobile › permet d'exporter sur mobile ──────
+    [mobile-safari] › e2e/i18n.spec.ts:11:5 › Internationalisation › Détection de langue › utilise le français par défaut pour un navigateur FR
+    [mobile-safari] › e2e/i18n.spec.ts:26:5 › Internationalisation › Détection de langue › utilise l'anglais pour un navigateur EN
+    [mobile-safari] › e2e/i18n.spec.ts:102:5 › Internationalisation › Changement de langue › persiste le choix de langue après rechargement
+    [mobile-safari] › e2e/i18n.spec.ts:132:7 › Internationalisation › Traduction de l'interface › Français › traduit la landing page
+    [mobile-safari] › e2e/i18n.spec.ts:180:7 › Internationalisation › Traduction de l'interface › Français › traduit les noms de sections
+    [mobile-safari] › e2e/i18n.spec.ts:218:7 › Internationalisation › Traduction de l'interface › Anglais › traduit la landing page
+    [mobile-safari] › e2e/i18n.spec.ts:266:7 › Internationalisation › Traduction de l'interface › Anglais › traduit les noms de sections
+    [mobile-safari] › e2e/i18n.spec.ts:357:5 › Internationalisation › Contenu dynamique › les sections de CV conservent leur titre personnalisé lors du changement de langue
+    [mobile-safari] › e2e/i18n.spec.ts:394:5 › Internationalisation › Contenu dynamique › les sections par défaut changent de langue
+    [mobile-safari] › e2e/landing.spec.ts:18:5 › Landing Page › Affichage général › affiche le titre principal
+    [mobile-safari] › e2e/landing.spec.ts:23:5 › Landing Page › Affichage général › affiche les boutons d'action principaux
+    [mobile-safari] › e2e/landing.spec.ts:28:5 › Landing Page › Affichage général › affiche la navigation
+    [mobile-safari] › e2e/landing.spec.ts:34:5 › Landing Page › Affichage général › affiche le footer avec les liens légaux
+    [mobile-safari] › e2e/landing.spec.ts:42:5 › Landing Page › Affichage général › affiche les templates disponibles
+    [mobile-safari] › e2e/landing.spec.ts:52:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur "Créer un CV"
+    [mobile-safari] › e2e/landing.spec.ts:63:5 › Landing Page › Navigation › navigue vers l'éditeur au clic sur un template
+    [mobile-safari] › e2e/landing.spec.ts:72:5 › Landing Page › Navigation › navigue vers "Mes CV" ─
+    [mobile-safari] › e2e/landing.spec.ts:81:5 › Landing Page › Navigation › permet de revenir à la landing depuis l'éditeur
+    [mobile-safari] › e2e/landing.spec.ts:96:5 › Landing Page › Templates › affiche une prévisualisation de chaque template
+    [mobile-safari] › e2e/landing.spec.ts:109:5 › Landing Page › Templates › permet de sélectionner un template spécifique
+    [mobile-safari] › e2e/landing.spec.ts:136:5 › Landing Page › Section Features › affiche au moins 3 fonctionnalités
+    [mobile-safari] › e2e/landing.spec.ts:147:5 › Landing Page › Call to Action › affiche une section CTA
+    [mobile-safari] › e2e/landing.spec.ts:173:5 › Landing Page › Import PDF › le bouton d'import est visible
+    [mobile-safari] › e2e/landing.spec.ts:177:5 › Landing Page › Import PDF › le bouton d'import déclenche le sélecteur de fichier
+    [mobile-safari] › e2e/landing.spec.ts:196:5 › Landing Page › Responsive › adapte l'affichage sur tablette
+    [mobile-safari] › e2e/landing.spec.ts:204:5 › Landing Page › Responsive › adapte l'affichage sur mobile
+    [mobile-safari] › e2e/mobile.spec.ts:20:5 › Expérience Mobile › Landing Page Mobile › affiche correctement le header sur mobile
+    [mobile-safari] › e2e/mobile.spec.ts:33:5 › Expérience Mobile › Landing Page Mobile › le titre hero est lisible sur mobile
+    [mobile-safari] › e2e/mobile.spec.ts:43:5 › Expérience Mobile › Landing Page Mobile › les boutons d'action sont accessibles sur mobile
+    [mobile-safari] › e2e/mobile.spec.ts:54:5 › Expérience Mobile › Landing Page Mobile › les templates sont affichés en grille adaptative
+    [mobile-safari] › e2e/mobile.spec.ts:109:5 › Expérience Mobile › Éditeur Mobile › ouvre le preview en plein écran au clic sur le bouton
+    [mobile-safari] › e2e/mobile.spec.ts:155:5 › Expérience Mobile › Éditeur Mobile › les boutons Suivant/Précédent sont accessibles
+    [mobile-safari] › e2e/mobile.spec.ts:178:5 › Expérience Mobile › Menu Mobile › affiche le menu hamburger
+    [mobile-safari] › e2e/mobile.spec.ts:243:5 › Expérience Mobile › Responsive Tablet › affiche un layout adapté sur tablette
+    [mobile-safari] › e2e/mobile.spec.ts:303:5 › Expérience Mobile › Touch Interactions › les formulaires sont scrollables verticalement
+    [mobile-safari] › e2e/mobile.spec.ts:322:5 › Expérience Mobile › Export Mobile › permet d'exporter sur mobile
+    [mobile-safari] › e2e/mobile.spec.ts:346:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (portrait → paysage)
+    [mobile-safari] › e2e/mobile.spec.ts:361:5 › Expérience Mobile › Orientation › s'adapte au changement d'orientation (paysage → portrait)
+    [mobile-safari] › e2e/resumes.spec.ts:20:5 › Gestion des CV › Page Mes CV › est accessible depuis la landing page
+    [mobile-safari] › e2e/resumes.spec.ts:27:5 › Gestion des CV › Page Mes CV › affiche un état vide quand aucun CV n'est sauvegardé
+    [mobile-safari] › e2e/resumes.spec.ts:39:5 › Gestion des CV › Page Mes CV › permet de créer un nouveau CV depuis cette page
+    [mobile-safari] › e2e/resumes.spec.ts:49:5 › Gestion des CV › Page Mes CV › permet de retourner à la landing
+    [mobile-safari] › e2e/resumes.spec.ts:64:5 › Gestion des CV › Sauvegarde d'un CV › sauvegarde un nouveau CV avec un nom
+    [mobile-safari] › e2e/resumes.spec.ts:90:5 › Gestion des CV › Sauvegarde d'un CV › met à jour un CV existant
+    [mobile-safari] › e2e/resumes.spec.ts:124:5 › Gestion des CV › Chargement d'un CV › charge un CV sauvegardé
+    [mobile-safari] › e2e/resumes.spec.ts:153:5 › Gestion des CV › Chargement d'un CV › charge les sections sauvegardées
+    [mobile-safari] › e2e/resumes.spec.ts:191:5 › Gestion des CV › Suppression d'un CV › demande confirmation avant suppression
+    [mobile-safari] › e2e/resumes.spec.ts:223:5 › Gestion des CV › Suppression d'un CV › supprime le CV après confirmation
+    [mobile-safari] › e2e/resumes.spec.ts:265:5 › Gestion des CV › Suppression d'un CV › annule la suppression
+    [mobile-safari] › e2e/resumes.spec.ts:309:5 › Gestion des CV › Affichage des CV › affiche le nom du CV
+    [mobile-safari] › e2e/resumes.spec.ts:323:5 › Gestion des CV › Affichage des CV › affiche la date de création/modification
+    [mobile-safari] › e2e/resumes.spec.ts:340:5 › Gestion des CV › Affichage des CV › affiche le template utilisé
+    [mobile-safari] › e2e/resumes.spec.ts:358:5 › Gestion des CV › Affichage des CV › affiche une prévisualisation du CV
+    [mobile-safari] › e2e/resumes.spec.ts:375:5 › Gestion des CV › Limites utilisateur › limite les invités à 3 CV
+    [unauthenticated] › e2e/auth.unauth.spec.ts:143:5 › Authentification › Mode invité › permet de continuer sans compte
+    [unauthenticated] › e2e/auth.unauth.spec.ts:219:5 › Authentification › Persistance de session › maintient la session après rechargement (invité)
+  34 skipped
+  395 passed (26.5m)

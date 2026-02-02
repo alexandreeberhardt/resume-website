@@ -1,0 +1,141 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - button "Sivee" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+        - generic [ref=e10]: Sivee
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - button "Set theme to Light" [ref=e13] [cursor=pointer]:
+            - img [ref=e14]
+          - button "Set theme to Dark" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+        - generic [ref=e23]:
+          - button "🇫🇷" [ref=e24] [cursor=pointer]
+          - button "🇬🇧" [ref=e25] [cursor=pointer]
+        - button "Mes CV" [ref=e27] [cursor=pointer]:
+          - img [ref=e28]
+          - generic [ref=e30]: Mes CV
+        - button "Enregistrer" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+          - generic [ref=e36]: Enregistrer
+        - button "Exporter en PDF" [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+          - generic [ref=e42]: Exporter en PDF
+        - generic [ref=e44]:
+          - generic [ref=e45]: test-e2e@sivee.local
+          - link "Mon compte" [ref=e46] [cursor=pointer]:
+            - /url: /account
+            - img [ref=e47]
+          - button "Déconnexion" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+  - generic [ref=e54]:
+    - main [ref=e55]:
+      - generic [ref=e57]:
+        - img [ref=e59]
+        - generic [ref=e63]:
+          - heading "Vous avez déjà un CV ?" [level=3] [ref=e64]
+          - paragraph [ref=e65]: Importez-le pour pré-remplir automatiquement vos informations
+        - button "Importer un PDF" [ref=e66] [cursor=pointer]:
+          - img [ref=e67]
+          - text: Importer un PDF
+      - generic [ref=e70]:
+        - generic [ref=e72]:
+          - img [ref=e74]
+          - generic [ref=e77]:
+            - heading "Informations personnelles" [level=2] [ref=e78]
+            - paragraph [ref=e79]: Vos coordonnées et liens professionnels
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]: Nom complet
+            - generic [ref=e83]:
+              - textbox "Jean Dupont" [ref=e84]
+              - img [ref=e85]
+          - generic [ref=e88]:
+            - generic [ref=e89]: Titre professionnel
+            - textbox "Développeur Full Stack" [ref=e90]
+          - generic [ref=e91]:
+            - generic [ref=e92]: Localisation
+            - generic [ref=e93]:
+              - textbox "Paris, France" [ref=e94]
+              - img [ref=e95]
+          - generic [ref=e98]:
+            - generic [ref=e99]: Email
+            - generic [ref=e100]:
+              - textbox "jean@exemple.com" [ref=e101]
+              - img [ref=e102]
+          - generic [ref=e105]:
+            - generic [ref=e106]: Téléphone
+            - generic [ref=e107]:
+              - textbox "+33 6 12 34 56 78" [ref=e108]
+              - img [ref=e109]
+        - generic [ref=e111]:
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - img [ref=e114]
+              - heading "Liens professionnels" [level=3] [ref=e117]
+            - button "Ajouter un lien" [ref=e118] [cursor=pointer]:
+              - img [ref=e119]
+              - text: Ajouter un lien
+          - paragraph [ref=e120]: Aucun lien ajouté. Ajoutez LinkedIn, GitHub, Portfolio...
+      - button "Suivant" [ref=e122] [cursor=pointer]:
+        - text: Suivant
+        - img [ref=e123]
+    - complementary [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - heading "Aperçu" [level=3] [ref=e129]
+            - generic [ref=e130]:
+              - button "Actualiser" [ref=e131] [cursor=pointer]:
+                - img [ref=e132]
+              - button "Masquer l'aperçu" [ref=e137] [cursor=pointer]:
+                - img [ref=e138]
+          - generic [ref=e146] [cursor=pointer]:
+            - iframe [ref=e148]:
+              
+            - generic [ref=e150]:
+              - img [ref=e151]
+              - generic [ref=e156]: Plein écran
+          - paragraph [ref=e157]: L'aperçu se met à jour automatiquement
+        - generic [ref=e158]:
+          - heading "Templates" [level=3] [ref=e159]
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - button "Auto" [ref=e162] [cursor=pointer]:
+                - img [ref=e163]
+                - generic [ref=e165]: Auto
+              - button "Compact" [ref=e166] [cursor=pointer]
+              - button "Normal" [ref=e167] [cursor=pointer]
+              - button "Large" [ref=e168] [cursor=pointer]
+            - generic [ref=e169]:
+              - img [ref=e170]
+              - generic [ref=e172]: "Taille optimisée: Large"
+          - generic [ref=e173]:
+            - button "Harvard Harvard" [ref=e174] [cursor=pointer]:
+              - img "Harvard" [ref=e176]
+              - paragraph [ref=e178]: Harvard
+            - button "Double Double" [ref=e179] [cursor=pointer]:
+              - img "Double" [ref=e181]
+              - paragraph [ref=e183]: Double
+            - button "Michel Michel" [ref=e184] [cursor=pointer]:
+              - img "Michel" [ref=e186]
+              - paragraph [ref=e188]: Michel
+            - button "Stephane Stephane" [ref=e189] [cursor=pointer]:
+              - img "Stephane" [ref=e191]
+              - paragraph [ref=e193]: Stephane
+            - button "Aurianne Aurianne" [ref=e194] [cursor=pointer]:
+              - img "Aurianne" [ref=e196]
+              - paragraph [ref=e198]: Aurianne
+  - generic [ref=e201]:
+    - img [ref=e203]
+    - generic [ref=e205]:
+      - heading "Sauvegardez votre travail" [level=3] [ref=e206]
+      - paragraph [ref=e207]: Créez un compte gratuit pour conserver vos CV et débloquer plus de fonctionnalités.
+      - button "Créer un compte gratuit" [ref=e208] [cursor=pointer]
+    - button [ref=e209] [cursor=pointer]:
+      - img [ref=e210]
+```

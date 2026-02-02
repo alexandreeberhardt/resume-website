@@ -55,6 +55,8 @@ services:
       - ./curriculum-vitae/alembic:/app/alembic:rw
       - ./curriculum-vitae/alembic.ini:/app/alembic.ini:ro
       - ./curriculum-vitae/data.yml:/app/data.yml:ro
+      - ./curriculum-vitae/auth:/app/auth:ro
+      - ./curriculum-vitae/api:/app/api:ro
     depends_on:
       db:
         condition: service_healthy

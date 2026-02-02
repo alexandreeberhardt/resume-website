@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - button [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - button "Set theme to Light" [ref=e12] [cursor=pointer]:
+            - img [ref=e13]
+          - button "Set theme to Dark" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+        - generic [ref=e22]:
+          - button "🇫🇷" [ref=e23] [cursor=pointer]
+          - button "🇬🇧" [ref=e24] [cursor=pointer]
+        - button [ref=e25] [cursor=pointer]:
+          - img [ref=e26]
+        - button [active] [ref=e30] [cursor=pointer]:
+          - img [ref=e31]
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - img [ref=e38]
+        - generic [ref=e41]: test-e2e@sivee.local
+      - link "Mon compte" [ref=e43] [cursor=pointer]:
+        - /url: /account
+        - img [ref=e44]
+        - text: Mon compte
+      - button "Mes CV" [ref=e47] [cursor=pointer]:
+        - img [ref=e48]
+        - text: Mes CV
+      - button "Enregistrer" [ref=e50] [cursor=pointer]:
+        - img [ref=e51]
+        - text: Enregistrer
+      - button "Importer un PDF" [ref=e55] [cursor=pointer]:
+        - img [ref=e56]
+        - text: Importer un PDF
+      - button "Ajouter la section" [ref=e59] [cursor=pointer]:
+        - img [ref=e60]
+        - text: Ajouter la section
+      - generic [ref=e62]:
+        - generic [ref=e63]: Langue
+        - generic [ref=e64]:
+          - button "🇫🇷" [ref=e65] [cursor=pointer]
+          - button "🇬🇧" [ref=e66] [cursor=pointer]
+      - button "Déconnexion" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+        - text: Déconnexion
+  - main [ref=e73]:
+    - generic [ref=e75]:
+      - img [ref=e77]
+      - generic [ref=e81]:
+        - heading "Vous avez déjà un CV ?" [level=3] [ref=e82]
+        - paragraph [ref=e83]: Importez-le pour pré-remplir automatiquement vos informations
+      - button "Importer un PDF" [ref=e84] [cursor=pointer]:
+        - img [ref=e85]
+        - text: Importer un PDF
+    - generic [ref=e88]:
+      - generic [ref=e90]:
+        - img [ref=e92]
+        - generic [ref=e95]:
+          - heading "Informations personnelles" [level=2] [ref=e96]
+          - paragraph [ref=e97]: Vos coordonnées et liens professionnels
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]: Nom complet
+          - generic [ref=e101]:
+            - textbox "Jean Dupont" [ref=e102]
+            - img [ref=e103]
+        - generic [ref=e106]:
+          - generic [ref=e107]: Titre professionnel
+          - textbox "Développeur Full Stack" [ref=e108]
+        - generic [ref=e109]:
+          - generic [ref=e110]: Localisation
+          - generic [ref=e111]:
+            - textbox "Paris, France" [ref=e112]
+            - img [ref=e113]
+        - generic [ref=e116]:
+          - generic [ref=e117]: Email
+          - generic [ref=e118]:
+            - textbox "jean@exemple.com" [ref=e119]
+            - img [ref=e120]
+        - generic [ref=e123]:
+          - generic [ref=e124]: Téléphone
+          - generic [ref=e125]:
+            - textbox "+33 6 12 34 56 78" [ref=e126]
+            - img [ref=e127]
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - img [ref=e132]
+            - heading "Liens professionnels" [level=3] [ref=e135]
+          - button "Ajouter un lien" [ref=e136] [cursor=pointer]:
+            - img [ref=e137]
+            - text: Ajouter un lien
+        - paragraph [ref=e138]: Aucun lien ajouté. Ajoutez LinkedIn, GitHub, Portfolio...
+    - button "Suivant" [ref=e140] [cursor=pointer]:
+      - text: Suivant
+      - img [ref=e141]
+  - generic [ref=e145]:
+    - img [ref=e147]
+    - generic [ref=e149]:
+      - heading "Sauvegardez votre travail" [level=3] [ref=e150]
+      - paragraph [ref=e151]: Créez un compte gratuit pour conserver vos CV et débloquer plus de fonctionnalités.
+      - button "Créer un compte gratuit" [ref=e152] [cursor=pointer]
+    - button [ref=e153] [cursor=pointer]:
+      - img [ref=e154]
+  - button "Aperçu" [ref=e157] [cursor=pointer]:
+    - img [ref=e158]
+```

@@ -1,0 +1,85 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - button "Set theme to Light" [ref=e12] [cursor=pointer]:
+            - img [ref=e13]
+          - button "Set theme to Dark" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+        - generic [ref=e22]:
+          - button "🇫🇷" [ref=e23] [cursor=pointer]
+          - button "🇬🇧" [ref=e24] [cursor=pointer]
+        - button [ref=e25] [cursor=pointer]:
+          - img [ref=e26]
+        - generic [ref=e28]:
+          - link "Mon compte" [ref=e29] [cursor=pointer]:
+            - /url: /account
+            - img [ref=e30]
+          - button "Déconnexion" [ref=e33] [cursor=pointer]:
+            - img [ref=e34]
+  - generic [ref=e38]:
+    - heading "Créez un CV professionnel en quelques minutes" [level=1] [ref=e39]
+    - paragraph [ref=e40]: Importez votre CV existant ou partez de zéro. Éditez, personnalisez et exportez en PDF avec un rendu LaTeX impeccable.
+    - generic [ref=e41]:
+      - button "Créer mon CV" [ref=e42] [cursor=pointer]
+      - button "Importer un PDF" [ref=e43] [cursor=pointer]:
+        - img [ref=e44]
+        - text: Importer un PDF
+  - generic [ref=e48]:
+    - generic [ref=e49]:
+      - heading "21 templates disponibles" [level=2] [ref=e50]
+      - paragraph [ref=e51]: Du style classique au design moderne, 100% ATS friendly et professionnels
+    - generic [ref=e52]:
+      - generic [ref=e53] [cursor=pointer]:
+        - img "Template Harvard" [ref=e55]
+        - paragraph [ref=e56]: Harvard
+      - generic [ref=e57] [cursor=pointer]:
+        - img "Template Double" [ref=e59]
+        - paragraph [ref=e60]: Double
+      - generic [ref=e61] [cursor=pointer]:
+        - img "Template Michel" [ref=e63]
+        - paragraph [ref=e64]: Michel
+      - generic [ref=e65] [cursor=pointer]:
+        - img "Template Stephane" [ref=e67]
+        - paragraph [ref=e68]: Stephane
+    - button "Voir tous les templates" [ref=e70] [cursor=pointer]
+  - generic [ref=e72]:
+    - generic [ref=e73]:
+      - heading "Pourquoi choisir Sivee ?" [level=2] [ref=e74]
+      - paragraph [ref=e75]: Des outils simples et puissants pour créer le CV parfait
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - img [ref=e79]
+        - heading "Templates professionnels" [level=3] [ref=e81]
+        - paragraph [ref=e82]: Des designs élégants et modernes, optimisés pour les ATS
+      - generic [ref=e83]:
+        - img [ref=e85]
+        - heading "Interface intuitive" [level=3] [ref=e87]
+        - paragraph [ref=e88]: Éditez facilement chaque section de votre CV
+      - generic [ref=e89]:
+        - img [ref=e91]
+        - heading "Export PDF haute qualité" [level=3] [ref=e95]
+        - paragraph [ref=e96]: Rendu LaTeX professionnel et impeccable
+  - generic [ref=e98]:
+    - heading "Prêt à créer votre CV ?" [level=2] [ref=e99]
+    - paragraph [ref=e100]: Commencez gratuitement, exportez en PDF en quelques clics
+    - button "Commencer maintenant" [ref=e101] [cursor=pointer]
+  - contentinfo [ref=e102]:
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - img [ref=e106]
+        - generic [ref=e109]: Sivee
+      - navigation [ref=e110]:
+        - link "Mentions légales" [ref=e111] [cursor=pointer]:
+          - /url: /mentions-legales
+        - link "Politique de confidentialité" [ref=e112] [cursor=pointer]:
+          - /url: /politique-confidentialite
+        - link "Conditions d'utilisation" [ref=e113] [cursor=pointer]:
+          - /url: /cgu
+      - paragraph [ref=e114]: Fait avec soin
+```

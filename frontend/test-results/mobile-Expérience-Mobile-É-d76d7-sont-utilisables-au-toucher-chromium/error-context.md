@@ -1,0 +1,83 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - button [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - button "Set theme to Light" [ref=e12] [cursor=pointer]:
+            - img [ref=e13]
+          - button "Set theme to Dark" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+        - generic [ref=e22]:
+          - button "🇫🇷" [ref=e23] [cursor=pointer]
+          - button "🇬🇧" [ref=e24] [cursor=pointer]
+        - button [ref=e25] [cursor=pointer]:
+          - img [ref=e26]
+        - button [ref=e30] [cursor=pointer]:
+          - img [ref=e31]
+  - main [ref=e33]:
+    - generic [ref=e35]:
+      - img [ref=e37]
+      - generic [ref=e41]:
+        - heading "Vous avez déjà un CV ?" [level=3] [ref=e42]
+        - paragraph [ref=e43]: Importez-le pour pré-remplir automatiquement vos informations
+      - button "Importer un PDF" [ref=e44] [cursor=pointer]:
+        - img [ref=e45]
+        - text: Importer un PDF
+    - generic [ref=e48]:
+      - generic [ref=e50]:
+        - img [ref=e52]
+        - generic [ref=e55]:
+          - heading "Informations personnelles" [level=2] [ref=e56]
+          - paragraph [ref=e57]: Vos coordonnées et liens professionnels
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]: Nom complet
+          - generic [ref=e61]:
+            - textbox "Jean Dupont" [ref=e62]
+            - img [ref=e63]
+        - generic [ref=e66]:
+          - generic [ref=e67]: Titre professionnel
+          - textbox "Développeur Full Stack" [ref=e68]
+        - generic [ref=e69]:
+          - generic [ref=e70]: Localisation
+          - generic [ref=e71]:
+            - textbox "Paris, France" [ref=e72]
+            - img [ref=e73]
+        - generic [ref=e76]:
+          - generic [ref=e77]: Email
+          - generic [ref=e78]:
+            - textbox "jean@exemple.com" [ref=e79]
+            - img [ref=e80]
+        - generic [ref=e83]:
+          - generic [ref=e84]: Téléphone
+          - generic [ref=e85]:
+            - textbox "+33 6 12 34 56 78" [ref=e86]
+            - img [ref=e87]
+      - generic [ref=e89]:
+        - generic [ref=e90]:
+          - generic [ref=e91]:
+            - img [ref=e92]
+            - heading "Liens professionnels" [level=3] [ref=e95]
+          - button "Ajouter un lien" [ref=e96] [cursor=pointer]:
+            - img [ref=e97]
+            - text: Ajouter un lien
+        - paragraph [ref=e98]: Aucun lien ajouté. Ajoutez LinkedIn, GitHub, Portfolio...
+    - button "Suivant" [ref=e100] [cursor=pointer]:
+      - text: Suivant
+      - img [ref=e101]
+  - generic [ref=e105]:
+    - img [ref=e107]
+    - generic [ref=e109]:
+      - heading "Sauvegardez votre travail" [level=3] [ref=e110]
+      - paragraph [ref=e111]: Créez un compte gratuit pour conserver vos CV et débloquer plus de fonctionnalités.
+      - button "Créer un compte gratuit" [ref=e112] [cursor=pointer]
+    - button [ref=e113] [cursor=pointer]:
+      - img [ref=e114]
+  - button "Aperçu" [ref=e117] [cursor=pointer]:
+    - img [ref=e118]
+```
