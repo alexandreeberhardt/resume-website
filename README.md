@@ -2,11 +2,7 @@
 
 A web application to generate professional PDF resumes from a dynamic form interface. Built with FastAPI (Python) and React, with LaTeX-based PDF generation.
 
-## Screenshots
-
-| Web Interface | Generated PDF |
-|---------------|---------------|
-| ![Web Interface](small_website.png) | ![Generated CV](screen_cv.png) |
+**Live demo**: [sivee.pro](https://sivee.pro)
 
 ## Features
 
