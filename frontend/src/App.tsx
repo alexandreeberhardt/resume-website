@@ -285,6 +285,13 @@ function App() {
     } else {
       setSavedResumes([]);
       setCurrentResumeId(null);
+      setResumeName('');
+      // Reset editor data so the next user doesn't see stale content
+      setData(getEmptyResumeData(getTranslatedSectionTitle));
+      setHasImported(false);
+      setEditorStep(0);
+      setShowResumesPage(false);
+      setShowLanding(true);
     }
   }, [isAuthenticated]);
 
