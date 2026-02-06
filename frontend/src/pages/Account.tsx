@@ -3,7 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, ArrowLeft, User, Download, Trash2, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { FileText, ArrowLeft, User, Download, Trash2, Loader2, AlertTriangle, CheckCircle, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
@@ -132,11 +132,21 @@ export default function Account() {
             <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center">
               <User className="w-7 h-7 text-primary-600" />
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="text-lg font-semibold text-primary-900">{t('account.profile')}</h2>
               <p className="text-primary-500">{user?.email}</p>
             </div>
           </div>
+          <button
+            onClick={() => {
+              logout();
+              navigate('/');
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 dark:border-primary-700 dark:text-primary-300 dark:hover:bg-primary-800 transition-colors font-medium text-sm"
+          >
+            <LogOut className="w-4 h-4" />
+            {t('common.logout')}
+          </button>
         </div>
 
         {/* GDPR Actions */}
