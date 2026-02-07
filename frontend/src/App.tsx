@@ -34,6 +34,8 @@ import {
   FolderOpen,
   User,
   Trash2,
+  Pencil,
+  Check,
 } from 'lucide-react';
 import {
   ResumeData,
@@ -414,6 +416,15 @@ function App() {
       await loadSavedResumes();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete resume');
+    }
+  };
+
+  const handleRenameResume = async (resumeId: number, newName: string) => {
+    try {
+      await updateResume(resumeId, { name: newName });
+      await loadSavedResumes();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to rename resume');
     }
   };
 
@@ -993,6 +1004,7 @@ function App() {
                   isActive={currentResumeId === resume.id}
                   onOpen={() => handleOpenResume(resume)}
                   onDelete={() => handleDeleteResume(resume.id)}
+                  onRename={(newName) => handleRenameResume(resume.id, newName)}
                 />
               ))}
             </div>
@@ -1827,16 +1839,20 @@ function ResumeCard({
   isActive,
   onOpen,
   onDelete,
+  onRename,
 }: {
   resume: SavedResume;
   isActive: boolean;
   onOpen: () => void;
   onDelete: () => void;
+  onRename: (newName: string) => void;
 }) {
   const { t } = useTranslation();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isMobile] = useState(isMobileDevice);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(resume.name);
 
   // Generate preview on mount
   useEffect(() => {
@@ -1919,16 +1935,29 @@ function ResumeCard({
           </div>
         </div>
 
-        {/* Delete button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-error-50 text-primary-400 hover:text-error-600 rounded-lg transition-all opacity-0 group-hover:opacity-100 shadow-sm"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        {/* Action buttons */}
+        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsEditing(true);
+              setEditName(resume.name);
+            }}
+            className="p-2 bg-white/90 hover:bg-primary-50 text-primary-400 hover:text-primary-700 rounded-lg transition-all shadow-sm"
+            title={t('resumes.rename') || 'Renommer'}
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-2 bg-white/90 hover:bg-error-50 text-primary-400 hover:text-error-600 rounded-lg transition-all shadow-sm"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
 
         {/* Active indicator */}
         {isActive && (
@@ -1940,7 +1969,39 @@ function ResumeCard({
 
       {/* Info */}
       <div className="p-4">
-        <h3 className="font-medium text-primary-900 truncate">{displayName}</h3>
+        {isEditing ? (
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && editName.trim()) {
+                  onRename(editName.trim());
+                  setIsEditing(false);
+                } else if (e.key === 'Escape') {
+                  setIsEditing(false);
+                  setEditName(resume.name);
+                }
+              }}
+              autoFocus
+              className="flex-1 min-w-0 px-2 py-0.5 text-sm font-medium text-primary-900 border border-primary-200 rounded focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
+            />
+            <button
+              onClick={() => {
+                if (editName.trim()) {
+                  onRename(editName.trim());
+                  setIsEditing(false);
+                }
+              }}
+              className="p-1 text-brand hover:text-brand-dark rounded transition-colors"
+            >
+              <Check className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <h3 className="font-medium text-primary-900 truncate">{displayName}</h3>
+        )}
         <div className="flex items-center justify-between mt-1.5">
           <span className="text-xs text-primary-400 capitalize">{templateId}</span>
           {resume.created_at && (

@@ -78,6 +78,7 @@
     "delete": "Supprimer",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce CV ?",
     "open": "Ouvrir",
+    "rename": "Renommer",
     "saveCurrent": "Sauvegarder",
     "saveAs": "Enregistrer sous",
     "resumeName": "Nom du CV",
