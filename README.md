@@ -192,6 +192,16 @@ cd /opt/cv-generator
 
 ---
 
+## Tests
+
+```bash
+./test.sh
+```
+
+This runs both backend (pytest) and frontend (Vitest) test suites.
+
+---
+
 ## Production Deployment
 
 ### Deploy
