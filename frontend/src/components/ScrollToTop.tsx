@@ -1,8 +1,8 @@
 /**
  * ScrollToTop component - scrolls to top on legal page navigation
  */
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 const LEGAL_PATHS = [
   '/mentions-legales',
@@ -11,17 +11,17 @@ const LEGAL_PATHS = [
   '/privacy-policy',
   '/cgu',
   '/terms',
-];
+]
 
 export default function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
   useEffect(() => {
     // Only scroll to top when navigating to legal pages
     if (LEGAL_PATHS.includes(pathname)) {
-      window.scrollTo(0, 0);
+      window.scrollTo(0, 0)
     }
-  }, [pathname]);
+  }, [pathname])
 
-  return null;
+  return null
 }

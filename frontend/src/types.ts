@@ -3,110 +3,110 @@
 // === Types d'authentification ===
 
 export interface User {
-  id: number;
-  email: string;
-  isGuest?: boolean;
+  id: number
+  email: string
+  isGuest?: boolean
 }
 
 export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  user: User | null
+  token: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
 }
 
 export interface LoginCredentials {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export interface RegisterCredentials {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export interface AuthResponse {
-  access_token: string;
-  token_type: string;
+  access_token: string
+  token_type: string
 }
 
 export interface SavedResume {
-  id: number;
-  user_id: number;
-  name: string;
-  json_content: ResumeData | null;
-  s3_url: string | null;
-  created_at?: string;
+  id: number
+  user_id: number
+  name: string
+  json_content: ResumeData | null
+  s3_url: string | null
+  created_at?: string
 }
 
 export interface SavedResumeListResponse {
-  resumes: SavedResume[];
-  total: number;
+  resumes: SavedResume[]
+  total: number
 }
 
 // === Types de base pour les items ===
 
-export type PlatformType = 'linkedin' | 'github' | 'portfolio' | 'behance' | 'website' | 'other';
+export type PlatformType = 'linkedin' | 'github' | 'portfolio' | 'behance' | 'website' | 'other'
 
 export interface ProfessionalLink {
-  platform: PlatformType;
-  username: string;
-  url: string;
+  platform: PlatformType
+  username: string
+  url: string
 }
 
 export interface PersonalInfo {
-  name: string;
-  title: string;
-  location: string;
-  email: string;
-  phone: string;
-  links: ProfessionalLink[];
+  name: string
+  title: string
+  location: string
+  email: string
+  phone: string
+  links: ProfessionalLink[]
 }
 
 export const createEmptyLink = (): ProfessionalLink => ({
   platform: 'linkedin',
   username: '',
   url: '',
-});
+})
 
 export interface EducationItem {
-  school: string;
-  degree: string;
-  dates: string;
-  subtitle: string;
-  description: string;
+  school: string
+  degree: string
+  dates: string
+  subtitle: string
+  description: string
 }
 
 export interface ExperienceItem {
-  title: string;
-  company: string;
-  dates: string;
-  highlights: string[];
+  title: string
+  company: string
+  dates: string
+  highlights: string[]
 }
 
 export interface ProjectItem {
-  name: string;
-  year: string;
-  highlights: string[];
+  name: string
+  year: string
+  highlights: string[]
 }
 
 export interface SkillsItem {
-  languages: string;
-  tools: string;
+  languages: string
+  tools: string
 }
 
 export interface LeadershipItem {
-  role: string;
-  place: string;
-  dates: string;
-  highlights: string[];
+  role: string
+  place: string
+  dates: string
+  highlights: string[]
 }
 
 export interface CustomItem {
-  title: string;
-  subtitle?: string;
-  dates?: string;
-  highlights: string[];
+  title: string
+  subtitle?: string
+  dates?: string
+  highlights: string[]
 }
 
 // === Types de sections ===
@@ -119,7 +119,7 @@ export type SectionType =
   | 'skills'
   | 'leadership'
   | 'languages'
-  | 'custom';
+  | 'custom'
 
 export type SectionItems =
   | EducationItem[]
@@ -127,32 +127,46 @@ export type SectionItems =
   | ProjectItem[]
   | SkillsItem
   | LeadershipItem[]
-  | string  // pour languages
-  | CustomItem[];
+  | string // pour languages
+  | CustomItem[]
 
 export interface CVSection {
-  id: string;
-  type: SectionType;
-  title: string;
-  isVisible: boolean;
-  items: SectionItems;
+  id: string
+  type: SectionType
+  title: string
+  isVisible: boolean
+  items: SectionItems
 }
 
 // === Types de templates ===
 
 export type TemplateId =
-  | 'harvard' | 'harvard_compact' | 'harvard_large'
-  | 'europass' | 'europass_compact' | 'europass_large'
-  | 'mckinsey' | 'mckinsey_compact' | 'mckinsey_large'
-  | 'aurianne' | 'aurianne_compact' | 'aurianne_large'
-  | 'stephane' | 'stephane_compact' | 'stephane_large'
-  | 'michel' | 'michel_compact' | 'michel_large'
-  | 'double' | 'double_compact' | 'double_large';
+  | 'harvard'
+  | 'harvard_compact'
+  | 'harvard_large'
+  | 'europass'
+  | 'europass_compact'
+  | 'europass_large'
+  | 'mckinsey'
+  | 'mckinsey_compact'
+  | 'mckinsey_large'
+  | 'aurianne'
+  | 'aurianne_compact'
+  | 'aurianne_large'
+  | 'stephane'
+  | 'stephane_compact'
+  | 'stephane_large'
+  | 'michel'
+  | 'michel_compact'
+  | 'michel_large'
+  | 'double'
+  | 'double_compact'
+  | 'double_large'
 
 export interface TemplateOption {
-  id: TemplateId;
-  name: string;
-  description: string;
+  id: TemplateId
+  name: string
+  description: string
 }
 
 export const AVAILABLE_TEMPLATES: TemplateOption[] = [
@@ -162,20 +176,52 @@ export const AVAILABLE_TEMPLATES: TemplateOption[] = [
   { id: 'harvard_large', name: 'Harvard Large', description: 'Harvard avec espacement augmenté' },
   // Europass
   { id: 'europass', name: 'Europass', description: 'Format européen standardisé' },
-  { id: 'europass_compact', name: 'Europass Compact', description: 'Europass avec espacement réduit' },
-  { id: 'europass_large', name: 'Europass Large', description: 'Europass avec espacement augmenté' },
+  {
+    id: 'europass_compact',
+    name: 'Europass Compact',
+    description: 'Europass avec espacement réduit',
+  },
+  {
+    id: 'europass_large',
+    name: 'Europass Large',
+    description: 'Europass avec espacement augmenté',
+  },
   // McKinsey
   { id: 'mckinsey', name: 'McKinsey', description: 'Style consulting haut de gamme' },
-  { id: 'mckinsey_compact', name: 'McKinsey Compact', description: 'McKinsey avec espacement réduit' },
-  { id: 'mckinsey_large', name: 'McKinsey Large', description: 'McKinsey avec espacement augmenté' },
+  {
+    id: 'mckinsey_compact',
+    name: 'McKinsey Compact',
+    description: 'McKinsey avec espacement réduit',
+  },
+  {
+    id: 'mckinsey_large',
+    name: 'McKinsey Large',
+    description: 'McKinsey avec espacement augmenté',
+  },
   // Aurianne
   { id: 'aurianne', name: 'Aurianne', description: 'Style moderne et compact' },
-  { id: 'aurianne_compact', name: 'Aurianne Compact', description: 'Aurianne avec espacement réduit' },
-  { id: 'aurianne_large', name: 'Aurianne Large', description: 'Aurianne avec espacement augmenté' },
+  {
+    id: 'aurianne_compact',
+    name: 'Aurianne Compact',
+    description: 'Aurianne avec espacement réduit',
+  },
+  {
+    id: 'aurianne_large',
+    name: 'Aurianne Large',
+    description: 'Aurianne avec espacement augmenté',
+  },
   // Stephane
   { id: 'stephane', name: 'Stephane', description: 'Style moderne avec icônes' },
-  { id: 'stephane_compact', name: 'Stephane Compact', description: 'Stephane avec espacement réduit' },
-  { id: 'stephane_large', name: 'Stephane Large', description: 'Stephane avec espacement augmenté' },
+  {
+    id: 'stephane_compact',
+    name: 'Stephane Compact',
+    description: 'Stephane avec espacement réduit',
+  },
+  {
+    id: 'stephane_large',
+    name: 'Stephane Large',
+    description: 'Stephane avec espacement augmenté',
+  },
   // Michel
   { id: 'michel', name: 'Michel', description: 'Style moderncv classique' },
   { id: 'michel_compact', name: 'Michel Compact', description: 'Michel avec espacement réduit' },
@@ -184,14 +230,14 @@ export const AVAILABLE_TEMPLATES: TemplateOption[] = [
   { id: 'double', name: 'Double', description: 'Style moderne deux colonnes avec initiales' },
   { id: 'double_compact', name: 'Double Compact', description: 'Double avec espacement réduit' },
   { id: 'double_large', name: 'Double Large', description: 'Double avec espacement augmenté' },
-];
+]
 
 // === Structure principale du CV ===
 
 export interface ResumeData {
-  personal: PersonalInfo;
-  sections: CVSection[];
-  template_id: TemplateId;
+  personal: PersonalInfo
+  sections: CVSection[]
+  template_id: TemplateId
 }
 
 // === Helpers pour créer des sections vides ===
@@ -202,81 +248,81 @@ export const createEmptyEducation = (): EducationItem => ({
   dates: '',
   subtitle: '',
   description: '',
-});
+})
 
 export const createEmptyExperience = (): ExperienceItem => ({
   title: '',
   company: '',
   dates: '',
   highlights: [],
-});
+})
 
 export const createEmptyProject = (): ProjectItem => ({
   name: '',
   year: '',
   highlights: [],
-});
+})
 
 export const createEmptySkills = (): SkillsItem => ({
   languages: '',
   tools: '',
-});
+})
 
 export const createEmptyLeadership = (): LeadershipItem => ({
   role: '',
   place: '',
   dates: '',
   highlights: [],
-});
+})
 
 export const createEmptyCustomItem = (): CustomItem => ({
   title: '',
   subtitle: '',
   dates: '',
   highlights: [],
-});
+})
 
 // Générateur d'ID unique
 export const generateId = (): string => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+}
 
 // Créer une nouvelle section
 export const createSection = (type: SectionType, title: string): CVSection => {
-  const id = generateId();
-  let items: SectionItems;
+  const id = generateId()
+  let items: SectionItems
 
   switch (type) {
     case 'summary':
-      items = '';
-      break;
+      items = ''
+      break
     case 'education':
-      items = [];
-      break;
+      items = []
+      break
     case 'experiences':
-      items = [];
-      break;
+      items = []
+      break
     case 'projects':
-      items = [];
-      break;
+      items = []
+      break
     case 'skills':
-      items = createEmptySkills();
-      break;
+      items = createEmptySkills()
+      break
     case 'leadership':
-      items = [];
-      break;
+      items = []
+      break
     case 'languages':
-      items = '';
-      break;
+      items = ''
+      break
     case 'custom':
-      items = [];
-      break;
+      items = []
+      break
     default:
-      items = [];
+      items = []
   }
 
-  return { id, type, title, isVisible: true, items };
-};
+  return { id, type, title, isVisible: true, items }
+}
 
 // Titres par défaut en anglais (utilisés comme fallback et pour la détection de personnalisation)
 export const defaultSectionTitlesEn: Record<SectionType, string> = {
@@ -288,10 +334,10 @@ export const defaultSectionTitlesEn: Record<SectionType, string> = {
   leadership: 'Leadership & Community Involvement',
   languages: 'Languages',
   custom: 'Custom Section',
-};
+}
 
 // Alias pour compatibilité
-export const defaultSectionTitles = defaultSectionTitlesEn;
+export const defaultSectionTitles = defaultSectionTitlesEn
 
 // Données par défaut vides (avec titres en anglais, sera remplacé par getEmptyResumeData)
 export const emptyResumeData: ResumeData = {
@@ -305,11 +351,11 @@ export const emptyResumeData: ResumeData = {
   },
   sections: [],
   template_id: 'harvard',
-};
+}
 
 // === Estimation de densité du contenu ===
 
-export type SizeVariant = 'compact' | 'normal' | 'large';
+export type SizeVariant = 'compact' | 'normal' | 'large'
 
 /**
  * Estime la densité du contenu du CV pour recommander une variante de taille.
@@ -326,132 +372,132 @@ export type SizeVariant = 'compact' | 'normal' | 'large';
  * - score >= 30: 'compact' (contenu dense, besoin de compression)
  */
 export const estimateContentDensity = (data: ResumeData): SizeVariant => {
-  let score = 0;
+  let score = 0
 
   // Parcourir toutes les sections visibles
   for (const section of data.sections) {
-    if (!section.isVisible) continue;
+    if (!section.isVisible) continue
 
     switch (section.type) {
       case 'summary': {
-        const summaryText = section.items as string;
+        const summaryText = section.items as string
         // 1 point par 100 caractères
-        score += Math.floor((summaryText?.length || 0) / 100);
-        break;
+        score += Math.floor((summaryText?.length || 0) / 100)
+        break
       }
 
       case 'education': {
-        const items = section.items as EducationItem[];
+        const items = section.items as EducationItem[]
         // 2 points par formation
-        score += (items?.length || 0) * 2;
+        score += (items?.length || 0) * 2
         // +1 si description présente
-        items?.forEach(item => {
-          if (item.description?.trim()) score += 1;
-        });
-        break;
+        items?.forEach((item) => {
+          if (item.description?.trim()) score += 1
+        })
+        break
       }
 
       case 'experiences': {
-        const items = section.items as ExperienceItem[];
+        const items = section.items as ExperienceItem[]
         // 3 points par expérience (plus impactant visuellement)
-        score += (items?.length || 0) * 3;
+        score += (items?.length || 0) * 3
         // 0.5 point par highlight
-        items?.forEach(item => {
-          score += (item.highlights?.length || 0) * 0.5;
-        });
-        break;
+        items?.forEach((item) => {
+          score += (item.highlights?.length || 0) * 0.5
+        })
+        break
       }
 
       case 'projects': {
-        const items = section.items as ProjectItem[];
+        const items = section.items as ProjectItem[]
         // 2 points par projet
-        score += (items?.length || 0) * 2;
+        score += (items?.length || 0) * 2
         // 0.5 point par highlight
-        items?.forEach(item => {
-          score += (item.highlights?.length || 0) * 0.5;
-        });
-        break;
+        items?.forEach((item) => {
+          score += (item.highlights?.length || 0) * 0.5
+        })
+        break
       }
 
       case 'leadership': {
-        const items = section.items as LeadershipItem[];
+        const items = section.items as LeadershipItem[]
         // 2 points par engagement
-        score += (items?.length || 0) * 2;
+        score += (items?.length || 0) * 2
         // 0.5 point par highlight
-        items?.forEach(item => {
-          score += (item.highlights?.length || 0) * 0.5;
-        });
-        break;
+        items?.forEach((item) => {
+          score += (item.highlights?.length || 0) * 0.5
+        })
+        break
       }
 
       case 'custom': {
-        const items = section.items as CustomItem[];
+        const items = section.items as CustomItem[]
         // 2 points par item custom
-        score += (items?.length || 0) * 2;
+        score += (items?.length || 0) * 2
         // 0.5 point par highlight
-        items?.forEach(item => {
-          score += (item.highlights?.length || 0) * 0.5;
-        });
-        break;
+        items?.forEach((item) => {
+          score += (item.highlights?.length || 0) * 0.5
+        })
+        break
       }
 
       case 'skills': {
-        const skills = section.items as SkillsItem;
+        const skills = section.items as SkillsItem
         // Points basés sur la longueur des compétences
-        const languagesLen = skills?.languages?.length || 0;
-        const toolsLen = skills?.tools?.length || 0;
-        score += Math.floor((languagesLen + toolsLen) / 50);
-        break;
+        const languagesLen = skills?.languages?.length || 0
+        const toolsLen = skills?.tools?.length || 0
+        score += Math.floor((languagesLen + toolsLen) / 50)
+        break
       }
 
       case 'languages': {
-        const langText = section.items as string;
+        const langText = section.items as string
         // 0.5 point par 50 caractères
-        score += Math.floor((langText?.length || 0) / 100);
-        break;
+        score += Math.floor((langText?.length || 0) / 100)
+        break
       }
     }
   }
 
   // Déterminer la variante selon le score
   if (score < 12) {
-    return 'large';
+    return 'large'
   } else if (score < 30) {
-    return 'normal';
+    return 'normal'
   } else {
-    return 'compact';
+    return 'compact'
   }
-};
+}
 
 /**
  * Applique une variante de taille à un template ID.
  */
 export const applyTemplateSizeVariant = (
   templateId: TemplateId,
-  variant: SizeVariant
+  variant: SizeVariant,
 ): TemplateId => {
-  const baseTemplate = templateId.replace(/_compact|_large/, '');
+  const baseTemplate = templateId.replace(/_compact|_large/, '')
   if (variant === 'normal') {
-    return baseTemplate as TemplateId;
+    return baseTemplate as TemplateId
   }
-  return `${baseTemplate}_${variant}` as TemplateId;
-};
+  return `${baseTemplate}_${variant}` as TemplateId
+}
 
 /**
  * Extrait la variante de taille d'un template ID.
  */
 export const getTemplateSizeVariant = (templateId: TemplateId): SizeVariant => {
-  if (templateId.includes('_compact')) return 'compact';
-  if (templateId.includes('_large')) return 'large';
-  return 'normal';
-};
+  if (templateId.includes('_compact')) return 'compact'
+  if (templateId.includes('_large')) return 'large'
+  return 'normal'
+}
 
 /**
  * Extrait le template de base (sans suffixe de taille).
  */
 export const getBaseTemplateId = (templateId: TemplateId): string => {
-  return templateId.replace(/_compact|_large/, '');
-};
+  return templateId.replace(/_compact|_large/, '')
+}
 
 // Fonction pour créer les données par défaut avec les titres traduits
 export const getEmptyResumeData = (): ResumeData => ({
@@ -465,4 +511,4 @@ export const getEmptyResumeData = (): ResumeData => ({
   },
   sections: [],
   template_id: 'harvard',
-});
+})

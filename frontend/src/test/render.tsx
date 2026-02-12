@@ -7,16 +7,11 @@ import '../i18n'
 function AllProviders({ children }: { children: React.ReactNode }) {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
+      <AuthProvider>{children}</AuthProvider>
     </BrowserRouter>
   )
 }
 
-export function renderWithProviders(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
-) {
+export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
   return render(ui, { wrapper: AllProviders, ...options })
 }

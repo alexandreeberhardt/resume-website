@@ -1,6 +1,6 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useTranslation } from 'react-i18next';
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useTranslation } from 'react-i18next'
 import {
   GripVertical,
   Eye,
@@ -11,8 +11,8 @@ import {
   Pencil,
   Check,
   X,
-} from 'lucide-react';
-import { useState } from 'react';
+} from 'lucide-react'
+import { useState } from 'react'
 import {
   CVSection,
   EducationItem,
@@ -22,27 +22,27 @@ import {
   LeadershipItem,
   CustomItem,
   SectionType,
-} from '../types';
-import EducationEditor from './editors/EducationEditor';
-import ExperienceEditor from './editors/ExperienceEditor';
-import ProjectEditor from './editors/ProjectEditor';
-import SkillsEditor from './editors/SkillsEditor';
-import LeadershipEditor from './editors/LeadershipEditor';
-import LanguagesEditor from './editors/LanguagesEditor';
-import CustomEditor from './editors/CustomEditor';
-import SummaryEditor from './editors/SummaryEditor';
+} from '../types'
+import EducationEditor from './editors/EducationEditor'
+import ExperienceEditor from './editors/ExperienceEditor'
+import ProjectEditor from './editors/ProjectEditor'
+import SkillsEditor from './editors/SkillsEditor'
+import LeadershipEditor from './editors/LeadershipEditor'
+import LanguagesEditor from './editors/LanguagesEditor'
+import CustomEditor from './editors/CustomEditor'
+import SummaryEditor from './editors/SummaryEditor'
 
 interface SortableSectionProps {
-  section: CVSection;
-  onUpdate: (updates: Partial<CVSection>) => void;
-  onDelete: () => void;
+  section: CVSection
+  onUpdate: (updates: Partial<CVSection>) => void
+  onDelete: () => void
 }
 
 export default function SortableSection({ section, onUpdate, onDelete }: SortableSectionProps) {
-  const { t } = useTranslation();
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [titleInput, setTitleInput] = useState(section.title);
+  const { t } = useTranslation()
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [titleInput, setTitleInput] = useState(section.title)
 
   const getSectionTypeLabel = (type: SectionType): string => {
     const labels: Record<SectionType, string> = {
@@ -54,33 +54,28 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
       leadership: t('sections.leadership'),
       languages: t('sections.languages'),
       custom: t('sections.custom'),
-    };
-    return labels[type] || type;
-  };
+    }
+    return labels[type] || type
+  }
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: section.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: section.id,
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
+  }
 
   const handleTitleSave = () => {
-    onUpdate({ title: titleInput });
-    setIsEditingTitle(false);
-  };
+    onUpdate({ title: titleInput })
+    setIsEditingTitle(false)
+  }
 
   const handleTitleCancel = () => {
-    setTitleInput(section.title);
-    setIsEditingTitle(false);
-  };
+    setTitleInput(section.title)
+    setIsEditingTitle(false)
+  }
 
   const renderEditor = () => {
     switch (section.type) {
@@ -90,60 +85,60 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
             value={section.items as string}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'education':
         return (
           <EducationEditor
             items={section.items as EducationItem[]}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'experiences':
         return (
           <ExperienceEditor
             items={section.items as ExperienceItem[]}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'projects':
         return (
           <ProjectEditor
             items={section.items as ProjectItem[]}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'skills':
         return (
           <SkillsEditor
             data={section.items as SkillsItem}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'leadership':
         return (
           <LeadershipEditor
             items={section.items as LeadershipItem[]}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'languages':
         return (
           <LanguagesEditor
             value={section.items as string}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       case 'custom':
         return (
           <CustomEditor
             items={section.items as CustomItem[]}
             onChange={(items) => onUpdate({ items })}
           />
-        );
+        )
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
     <div
@@ -174,8 +169,8 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
                 value={titleInput}
                 onChange={(e) => setTitleInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleTitleSave();
-                  if (e.key === 'Escape') handleTitleCancel();
+                  if (e.key === 'Enter') handleTitleSave()
+                  if (e.key === 'Escape') handleTitleCancel()
                 }}
                 className="flex-1 min-w-0 px-2 sm:px-3 py-1.5 text-sm sm:text-base font-semibold border border-primary-300
                            rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2
@@ -241,28 +236,20 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
             className="p-1.5 sm:p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50
                        rounded-lg transition-colors"
           >
-            {isExpanded ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
-            )}
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
       {/* Content */}
-      {isExpanded && section.isVisible && (
-        <div className="p-3 sm:p-5">{renderEditor()}</div>
-      )}
+      {isExpanded && section.isVisible && <div className="p-3 sm:p-5">{renderEditor()}</div>}
 
       {/* Collapsed/Hidden message */}
       {isExpanded && !section.isVisible && (
         <div className="px-3 sm:px-5 py-4 text-center">
-          <p className="text-sm text-primary-400">
-            {t('sections.hiddenMessage')}
-          </p>
+          <p className="text-sm text-primary-400">{t('sections.hiddenMessage')}</p>
         </div>
       )}
     </div>
-  );
+  )
 }

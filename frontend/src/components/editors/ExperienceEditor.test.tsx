@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, within } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ExperienceEditor from './ExperienceEditor'
 import { renderWithProviders } from '../../test/render'
@@ -75,9 +75,13 @@ describe('ExperienceEditor', () => {
     const allButtons = screen.getAllByRole('button')
     // The add highlight button has the Plus icon and small "Add" text,
     // while the main button says "Add experience" / "Ajouter une expérience"
-    const addHighlightBtn = allButtons.find(btn => {
+    const addHighlightBtn = allButtons.find((btn) => {
       const text = btn.textContent?.toLowerCase() || ''
-      return (text === 'add' || text === 'ajouter') && !text.includes('experience') && !text.includes('expérience')
+      return (
+        (text === 'add' || text === 'ajouter') &&
+        !text.includes('experience') &&
+        !text.includes('expérience')
+      )
     })!
     await user.click(addHighlightBtn)
 
@@ -95,8 +99,9 @@ describe('ExperienceEditor', () => {
     renderWithProviders(<ExperienceEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 
     // The "noHighlights" message is an italic paragraph
-    const emptyMessage = screen.getByText((text, element) =>
-      element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0
+    const emptyMessage = screen.getByText(
+      (text, element) =>
+        element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0,
     )
     expect(emptyMessage).toBeInTheDocument()
   })

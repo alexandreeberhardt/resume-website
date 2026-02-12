@@ -178,9 +178,13 @@ describe('estimateContentDensity', () => {
 
   it('returns large for minimal content', () => {
     const data = makeData([
-      { id: '1', type: 'education', title: 'Education', isVisible: true, items: [
-        { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: '' }
-      ]},
+      {
+        id: '1',
+        type: 'education',
+        title: 'Education',
+        isVisible: true,
+        items: [{ school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: '' }],
+      },
     ])
     // 1 education item = 2 points → large (< 12)
     expect(estimateContentDensity(data)).toBe('large')
@@ -188,14 +192,24 @@ describe('estimateContentDensity', () => {
 
   it('returns normal for moderate content', () => {
     const data = makeData([
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: true, items: [
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c'] },
-        { title: 'Dev', company: 'Co', dates: '2021', highlights: ['a', 'b'] },
-        { title: 'Dev', company: 'Co', dates: '2022', highlights: ['a', 'b'] },
-      ]},
-      { id: '2', type: 'education', title: 'Edu', isVisible: true, items: [
-        { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' },
-      ]},
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: true,
+        items: [
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c'] },
+          { title: 'Dev', company: 'Co', dates: '2021', highlights: ['a', 'b'] },
+          { title: 'Dev', company: 'Co', dates: '2022', highlights: ['a', 'b'] },
+        ],
+      },
+      {
+        id: '2',
+        type: 'education',
+        title: 'Edu',
+        isVisible: true,
+        items: [{ school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' }],
+      },
     ])
     // 3 exp * 3 = 9, 7 highlights * 0.5 = 3.5, 1 edu * 2 = 2, +1 desc = 1 → 15.5 → normal
     expect(estimateContentDensity(data)).toBe('normal')
@@ -203,20 +217,39 @@ describe('estimateContentDensity', () => {
 
   it('returns compact for dense content', () => {
     const makeExp = () => ({
-      title: 'Dev', company: 'Co', dates: '2020',
-      highlights: ['a', 'b', 'c', 'd']
+      title: 'Dev',
+      company: 'Co',
+      dates: '2020',
+      highlights: ['a', 'b', 'c', 'd'],
     })
     const data = makeData([
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: true,
-        items: [makeExp(), makeExp(), makeExp(), makeExp(), makeExp()] },
-      { id: '2', type: 'education', title: 'Edu', isVisible: true, items: [
-        { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' },
-        { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' },
-      ]},
-      { id: '3', type: 'projects', title: 'Projects', isVisible: true, items: [
-        { name: 'P1', year: '2020', highlights: ['a', 'b'] },
-        { name: 'P2', year: '2021', highlights: ['a', 'b'] },
-      ]},
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: true,
+        items: [makeExp(), makeExp(), makeExp(), makeExp(), makeExp()],
+      },
+      {
+        id: '2',
+        type: 'education',
+        title: 'Edu',
+        isVisible: true,
+        items: [
+          { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' },
+          { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: 'desc' },
+        ],
+      },
+      {
+        id: '3',
+        type: 'projects',
+        title: 'Projects',
+        isVisible: true,
+        items: [
+          { name: 'P1', year: '2020', highlights: ['a', 'b'] },
+          { name: 'P2', year: '2021', highlights: ['a', 'b'] },
+        ],
+      },
     ])
     // 5 exp * 3 = 15, 20 highlights * 0.5 = 10, 2 edu * 2 = 4, 2 desc = 2, 2 proj * 2 = 4, 4 highlights * 0.5 = 2 → 37 → compact
     expect(estimateContentDensity(data)).toBe('compact')
@@ -224,13 +257,19 @@ describe('estimateContentDensity', () => {
 
   it('skips hidden sections', () => {
     const data = makeData([
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: false, items: [
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
-        { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
-      ]},
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: false,
+        items: [
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
+          { title: 'Dev', company: 'Co', dates: '2020', highlights: ['a', 'b', 'c', 'd'] },
+        ],
+      },
     ])
     expect(estimateContentDensity(data)).toBe('large')
   })
@@ -245,8 +284,13 @@ describe('estimateContentDensity', () => {
 
   it('counts skills by total field length', () => {
     const data = makeData([
-      { id: '1', type: 'skills', title: 'Skills', isVisible: true,
-        items: { languages: 'a'.repeat(200), tools: 'b'.repeat(200) } },
+      {
+        id: '1',
+        type: 'skills',
+        title: 'Skills',
+        isVisible: true,
+        items: { languages: 'a'.repeat(200), tools: 'b'.repeat(200) },
+      },
     ])
     // (200 + 200) / 50 = 8 → large
     expect(estimateContentDensity(data)).toBe('large')

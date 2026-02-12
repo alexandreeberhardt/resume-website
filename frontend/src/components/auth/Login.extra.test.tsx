@@ -3,14 +3,11 @@
  */
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '../../test/render'
 import Login from './Login'
 import Register from './Register'
 
 describe('Login component extra', () => {
-  const user = userEvent.setup()
-
   it('renders without crashing', () => {
     renderWithProviders(<Login onSwitchToRegister={vi.fn()} />)
   })

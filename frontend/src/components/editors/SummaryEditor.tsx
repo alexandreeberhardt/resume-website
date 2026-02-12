@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { User } from 'lucide-react';
+import { useTranslation } from 'react-i18next'
+import { User } from 'lucide-react'
 
 interface SummaryEditorProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string
+  onChange: (value: string) => void
 }
 
 export default function SummaryEditor({ value, onChange }: SummaryEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="form-group">
@@ -22,9 +22,7 @@ export default function SummaryEditor({ value, onChange }: SummaryEditorProps) {
         rows={4}
         className="input resize-y min-h-[100px]"
       />
-      <p className="text-xs text-primary-400 mt-1.5">
-        {t('editors.summary.hint')}
-      </p>
+      <p className="text-xs text-primary-400 mt-1.5">{t('editors.summary.hint')}</p>
     </div>
-  );
+  )
 }

@@ -1,16 +1,16 @@
 /**
  * Authentication API functions
  */
-import { api } from './client';
-import type { AuthResponse, User, LoginCredentials, RegisterCredentials } from '../types';
+import { api } from './client'
+import type { AuthResponse, User, LoginCredentials, RegisterCredentials } from '../types'
 
-const API_URL = import.meta.env.DEV ? '' : '';
+const API_URL = import.meta.env.DEV ? '' : ''
 
 /**
  * Register a new user
  */
 export async function registerUser(credentials: RegisterCredentials): Promise<User> {
-  return api.post<User>('/auth/register', credentials);
+  return api.post<User>('/auth/register', credentials)
 }
 
 /**
@@ -18,24 +18,26 @@ export async function registerUser(credentials: RegisterCredentials): Promise<Us
  * Note: OAuth2 expects 'username' field, so we send email as username
  */
 export async function loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
-  const formData = new URLSearchParams();
-  formData.append('username', credentials.email);
-  formData.append('password', credentials.password);
+  const formData = new URLSearchParams()
+  formData.append('username', credentials.email)
+  formData.append('password', credentials.password)
 
-  return api.postForm<AuthResponse>('/auth/login', formData);
+  return api.postForm<AuthResponse>('/auth/login', formData)
 }
 
 /**
  * Decode JWT token to extract user info
  * Note: This is client-side decoding for convenience - the server still validates the token
  */
-export function decodeToken(token: string): { sub: string; email: string; exp: number; is_guest?: boolean } | null {
+export function decodeToken(
+  token: string,
+): { sub: string; email: string; exp: number; is_guest?: boolean } | null {
   try {
-    const payload = token.split('.')[1];
-    const decoded = JSON.parse(atob(payload));
-    return decoded;
+    const payload = token.split('.')[1]
+    const decoded = JSON.parse(atob(payload))
+    return decoded
   } catch {
-    return null;
+    return null
   }
 }
 
@@ -43,58 +45,58 @@ export function decodeToken(token: string): { sub: string; email: string; exp: n
  * Check if token is expired
  */
 export function isTokenExpired(token: string): boolean {
-  const decoded = decodeToken(token);
-  if (!decoded) return true;
+  const decoded = decodeToken(token)
+  if (!decoded) return true
 
-  const now = Math.floor(Date.now() / 1000);
-  return decoded.exp < now;
+  const now = Math.floor(Date.now() / 1000)
+  return decoded.exp < now
 }
 
 /**
  * Get Google OAuth login URL
  */
 export function getGoogleLoginUrl(): string {
-  return `${API_URL}/api/auth/google/login`;
+  return `${API_URL}/api/auth/google/login`
 }
 
 /**
  * Redirect to Google OAuth login
  */
 export function loginWithGoogle(): void {
-  window.location.href = getGoogleLoginUrl();
+  window.location.href = getGoogleLoginUrl()
 }
 
 /**
  * Export all user data (GDPR right to portability)
  */
 export async function exportUserData(): Promise<Record<string, unknown>> {
-  return api.get<Record<string, unknown>>('/auth/me/export');
+  return api.get<Record<string, unknown>>('/auth/me/export')
 }
 
 /**
  * Delete user account (GDPR right to erasure)
  */
 export async function deleteUserAccount(): Promise<void> {
-  return api.delete<void>('/auth/me');
+  return api.delete<void>('/auth/me')
 }
 
 /**
  * Get current user info
  */
 export async function getCurrentUser(): Promise<User> {
-  return api.get<User>('/auth/me');
+  return api.get<User>('/auth/me')
 }
 
 /**
  * Create an anonymous guest account
  */
 export async function createGuestAccount(): Promise<AuthResponse> {
-  return api.post<AuthResponse>('/auth/guest', {});
+  return api.post<AuthResponse>('/auth/guest', {})
 }
 
 /**
  * Upgrade a guest account to a permanent account
  */
 export async function upgradeGuestAccount(email: string, password: string): Promise<User> {
-  return api.post<User>('/auth/upgrade', { email, password });
+  return api.post<User>('/auth/upgrade', { email, password })
 }

@@ -51,7 +51,7 @@ describe('GuestUpgradeBanner', () => {
     const closeButtons = screen.getAllByRole('button')
     // The dismiss button is the last small one in the banner
     const dismissBtn = closeButtons.find(
-      (b) => b.querySelector('svg.lucide-x') || b.querySelector('[class*="w-4 h-4"]')
+      (b) => b.querySelector('svg.lucide-x') || b.querySelector('[class*="w-4 h-4"]'),
     )
     if (dismissBtn) {
       await user.click(dismissBtn)
@@ -70,9 +70,9 @@ describe('GuestUpgradeBanner', () => {
     renderWithProviders(<GuestUpgradeBanner />)
 
     // Find the "create account" button (white bg button in the banner)
-    const createAccountBtn = screen.getAllByRole('button').find(
-      (b) => b.classList.contains('bg-white')
-    )
+    const createAccountBtn = screen
+      .getAllByRole('button')
+      .find((b) => b.classList.contains('bg-white'))
     if (createAccountBtn) {
       await user.click(createAccountBtn)
 

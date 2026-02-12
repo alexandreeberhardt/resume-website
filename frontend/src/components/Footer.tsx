@@ -1,13 +1,13 @@
 /**
  * Footer component with legal links
  */
-import { useTranslation } from 'react-i18next';
-import { FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'
+import { FileText } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
-  const { t, i18n } = useTranslation();
-  const isFrench = i18n.language.startsWith('fr');
+  const { t, i18n } = useTranslation()
+  const isFrench = i18n.language.startsWith('fr')
 
   return (
     <footer className="py-6 sm:py-8 px-4 sm:px-6 bg-surface-0 border-t border-primary-100">
@@ -51,5 +51,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

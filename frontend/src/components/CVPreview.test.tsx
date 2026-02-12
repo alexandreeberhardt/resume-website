@@ -14,10 +14,15 @@ const emptyData: ResumeData = {
 }
 
 const dataWithContent: ResumeData = {
-  personal: { name: 'John Doe', title: 'SWE', location: 'Paris', email: 'j@e.com', phone: '123', links: [] },
-  sections: [
-    { id: '1', type: 'summary', title: 'Summary', isVisible: true, items: 'My bio' },
-  ],
+  personal: {
+    name: 'John Doe',
+    title: 'SWE',
+    location: 'Paris',
+    email: 'j@e.com',
+    phone: '123',
+    links: [],
+  },
+  sections: [{ id: '1', type: 'summary', title: 'Summary', isVisible: true, items: 'My bio' }],
   template_id: 'harvard',
 }
 

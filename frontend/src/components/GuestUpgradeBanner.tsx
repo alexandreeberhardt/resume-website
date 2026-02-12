@@ -1,9 +1,9 @@
 /**
  * Guest Upgrade Banner - Floating banner for guest users to create a permanent account
  */
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import {
   X,
   UserPlus,
@@ -16,20 +16,20 @@ import {
   EyeOff,
   Check,
   Sparkles,
-} from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { ApiError } from '../api/client';
+} from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+import { ApiError } from '../api/client'
 
 export default function GuestUpgradeBanner() {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   // Removed unused 'upgradeAccount' from destructuring
-  const { isGuest } = useAuth();
-  const [showModal, setShowModal] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const { isGuest } = useAuth()
+  const [showModal, setShowModal] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
 
   // Don't show if not a guest or if dismissed
   if (!isGuest || dismissed) {
-    return null;
+    return null
   }
 
   return (
@@ -42,12 +42,8 @@ export default function GuestUpgradeBanner() {
               <Sparkles className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm mb-0.5">
-                {t('guest.upgradeBannerTitle')}
-              </h3>
-              <p className="text-xs text-white/80 mb-3">
-                {t('guest.upgradeBannerDesc')}
-              </p>
+              <h3 className="font-semibold text-sm mb-0.5">{t('guest.upgradeBannerTitle')}</h3>
+              <p className="text-xs text-white/80 mb-3">{t('guest.upgradeBannerDesc')}</p>
               <button
                 onClick={() => setShowModal(true)}
                 className="bg-white text-brand font-medium text-sm px-4 py-2 rounded-lg hover:bg-white/90 transition-colors"
@@ -66,27 +62,25 @@ export default function GuestUpgradeBanner() {
       </div>
 
       {/* Upgrade Modal */}
-      {showModal && (
-        <UpgradeModal onClose={() => setShowModal(false)} />
-      )}
+      {showModal && <UpgradeModal onClose={() => setShowModal(false)} />}
     </>
-  );
+  )
 }
 
 function UpgradeModal({ onClose }: { onClose: () => void }) {
-  const { t, i18n } = useTranslation();
-  const { upgradeAccount } = useAuth();
-  const isFrench = i18n.language.startsWith('fr');
+  const { t, i18n } = useTranslation()
+  const { upgradeAccount } = useAuth()
+  const isFrench = i18n.language.startsWith('fr')
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // Password validation - must match backend requirements (12 chars + special char)
   const passwordChecks = {
@@ -95,47 +89,47 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
     lowercase: /[a-z]/.test(password),
     digit: /\d/.test(password),
     special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
-  };
-  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
-  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
-  const allChecksValid = isPasswordValid && passwordsMatch && acceptedTerms;
+  }
+  const isPasswordValid = Object.values(passwordChecks).every(Boolean)
+  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
+  const allChecksValid = isPasswordValid && passwordsMatch && acceptedTerms
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
 
     if (!isPasswordValid) {
-      setError(t('auth.errors.passwordRequirements'));
-      return;
+      setError(t('auth.errors.passwordRequirements'))
+      return
     }
 
     if (!passwordsMatch) {
-      setError(t('auth.errors.passwordMismatch'));
-      return;
+      setError(t('auth.errors.passwordMismatch'))
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
 
     try {
-      await upgradeAccount(email, password);
-      setSuccess(true);
+      await upgradeAccount(email, password)
+      setSuccess(true)
       setTimeout(() => {
-        onClose();
-      }, 1500);
+        onClose()
+      }, 1500)
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.status === 400) {
-          setError(t('auth.errors.emailExists'));
+          setError(t('auth.errors.emailExists'))
         } else {
-          setError(err.detail || t('auth.errors.generic'));
+          setError(err.detail || t('auth.errors.generic'))
         }
       } else {
-        setError(t('auth.errors.generic'));
+        setError(t('auth.errors.generic'))
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   if (success) {
     return (
@@ -154,7 +148,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -247,11 +241,26 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
               {password && (
                 <div className="mt-2.5 p-2.5 bg-primary-50 dark:bg-primary-700/30 rounded-lg border border-primary-100 dark:border-primary-700/50">
                   <div className="grid grid-cols-1 xs:grid-cols-2 gap-1.5">
-                    <PasswordCheck passed={passwordChecks.length} label={t('auth.passwordRules.length')} />
-                    <PasswordCheck passed={passwordChecks.uppercase} label={t('auth.passwordRules.uppercase')} />
-                    <PasswordCheck passed={passwordChecks.lowercase} label={t('auth.passwordRules.lowercase')} />
-                    <PasswordCheck passed={passwordChecks.digit} label={t('auth.passwordRules.digit')} />
-                    <PasswordCheck passed={passwordChecks.special} label={t('auth.passwordRules.special')} />
+                    <PasswordCheck
+                      passed={passwordChecks.length}
+                      label={t('auth.passwordRules.length')}
+                    />
+                    <PasswordCheck
+                      passed={passwordChecks.uppercase}
+                      label={t('auth.passwordRules.uppercase')}
+                    />
+                    <PasswordCheck
+                      passed={passwordChecks.lowercase}
+                      label={t('auth.passwordRules.lowercase')}
+                    />
+                    <PasswordCheck
+                      passed={passwordChecks.digit}
+                      label={t('auth.passwordRules.digit')}
+                    />
+                    <PasswordCheck
+                      passed={passwordChecks.special}
+                      label={t('auth.passwordRules.special')}
+                    />
                   </div>
                 </div>
               )}
@@ -273,8 +282,8 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
                     confirmPassword && !passwordsMatch
                       ? 'border-error-300 focus:border-error-400 focus:ring-error-100 dark:focus:ring-error-900/30'
                       : confirmPassword && passwordsMatch
-                      ? 'border-success-300 focus:border-success-400 focus:ring-success-100 dark:focus:ring-success-900/30'
-                      : ''
+                        ? 'border-success-300 focus:border-success-400 focus:ring-success-100 dark:focus:ring-success-900/30'
+                        : ''
                   }`}
                   required
                   autoComplete="new-password"
@@ -285,7 +294,11 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
                 >
-                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
               {confirmPassword && !passwordsMatch && (
@@ -312,11 +325,13 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
                     onChange={(e) => setAcceptedTerms(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
-                    acceptedTerms
-                      ? 'bg-brand border-brand'
-                      : 'border-primary-300 dark:border-primary-600 group-hover:border-primary-400'
-                  }`}>
+                  <div
+                    className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                      acceptedTerms
+                        ? 'bg-brand border-brand'
+                        : 'border-primary-300 dark:border-primary-600 group-hover:border-primary-400'
+                    }`}
+                  >
                     {acceptedTerms && <Check className="w-3.5 h-3.5 text-white" />}
                   </div>
                 </div>
@@ -324,14 +339,10 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
                   {isFrench ? (
                     <>
                       J'accepte les{' '}
-                      <Link
-                        to="/cgu"
-                        className="text-brand hover:underline"
-                        target="_blank"
-                      >
+                      <Link to="/cgu" className="text-brand hover:underline" target="_blank">
                         conditions d'utilisation
-                      </Link>
-                      {' '}et la{' '}
+                      </Link>{' '}
+                      et la{' '}
                       <Link
                         to="/politique-confidentialite"
                         className="text-brand hover:underline"
@@ -343,14 +354,10 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
                   ) : (
                     <>
                       I accept the{' '}
-                      <Link
-                        to="/terms"
-                        className="text-brand hover:underline"
-                        target="_blank"
-                      >
+                      <Link to="/terms" className="text-brand hover:underline" target="_blank">
                         Terms of Service
-                      </Link>
-                      {' '}and{' '}
+                      </Link>{' '}
+                      and{' '}
                       <Link
                         to="/privacy-policy"
                         className="text-brand hover:underline"
@@ -366,11 +373,7 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
 
             {/* Submit button */}
             <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn-secondary flex-1"
-              >
+              <button type="button" onClick={onClose} className="btn-secondary flex-1">
                 {t('common.cancel')}
               </button>
               <button
@@ -392,20 +395,24 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
-    <div className={`flex items-center gap-1.5 text-[11px] transition-all duration-200 ${
-      passed ? 'text-success-600 dark:text-success-400' : 'text-primary-500 dark:text-primary-400'
-    }`}>
-      <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
-        passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-600'
-      }`}>
+    <div
+      className={`flex items-center gap-1.5 text-[11px] transition-all duration-200 ${
+        passed ? 'text-success-600 dark:text-success-400' : 'text-primary-500 dark:text-primary-400'
+      }`}
+    >
+      <div
+        className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
+          passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-600'
+        }`}
+      >
         {passed && <Check className="w-2.5 h-2.5" />}
       </div>
       <span>{label}</span>
     </div>
-  );
+  )
 }

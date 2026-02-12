@@ -1,7 +1,7 @@
 /**
  * Additional tests for types.ts - factory functions, helpers, and estimateContentDensity
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
   createEmptyEducation,
   createEmptyExperience,
@@ -23,7 +23,6 @@ import {
   type ResumeData,
   type CVSection,
   type TemplateId,
-  type SizeVariant,
 } from './types'
 
 describe('createEmptyLink', () => {
@@ -184,7 +183,7 @@ describe('AVAILABLE_TEMPLATES', () => {
   })
 
   it('includes all base templates', () => {
-    const ids = AVAILABLE_TEMPLATES.map(t => t.id)
+    const ids = AVAILABLE_TEMPLATES.map((t) => t.id)
     expect(ids).toContain('harvard')
     expect(ids).toContain('europass')
     expect(ids).toContain('mckinsey')
@@ -232,43 +231,83 @@ describe('estimateContentDensity', () => {
 
   it('returns normal for moderate content', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: true, items: [
-        { title: 'SWE1', company: 'A', dates: '2023', highlights: ['x', 'y'] },
-        { title: 'SWE2', company: 'B', dates: '2022', highlights: ['x', 'y'] },
-        { title: 'SWE3', company: 'C', dates: '2021', highlights: ['x', 'y'] },
-        { title: 'SWE4', company: 'D', dates: '2020', highlights: ['x', 'y'] },
-      ] },
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: true,
+        items: [
+          { title: 'SWE1', company: 'A', dates: '2023', highlights: ['x', 'y'] },
+          { title: 'SWE2', company: 'B', dates: '2022', highlights: ['x', 'y'] },
+          { title: 'SWE3', company: 'C', dates: '2021', highlights: ['x', 'y'] },
+          { title: 'SWE4', company: 'D', dates: '2020', highlights: ['x', 'y'] },
+        ],
+      },
     ]
     expect(estimateContentDensity(makeData(sections))).toBe('normal')
   })
 
   it('returns compact for dense content', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: true, items: Array(8).fill(
-        { title: 'SWE', company: 'Co', dates: '2023', highlights: ['a', 'b', 'c'] }
-      ) },
-      { id: '2', type: 'education', title: 'Edu', isVisible: true, items: Array(3).fill(
-        { school: 'MIT', degree: 'BSc', dates: '2020', subtitle: '', description: 'Long description here' }
-      ) },
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: true,
+        items: Array(8).fill({
+          title: 'SWE',
+          company: 'Co',
+          dates: '2023',
+          highlights: ['a', 'b', 'c'],
+        }),
+      },
+      {
+        id: '2',
+        type: 'education',
+        title: 'Edu',
+        isVisible: true,
+        items: Array(3).fill({
+          school: 'MIT',
+          degree: 'BSc',
+          dates: '2020',
+          subtitle: '',
+          description: 'Long description here',
+        }),
+      },
     ]
     expect(estimateContentDensity(makeData(sections))).toBe('compact')
   })
 
   it('ignores hidden sections', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'experiences', title: 'Exp', isVisible: false, items: Array(10).fill(
-        { title: 'SWE', company: 'Co', dates: '2023', highlights: ['a', 'b', 'c'] }
-      ) },
+      {
+        id: '1',
+        type: 'experiences',
+        title: 'Exp',
+        isVisible: false,
+        items: Array(10).fill({
+          title: 'SWE',
+          company: 'Co',
+          dates: '2023',
+          highlights: ['a', 'b', 'c'],
+        }),
+      },
     ]
     expect(estimateContentDensity(makeData(sections))).toBe('large')
   })
 
   it('scores skills by text length', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'skills', title: 'Skills', isVisible: true, items: {
-        languages: 'Python, JavaScript, TypeScript, Java, C++, Rust, Go, Ruby, PHP',
-        tools: 'Git, Docker, Kubernetes, Jenkins, AWS, GCP, Azure, Linux, Terraform',
-      } },
+      {
+        id: '1',
+        type: 'skills',
+        title: 'Skills',
+        isVisible: true,
+        items: {
+          languages: 'Python, JavaScript, TypeScript, Java, C++, Rust, Go, Ruby, PHP',
+          tools: 'Git, Docker, Kubernetes, Jenkins, AWS, GCP, Azure, Linux, Terraform',
+        },
+      },
     ]
     const result = estimateContentDensity(makeData(sections))
     expect(['large', 'normal', 'compact']).toContain(result)
@@ -276,7 +315,14 @@ describe('estimateContentDensity', () => {
 
   it('scores languages section', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'languages', title: 'Languages', isVisible: true, items: 'French (native), English (fluent), Spanish (intermediate), German (beginner), Chinese (beginner), Japanese (beginner)' },
+      {
+        id: '1',
+        type: 'languages',
+        title: 'Languages',
+        isVisible: true,
+        items:
+          'French (native), English (fluent), Spanish (intermediate), German (beginner), Chinese (beginner), Japanese (beginner)',
+      },
     ]
     const result = estimateContentDensity(makeData(sections))
     expect(['large', 'normal', 'compact']).toContain(result)
@@ -284,10 +330,16 @@ describe('estimateContentDensity', () => {
 
   it('scores custom sections', () => {
     const sections: CVSection[] = [
-      { id: '1', type: 'custom', title: 'Hobbies', isVisible: true, items: [
-        { title: 'Sport', highlights: ['Football', 'Running'] },
-        { title: 'Music', highlights: ['Piano'] },
-      ] },
+      {
+        id: '1',
+        type: 'custom',
+        title: 'Hobbies',
+        isVisible: true,
+        items: [
+          { title: 'Sport', highlights: ['Football', 'Running'] },
+          { title: 'Music', highlights: ['Piano'] },
+        ],
+      },
     ]
     const result = estimateContentDensity(makeData(sections))
     expect(['large', 'normal', 'compact']).toContain(result)

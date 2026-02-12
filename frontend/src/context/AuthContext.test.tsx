@@ -11,8 +11,12 @@ const mockSetOnUnauthorized = vi.fn()
 // Mock the API client
 vi.mock('../api/client', () => ({
   getStoredToken: () => storedToken,
-  setStoredToken: (t: string) => { storedToken = t },
-  removeStoredToken: () => { storedToken = null },
+  setStoredToken: (t: string) => {
+    storedToken = t
+  },
+  removeStoredToken: () => {
+    storedToken = null
+  },
   setOnUnauthorized: (...args: unknown[]) => mockSetOnUnauthorized(...args),
   api: {
     post: vi.fn(),
@@ -39,7 +43,7 @@ vi.mock('../api/auth', () => ({
 }))
 
 // Import after mocks
-import { AuthProvider, useAuth } from './AuthContext'
+import { useAuth } from './AuthContext'
 
 function TestConsumer() {
   const auth = useAuth()
@@ -49,10 +53,24 @@ function TestConsumer() {
       <span data-testid="loading">{auth.isLoading ? 'yes' : 'no'}</span>
       <span data-testid="guest">{auth.isGuest ? 'yes' : 'no'}</span>
       <span data-testid="email">{auth.user?.email || 'none'}</span>
-      <button data-testid="login" onClick={() => auth.login({ email: 'a@b.com', password: 'pass' })}>Login</button>
-      <button data-testid="register" onClick={() => auth.register({ email: 'a@b.com', password: 'pass' })}>Register</button>
-      <button data-testid="logout" onClick={auth.logout}>Logout</button>
-      <button data-testid="guest-login" onClick={auth.loginAsGuest}>Guest</button>
+      <button
+        data-testid="login"
+        onClick={() => auth.login({ email: 'a@b.com', password: 'pass' })}
+      >
+        Login
+      </button>
+      <button
+        data-testid="register"
+        onClick={() => auth.register({ email: 'a@b.com', password: 'pass' })}
+      >
+        Register
+      </button>
+      <button data-testid="logout" onClick={auth.logout}>
+        Logout
+      </button>
+      <button data-testid="guest-login" onClick={auth.loginAsGuest}>
+        Guest
+      </button>
     </div>
   )
 }

@@ -1,18 +1,18 @@
-import { useTranslation } from 'react-i18next';
-import { Code2, Wrench } from 'lucide-react';
-import { SkillsItem } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Code2, Wrench } from 'lucide-react'
+import { SkillsItem } from '../../types'
 
 interface SkillsEditorProps {
-  data: SkillsItem;
-  onChange: (data: SkillsItem) => void;
+  data: SkillsItem
+  onChange: (data: SkillsItem) => void
 }
 
 export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const updateField = (field: keyof SkillsItem, value: string) => {
-    onChange({ ...data, [field]: value });
-  };
+    onChange({ ...data, [field]: value })
+  }
 
   return (
     <div className="space-y-4 sm:space-y-5">
@@ -28,9 +28,7 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
           placeholder={t('editors.skills.languagesPlaceholder')}
           className="input text-sm"
         />
-        <p className="text-xs text-primary-400 mt-1.5">
-          {t('editors.skills.languagesHint')}
-        </p>
+        <p className="text-xs text-primary-400 mt-1.5">{t('editors.skills.languagesHint')}</p>
       </div>
 
       <div className="form-group">
@@ -45,10 +43,8 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
           placeholder={t('editors.skills.toolsPlaceholder')}
           className="input text-sm"
         />
-        <p className="text-xs text-primary-400 mt-1.5">
-          {t('editors.skills.toolsHint')}
-        </p>
+        <p className="text-xs text-primary-400 mt-1.5">{t('editors.skills.toolsHint')}</p>
       </div>
     </div>
-  );
+  )
 }

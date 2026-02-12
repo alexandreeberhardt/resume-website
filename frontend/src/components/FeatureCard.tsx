@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface FeatureCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
+  icon: React.ReactNode
+  title: string
+  description: string
 }
 
 export default function FeatureCard({ icon, title, description }: FeatureCardProps) {
@@ -15,5 +15,5 @@ export default function FeatureCard({ icon, title, description }: FeatureCardPro
       <h3 className="text-base font-semibold text-primary-900 mb-1.5">{title}</h3>
       <p className="text-sm text-primary-500 leading-relaxed">{description}</p>
     </div>
-  );
+  )
 }

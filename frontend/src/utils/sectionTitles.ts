@@ -1,5 +1,5 @@
-import { SectionType } from '../types';
-import { TFunction } from 'i18next';
+import { SectionType } from '../types'
+import { TFunction } from 'i18next'
 
 export const getTranslatedSectionTitle = (type: SectionType, t: TFunction): string => {
   const titles: Record<SectionType, string> = {
@@ -11,9 +11,9 @@ export const getTranslatedSectionTitle = (type: SectionType, t: TFunction): stri
     leadership: t('sections.leadership'),
     languages: t('sections.languages'),
     custom: t('sections.custom'),
-  };
-  return titles[type];
-};
+  }
+  return titles[type]
+}
 
 export const defaultTitlesAllLanguages: Record<SectionType, string[]> = {
   summary: ['Summary', 'Résumé'],
@@ -24,8 +24,8 @@ export const defaultTitlesAllLanguages: Record<SectionType, string[]> = {
   leadership: ['Leadership', 'Leadership'],
   languages: ['Languages', 'Langues'],
   custom: ['Custom', 'Personnalisé'],
-};
+}
 
 export const isDefaultTitle = (type: SectionType, title: string): boolean => {
-  return defaultTitlesAllLanguages[type]?.includes(title) ?? false;
-};
+  return defaultTitlesAllLanguages[type]?.includes(title) ?? false
+}

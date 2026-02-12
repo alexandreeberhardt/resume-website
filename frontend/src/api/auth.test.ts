@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { decodeToken, isTokenExpired, getGoogleLoginUrl } from './auth'
 
 // Helper: create a fake JWT with a given payload

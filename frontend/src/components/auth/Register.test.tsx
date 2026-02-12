@@ -44,9 +44,7 @@ describe('Register', () => {
     renderWithProviders(<Register onSwitchToLogin={onSwitchToLogin} />)
     // Find the submit button — it has the translated register text
     const buttons = screen.getAllByRole('button')
-    const submitBtn = buttons.find(
-      (b) => b.getAttribute('type') === 'submit'
-    )
+    const submitBtn = buttons.find((b) => b.getAttribute('type') === 'submit')
     expect(submitBtn).toBeInTheDocument()
     expect(submitBtn).toBeDisabled()
   })
@@ -58,9 +56,9 @@ describe('Register', () => {
     expect(passwordInput).toHaveAttribute('type', 'password')
 
     // Find toggle button — it's next to the password input
-    const toggleButtons = screen.getAllByRole('button').filter(
-      (b) => b.getAttribute('type') === 'button'
-    )
+    const toggleButtons = screen
+      .getAllByRole('button')
+      .filter((b) => b.getAttribute('type') === 'button')
     // First toggle button is for the password field
     await user.click(toggleButtons[1]) // [0] is Google, [1] is password toggle
 
@@ -76,9 +74,10 @@ describe('Register', () => {
     // Password requirements panel should now be visible
     // It shows rules like "12 characters", "uppercase", etc.
     // These come from i18n keys, but should render something
-    const requirementsPanel = screen.getByText((_, el) =>
-      el?.classList.contains('grid') &&
-      el.parentElement?.classList.contains('rounded-lg') || false
+    const requirementsPanel = screen.getByText(
+      (_, el) =>
+        (el?.classList.contains('grid') && el.parentElement?.classList.contains('rounded-lg')) ||
+        false,
     )
     expect(requirementsPanel).toBeTruthy()
   })
@@ -93,9 +92,8 @@ describe('Register', () => {
     await user.type(confirmInput, 'DifferentPass1!')
 
     // Should show mismatch text
-    const mismatchText = screen.getByText((_, el) =>
-      el?.tagName === 'P' &&
-      el.classList.contains('text-error-600') || false
+    const mismatchText = screen.getByText(
+      (_, el) => (el?.tagName === 'P' && el.classList.contains('text-error-600')) || false,
     )
     expect(mismatchText).toBeInTheDocument()
   })
@@ -110,9 +108,8 @@ describe('Register', () => {
     await user.type(confirmInput, 'TestPassword1!')
 
     // Should show match text (success color)
-    const matchText = screen.getByText((_, el) =>
-      el?.tagName === 'P' &&
-      el.classList.contains('text-success-600') || false
+    const matchText = screen.getByText(
+      (_, el) => (el?.tagName === 'P' && el.classList.contains('text-success-600')) || false,
     )
     expect(matchText).toBeInTheDocument()
   })
@@ -121,9 +118,9 @@ describe('Register', () => {
     renderWithProviders(<Register onSwitchToLogin={onSwitchToLogin} />)
 
     // Find the "login" link button at the bottom
-    const loginButton = screen.getAllByRole('button').find(
-      (b) => b.classList.contains('text-brand')
-    )
+    const loginButton = screen
+      .getAllByRole('button')
+      .find((b) => b.classList.contains('text-brand'))
     if (loginButton) {
       await user.click(loginButton)
       expect(onSwitchToLogin).toHaveBeenCalled()

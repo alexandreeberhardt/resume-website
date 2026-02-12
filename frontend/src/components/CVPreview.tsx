@@ -1,52 +1,52 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { createPortal } from 'react-dom';
-import { useTranslation } from 'react-i18next';
-import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2, Download } from 'lucide-react';
-import { ResumeData } from '../types';
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
+import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2, Download } from 'lucide-react'
+import { ResumeData } from '../types'
 
-const API_URL = import.meta.env.DEV ? '/api' : '';
+const API_URL = import.meta.env.DEV ? '/api' : ''
 
 // Detect if we're on a mobile device that doesn't support inline PDF
 const isMobileDevice = () => {
-  if (typeof window === 'undefined') return false;
-  const userAgent = navigator.userAgent.toLowerCase();
-  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-};
+  if (typeof window === 'undefined') return false
+  const userAgent = navigator.userAgent.toLowerCase()
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent)
+}
 
 interface CVPreviewProps {
-  data: ResumeData;
-  debounceMs?: number;
+  data: ResumeData
+  debounceMs?: number
 }
 
 export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
-  const { t, i18n } = useTranslation();
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMobile] = useState(isMobileDevice);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const previousDataRef = useRef<string>('');
-  const isFirstLoadRef = useRef(true);
+  const { t, i18n } = useTranslation()
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isMobile] = useState(isMobileDevice)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const previousDataRef = useRef<string>('')
+  const isFirstLoadRef = useRef(true)
 
   // Check if data has meaningful content (not just empty defaults)
   const hasContent = useCallback((d: ResumeData) => {
-    const hasPersonalInfo = d.personal.name || d.personal.title || d.personal.email;
-    const hasSections = d.sections.length > 0;
-    return hasPersonalInfo || hasSections;
-  }, []);
+    const hasPersonalInfo = d.personal.name || d.personal.title || d.personal.email
+    const hasSections = d.sections.length > 0
+    return hasPersonalInfo || hasSections
+  }, [])
 
   const generatePreview = useCallback(async () => {
     // Cancel any pending request
     if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+      abortControllerRef.current.abort()
     }
 
-    abortControllerRef.current = new AbortController();
-    setLoading(true);
-    setError(null);
+    abortControllerRef.current = new AbortController()
+    setLoading(true)
+    setError(null)
 
     try {
       const response = await fetch(`${API_URL}/generate`, {
@@ -54,83 +54,83 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, lang: i18n.language.substring(0, 2) }),
         signal: abortControllerRef.current.signal,
-      });
+      })
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.detail || t('errors.generation'));
+        const errData = await response.json()
+        throw new Error(errData.detail || t('errors.generation'))
       }
 
-      const blob = await response.blob();
+      const blob = await response.blob()
 
       // Revoke previous URL to prevent memory leaks
       if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
+        URL.revokeObjectURL(pdfUrl)
       }
 
-      const url = URL.createObjectURL(blob);
-      setPdfUrl(url);
+      const url = URL.createObjectURL(blob)
+      setPdfUrl(url)
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
         // Request was cancelled, ignore
-        return;
+        return
       }
-      setError(err instanceof Error ? err.message : t('errors.generation'));
+      setError(err instanceof Error ? err.message : t('errors.generation'))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [data, i18n.language, pdfUrl, t]);
+  }, [data, i18n.language, pdfUrl, t])
 
   // Debounced auto-refresh on data changes
   useEffect(() => {
-    const dataString = JSON.stringify(data);
+    const dataString = JSON.stringify(data)
 
     // Skip if data hasn't changed
     if (dataString === previousDataRef.current) {
-      return;
+      return
     }
-    previousDataRef.current = dataString;
+    previousDataRef.current = dataString
 
     // Clear any existing timeout
     if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
+      clearTimeout(debounceRef.current)
     }
 
     // Generate immediately on first load with content (e.g., after PDF import)
     // Only mark as "loaded" once we have actual content
     if (isFirstLoadRef.current) {
       if (hasContent(data)) {
-        isFirstLoadRef.current = false;
-        generatePreview();
-        return;
+        isFirstLoadRef.current = false
+        generatePreview()
+        return
       }
       // Don't mark as loaded yet if data is empty - wait for real content
-      return;
+      return
     }
 
     // Set a new debounced call for subsequent changes
     debounceRef.current = setTimeout(() => {
-      generatePreview();
-    }, debounceMs);
+      generatePreview()
+    }, debounceMs)
 
     return () => {
       if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
+        clearTimeout(debounceRef.current)
       }
-    };
-  }, [data, debounceMs, generatePreview, hasContent]);
+    }
+  }, [data, debounceMs, generatePreview, hasContent])
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
+        URL.revokeObjectURL(pdfUrl)
       }
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        abortControllerRef.current.abort()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   if (isCollapsed) {
     return (
@@ -143,7 +143,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
           {t('preview.show')}
         </button>
       </div>
-    );
+    )
   }
 
   return (
@@ -190,7 +190,9 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
                     <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                       <Eye className="w-8 h-8 text-brand" />
                     </div>
-                    <p className="text-sm text-primary-600 mb-4">{t('preview.mobileHint') || 'Aperçu non disponible sur mobile'}</p>
+                    <p className="text-sm text-primary-600 mb-4">
+                      {t('preview.mobileHint') || 'Aperçu non disponible sur mobile'}
+                    </p>
                     <a
                       href={pdfUrl}
                       download="CV_preview.pdf"
@@ -230,7 +232,9 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
             <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
               <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 shadow-md border border-primary-100/50 transform scale-95 group-hover:scale-100 transition-transform">
                 <Maximize2 className="w-4 h-4 text-primary-600" />
-                <span className="text-xs font-medium text-primary-600">{t('preview.fullscreen')}</span>
+                <span className="text-xs font-medium text-primary-600">
+                  {t('preview.fullscreen')}
+                </span>
               </div>
             </div>
           )}
@@ -257,54 +261,54 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
         </div>
       </div>
 
-      <p className="text-[11px] text-primary-400 mt-2.5 text-center">
-        {t('preview.hint')}
-      </p>
+      <p className="text-[11px] text-primary-400 mt-2.5 text-center">{t('preview.hint')}</p>
 
       {/* Fullscreen Modal - rendered via portal to escape stacking context (desktop only) */}
-      {isFullscreen && pdfUrl && !isMobile && createPortal(
-        <div
-          className="fixed inset-0 z-[9999] bg-primary-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
-          onClick={() => setIsFullscreen(false)}
-        >
-          {/* Close button */}
-          <button
+      {isFullscreen &&
+        pdfUrl &&
+        !isMobile &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9999] bg-primary-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
             onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 p-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors backdrop-blur-sm"
           >
-            <X className="w-5 h-5" />
-          </button>
-
-          {/* PDF Container with paper effect */}
-          <div className="relative w-full h-full flex items-center justify-center overflow-auto">
-            <div
-              className="relative my-auto"
-              style={{ width: 'min(90vw, calc(90vh * 210 / 297))', height: 'min(90vh, calc(90vw * 297 / 210))' }}
-              onClick={(e) => e.stopPropagation()}
+            {/* Close button */}
+            <button
+              onClick={() => setIsFullscreen(false)}
+              className="absolute top-4 right-4 p-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors backdrop-blur-sm"
             >
-              {/* Paper shadows */}
-              <div className="absolute inset-0 bg-black/10 rounded-xl translate-y-2 translate-x-1" />
-              <div className="absolute inset-0 bg-black/5 rounded-xl translate-y-4 translate-x-2" />
+              <X className="w-5 h-5" />
+            </button>
 
-              {/* Main paper */}
-              <div className="relative bg-white rounded-xl shadow-2xl overflow-hidden w-full h-full">
-                <object
-                  data={pdfUrl}
-                  type="application/pdf"
-                  className="w-full h-full"
-                >
-                  <iframe
-                    src={pdfUrl}
-                    className="w-full h-full border-0"
-                    title="CV Preview Fullscreen"
-                  />
-                </object>
+            {/* PDF Container with paper effect */}
+            <div className="relative w-full h-full flex items-center justify-center overflow-auto">
+              <div
+                className="relative my-auto"
+                style={{
+                  width: 'min(90vw, calc(90vh * 210 / 297))',
+                  height: 'min(90vh, calc(90vw * 297 / 210))',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Paper shadows */}
+                <div className="absolute inset-0 bg-black/10 rounded-xl translate-y-2 translate-x-1" />
+                <div className="absolute inset-0 bg-black/5 rounded-xl translate-y-4 translate-x-2" />
+
+                {/* Main paper */}
+                <div className="relative bg-white rounded-xl shadow-2xl overflow-hidden w-full h-full">
+                  <object data={pdfUrl} type="application/pdf" className="w-full h-full">
+                    <iframe
+                      src={pdfUrl}
+                      className="w-full h-full border-0"
+                      title="CV Preview Fullscreen"
+                    />
+                  </object>
+                </div>
               </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
-  );
+  )
 }

@@ -1,46 +1,46 @@
-import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, X, FileText } from 'lucide-react';
-import { CustomItem, createEmptyCustomItem } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Plus, Trash2, X, FileText } from 'lucide-react'
+import { CustomItem, createEmptyCustomItem } from '../../types'
 
 interface CustomEditorProps {
-  items: CustomItem[];
-  onChange: (items: CustomItem[]) => void;
+  items: CustomItem[]
+  onChange: (items: CustomItem[]) => void
 }
 
 export default function CustomEditor({ items, onChange }: CustomEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const addItem = () => {
-    onChange([...items, createEmptyCustomItem()]);
-  };
+    onChange([...items, createEmptyCustomItem()])
+  }
 
   const removeItem = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
+    onChange(items.filter((_, i) => i !== index))
+  }
 
   const updateItem = (index: number, field: keyof CustomItem, value: string | string[]) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: value };
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index] = { ...updated[index], [field]: value }
+    onChange(updated)
+  }
 
   const addHighlight = (index: number) => {
-    const updated = [...items];
-    updated[index].highlights = [...updated[index].highlights, ''];
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index].highlights = [...updated[index].highlights, '']
+    onChange(updated)
+  }
 
   const removeHighlight = (itemIndex: number, hlIndex: number) => {
-    const updated = [...items];
-    updated[itemIndex].highlights = updated[itemIndex].highlights.filter((_, i) => i !== hlIndex);
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[itemIndex].highlights = updated[itemIndex].highlights.filter((_, i) => i !== hlIndex)
+    onChange(updated)
+  }
 
   const updateHighlight = (itemIndex: number, hlIndex: number, value: string) => {
-    const updated = [...items];
-    updated[itemIndex].highlights[hlIndex] = value;
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[itemIndex].highlights[hlIndex] = value
+    onChange(updated)
+  }
 
   return (
     <div className="space-y-4">
@@ -143,5 +143,5 @@ export default function CustomEditor({ items, onChange }: CustomEditorProps) {
         {t('editors.custom.addItem')}
       </button>
     </div>
-  );
+  )
 }

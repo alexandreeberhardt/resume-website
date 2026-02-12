@@ -1,46 +1,46 @@
-import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, X, Users } from 'lucide-react';
-import { LeadershipItem, createEmptyLeadership } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Plus, Trash2, X, Users } from 'lucide-react'
+import { LeadershipItem, createEmptyLeadership } from '../../types'
 
 interface LeadershipEditorProps {
-  items: LeadershipItem[];
-  onChange: (items: LeadershipItem[]) => void;
+  items: LeadershipItem[]
+  onChange: (items: LeadershipItem[]) => void
 }
 
 export default function LeadershipEditor({ items, onChange }: LeadershipEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const addItem = () => {
-    onChange([...items, createEmptyLeadership()]);
-  };
+    onChange([...items, createEmptyLeadership()])
+  }
 
   const removeItem = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
+    onChange(items.filter((_, i) => i !== index))
+  }
 
   const updateItem = (index: number, field: keyof LeadershipItem, value: string | string[]) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: value };
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index] = { ...updated[index], [field]: value }
+    onChange(updated)
+  }
 
   const addHighlight = (index: number) => {
-    const updated = [...items];
-    updated[index].highlights = [...updated[index].highlights, ''];
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index].highlights = [...updated[index].highlights, '']
+    onChange(updated)
+  }
 
   const removeHighlight = (leadIndex: number, hlIndex: number) => {
-    const updated = [...items];
-    updated[leadIndex].highlights = updated[leadIndex].highlights.filter((_, i) => i !== hlIndex);
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[leadIndex].highlights = updated[leadIndex].highlights.filter((_, i) => i !== hlIndex)
+    onChange(updated)
+  }
 
   const updateHighlight = (leadIndex: number, hlIndex: number, value: string) => {
-    const updated = [...items];
-    updated[leadIndex].highlights[hlIndex] = value;
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[leadIndex].highlights[hlIndex] = value
+    onChange(updated)
+  }
 
   return (
     <div className="space-y-4">
@@ -143,5 +143,5 @@ export default function LeadershipEditor({ items, onChange }: LeadershipEditorPr
         {t('editors.leadership.addLeadership')}
       </button>
     </div>
-  );
+  )
 }

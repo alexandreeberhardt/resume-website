@@ -43,18 +43,14 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'My Education' })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     expect(screen.queryAllByText('My Education').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders section type badge', () => {
     renderWithProviders(
-      <SortableSection
-        section={makeSection()}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
+      <SortableSection section={makeSection()} onUpdate={vi.fn()} onDelete={vi.fn()} />,
     )
     // The badge shows the translated section type
     const badges = document.querySelectorAll('.badge')
@@ -64,17 +60,11 @@ describe('SortableSection', () => {
   it('calls onDelete when delete button clicked', async () => {
     const onDelete = vi.fn()
     renderWithProviders(
-      <SortableSection
-        section={makeSection()}
-        onUpdate={vi.fn()}
-        onDelete={onDelete}
-      />
+      <SortableSection section={makeSection()} onUpdate={vi.fn()} onDelete={onDelete} />,
     )
-    // Find trash button by its title attribute
-    const deleteBtn = document.querySelector('button[title]')
     const buttons = screen.getAllByRole('button')
     // The delete button has Trash2 icon
-    const trashBtn = buttons.find(b => b.querySelector('.lucide-trash-2'))
+    const trashBtn = buttons.find((b) => b.querySelector('.lucide-trash-2'))
     if (trashBtn) {
       await user.click(trashBtn)
       expect(onDelete).toHaveBeenCalledOnce()
@@ -88,11 +78,11 @@ describe('SortableSection', () => {
         section={makeSection({ isVisible: true })}
         onUpdate={onUpdate}
         onDelete={vi.fn()}
-      />
+      />,
     )
     // Find the eye button
     const buttons = screen.getAllByRole('button')
-    const eyeBtn = buttons.find(b => b.querySelector('.lucide-eye'))
+    const eyeBtn = buttons.find((b) => b.querySelector('.lucide-eye'))
     if (eyeBtn) {
       await user.click(eyeBtn)
       expect(onUpdate).toHaveBeenCalledWith({ isVisible: false })
@@ -105,7 +95,7 @@ describe('SortableSection', () => {
         section={makeSection({ isVisible: false })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     // The hidden message should appear (section is expanded by default)
     const hiddenText = document.querySelector('.text-primary-400')
@@ -114,15 +104,11 @@ describe('SortableSection', () => {
 
   it('collapses when chevron clicked', async () => {
     renderWithProviders(
-      <SortableSection
-        section={makeSection()}
-        onUpdate={vi.fn()}
-        onDelete={vi.fn()}
-      />
+      <SortableSection section={makeSection()} onUpdate={vi.fn()} onDelete={vi.fn()} />,
     )
     // Find chevron-up button (section starts expanded)
     const buttons = screen.getAllByRole('button')
-    const chevronBtn = buttons.find(b => b.querySelector('.lucide-chevron-up'))
+    const chevronBtn = buttons.find((b) => b.querySelector('.lucide-chevron-up'))
     if (chevronBtn) {
       await user.click(chevronBtn)
       // After collapsing, chevron-down should appear
@@ -137,7 +123,7 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'Education' })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     const pencilBtn = document.querySelector('button .lucide-pencil')?.parentElement
     if (pencilBtn) {
@@ -155,7 +141,7 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'Education' })}
         onUpdate={onUpdate}
         onDelete={vi.fn()}
-      />
+      />,
     )
     // Enter edit mode
     const pencilBtn = document.querySelector('button .lucide-pencil')?.parentElement
@@ -179,7 +165,7 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'Education' })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     const pencilBtn = document.querySelector('button .lucide-pencil')?.parentElement
     if (pencilBtn) {
@@ -205,7 +191,7 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'Education' })}
         onUpdate={onUpdate}
         onDelete={vi.fn()}
-      />
+      />,
     )
     const pencilBtn = document.querySelector('button .lucide-pencil')?.parentElement
     if (pencilBtn) {
@@ -223,7 +209,7 @@ describe('SortableSection', () => {
         section={makeSection({ title: 'Education' })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     const pencilBtn = document.querySelector('button .lucide-pencil')?.parentElement
     if (pencilBtn) {
@@ -241,7 +227,7 @@ describe('SortableSection', () => {
         section={makeSection({ type: 'education', items: [] })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     // The section should render without errors (editor renders the empty state)
   })
@@ -252,7 +238,7 @@ describe('SortableSection', () => {
         section={makeSection({ type: 'skills', items: { languages: '', tools: '' } })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
   })
 
@@ -262,7 +248,7 @@ describe('SortableSection', () => {
         section={makeSection({ type: 'summary', items: 'My summary text' })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
   })
 
@@ -272,7 +258,7 @@ describe('SortableSection', () => {
         section={makeSection({ isVisible: false })}
         onUpdate={vi.fn()}
         onDelete={vi.fn()}
-      />
+      />,
     )
     const card = container.firstChild as HTMLElement
     expect(card.className).toContain('opacity-60')

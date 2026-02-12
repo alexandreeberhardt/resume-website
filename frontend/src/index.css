@@ -7,7 +7,7 @@
 /* ===== Theme Variables ===== */
 :root {
   /* Brand colors */
-  --color-brand: #2563EB;
+  --color-brand: #2563eb;
   --color-brand-hover: #1d4ed8;
   --color-brand-active: #1e40af;
 
@@ -329,9 +329,23 @@
 
 /* ===== Custom Animations ===== */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
 }
 
 @keyframes bounce-in {

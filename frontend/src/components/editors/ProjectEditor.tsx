@@ -1,46 +1,46 @@
-import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, X, FolderKanban } from 'lucide-react';
-import { ProjectItem, createEmptyProject } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Plus, Trash2, X, FolderKanban } from 'lucide-react'
+import { ProjectItem, createEmptyProject } from '../../types'
 
 interface ProjectEditorProps {
-  items: ProjectItem[];
-  onChange: (items: ProjectItem[]) => void;
+  items: ProjectItem[]
+  onChange: (items: ProjectItem[]) => void
 }
 
 export default function ProjectEditor({ items, onChange }: ProjectEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const addItem = () => {
-    onChange([...items, createEmptyProject()]);
-  };
+    onChange([...items, createEmptyProject()])
+  }
 
   const removeItem = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
+    onChange(items.filter((_, i) => i !== index))
+  }
 
   const updateItem = (index: number, field: keyof ProjectItem, value: string | string[]) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: value };
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index] = { ...updated[index], [field]: value }
+    onChange(updated)
+  }
 
   const addHighlight = (index: number) => {
-    const updated = [...items];
-    updated[index].highlights = [...updated[index].highlights, ''];
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index].highlights = [...updated[index].highlights, '']
+    onChange(updated)
+  }
 
   const removeHighlight = (projIndex: number, hlIndex: number) => {
-    const updated = [...items];
-    updated[projIndex].highlights = updated[projIndex].highlights.filter((_, i) => i !== hlIndex);
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[projIndex].highlights = updated[projIndex].highlights.filter((_, i) => i !== hlIndex)
+    onChange(updated)
+  }
 
   const updateHighlight = (projIndex: number, hlIndex: number, value: string) => {
-    const updated = [...items];
-    updated[projIndex].highlights[hlIndex] = value;
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[projIndex].highlights[hlIndex] = value
+    onChange(updated)
+  }
 
   return (
     <div className="space-y-4">
@@ -133,5 +133,5 @@ export default function ProjectEditor({ items, onChange }: ProjectEditorProps) {
         {t('editors.projects.addProject')}
       </button>
     </div>
-  );
+  )
 }

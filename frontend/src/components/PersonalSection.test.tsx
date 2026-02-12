@@ -18,9 +18,7 @@ describe('PersonalSection', () => {
   }
 
   function renderSection(data: PersonalInfo = emptyData, onChange = vi.fn()) {
-    const result = renderWithProviders(
-      <PersonalSection data={data} onChange={onChange} />
-    )
+    const result = renderWithProviders(<PersonalSection data={data} onChange={onChange} />)
     return { onChange, ...result }
   }
 
@@ -39,9 +37,7 @@ describe('PersonalSection', () => {
     const inputs = screen.getAllByRole('textbox')
     await user.type(inputs[0], 'A')
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'A' })
-    )
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ name: 'A' }))
   })
 
   it('calls onChange when typing in email field', async () => {
@@ -51,16 +47,14 @@ describe('PersonalSection', () => {
     const emailInput = screen.getByPlaceholderText(/example/i)
     await user.type(emailInput, 'a')
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'a' })
-    )
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ email: 'a' }))
   })
 
   it('shows empty state when no links', () => {
     renderSection()
     // The empty links message contains "LinkedIn" or "lien"
-    const emptyMessage = screen.getByText((text) =>
-      text.toLowerCase().includes('linkedin') || text.toLowerCase().includes('lien')
+    const emptyMessage = screen.getByText(
+      (text) => text.toLowerCase().includes('linkedin') || text.toLowerCase().includes('lien'),
     )
     expect(emptyMessage).toBeInTheDocument()
   })
@@ -75,14 +69,16 @@ describe('PersonalSection', () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         links: [expect.objectContaining({ platform: 'linkedin', username: '', url: '' })],
-      })
+      }),
     )
   })
 
   it('renders existing links', () => {
     const data: PersonalInfo = {
       ...emptyData,
-      links: [{ platform: 'linkedin', username: 'johndoe', url: 'https://linkedin.com/in/johndoe' }],
+      links: [
+        { platform: 'linkedin', username: 'johndoe', url: 'https://linkedin.com/in/johndoe' },
+      ],
     }
     renderSection(data)
 
@@ -101,9 +97,7 @@ describe('PersonalSection', () => {
     const deleteButton = screen.getByTitle(/delete/i)
     await user.click(deleteButton)
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ links: [] })
-    )
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ links: [] }))
   })
 
   it('displays pre-filled personal data', () => {

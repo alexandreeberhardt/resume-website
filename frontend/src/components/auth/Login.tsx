@@ -1,44 +1,44 @@
 /**
  * Login component - Matching CV form design system
  */
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Loader2, Mail, Lock, LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { ApiError } from '../../api/client';
-import { loginWithGoogle } from '../../api/auth';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Loader2, Mail, Lock, LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
+import { ApiError } from '../../api/client'
+import { loginWithGoogle } from '../../api/auth'
 
 interface LoginProps {
-  onSwitchToRegister: () => void;
+  onSwitchToRegister: () => void
 }
 
 export default function Login({ onSwitchToRegister }: LoginProps) {
-  const { t } = useTranslation();
-  const { login } = useAuth();
+  const { t } = useTranslation()
+  const { login } = useAuth()
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
     try {
-      await login({ email, password });
+      await login({ email, password })
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.detail || t('auth.errors.invalidCredentials'));
+        setError(err.detail || t('auth.errors.invalidCredentials'))
       } else {
-        setError(t('auth.errors.generic'));
+        setError(t('auth.errors.generic'))
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="w-full animate-fade-in">
@@ -50,9 +50,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
           {t('auth.login.title')}
         </h2>
-        <p className="text-sm text-black dark:text-white">
-          {t('auth.login.subtitle')}
-        </p>
+        <p className="text-sm text-black dark:text-white">{t('auth.login.subtitle')}</p>
       </div>
 
       {/* Error message */}
@@ -154,11 +152,7 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </div>
 
         {/* Submit button - CV brand button style */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn-brand w-full py-3 mt-2"
-        >
+        <button type="submit" disabled={loading} className="btn-brand w-full py-3 mt-2">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -183,5 +177,5 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
         </p>
       </div>
     </div>
-  );
+  )
 }

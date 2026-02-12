@@ -8,7 +8,9 @@ import { renderWithProviders } from '../../test/render'
 vi.mock('./Login', () => ({
   default: ({ onSwitchToRegister }: { onSwitchToRegister: () => void }) => (
     <div data-testid="login-form">
-      <button onClick={onSwitchToRegister} data-testid="switch-register">Switch</button>
+      <button onClick={onSwitchToRegister} data-testid="switch-register">
+        Switch
+      </button>
     </div>
   ),
 }))
@@ -16,7 +18,9 @@ vi.mock('./Login', () => ({
 vi.mock('./Register', () => ({
   default: ({ onSwitchToLogin }: { onSwitchToLogin: () => void }) => (
     <div data-testid="register-form">
-      <button onClick={onSwitchToLogin} data-testid="switch-login">Switch</button>
+      <button onClick={onSwitchToLogin} data-testid="switch-login">
+        Switch
+      </button>
     </div>
   ),
 }))
@@ -66,18 +70,26 @@ describe('AuthPage', () => {
   it('shows continue without account button when callback provided', () => {
     const onContinue = vi.fn()
     renderWithProviders(<AuthPage onContinueWithoutAuth={onContinue} />)
-    const continueBtn = screen.getAllByRole('button').find(
-      b => b.textContent?.toLowerCase().includes('continu') || b.textContent?.toLowerCase().includes('without')
-    )
+    const continueBtn = screen
+      .getAllByRole('button')
+      .find(
+        (b) =>
+          b.textContent?.toLowerCase().includes('continu') ||
+          b.textContent?.toLowerCase().includes('without'),
+      )
     expect(continueBtn).toBeDefined()
   })
 
   it('calls onContinueWithoutAuth when button clicked', async () => {
     const onContinue = vi.fn()
     renderWithProviders(<AuthPage onContinueWithoutAuth={onContinue} />)
-    const continueBtn = screen.getAllByRole('button').find(
-      b => b.textContent?.toLowerCase().includes('continu') || b.textContent?.toLowerCase().includes('without')
-    )
+    const continueBtn = screen
+      .getAllByRole('button')
+      .find(
+        (b) =>
+          b.textContent?.toLowerCase().includes('continu') ||
+          b.textContent?.toLowerCase().includes('without'),
+      )
     if (continueBtn) {
       await user.click(continueBtn)
       expect(onContinue).toHaveBeenCalledOnce()
@@ -88,7 +100,9 @@ describe('AuthPage', () => {
     renderWithProviders(<AuthPage />)
     const buttons = screen.getAllByRole('button')
     const continueBtn = buttons.find(
-      b => b.textContent?.toLowerCase().includes('continu') || b.textContent?.toLowerCase().includes('without')
+      (b) =>
+        b.textContent?.toLowerCase().includes('continu') ||
+        b.textContent?.toLowerCase().includes('without'),
     )
     expect(continueBtn).toBeUndefined()
   })

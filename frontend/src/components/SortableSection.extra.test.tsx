@@ -20,9 +20,7 @@ const educationSection: CVSection = {
   type: 'education',
   title: 'Education',
   isVisible: true,
-  items: [
-    { school: 'MIT', degree: 'BSc CS', dates: '2020-2024', subtitle: '', description: '' },
-  ],
+  items: [{ school: 'MIT', degree: 'BSc CS', dates: '2020-2024', subtitle: '', description: '' }],
 }
 
 const skillsSection: CVSection = {

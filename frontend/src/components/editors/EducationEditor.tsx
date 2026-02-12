@@ -1,28 +1,28 @@
-import { useTranslation } from 'react-i18next';
-import { Trash2, GraduationCap } from 'lucide-react';
-import { EducationItem, createEmptyEducation } from '../../types';
+import { useTranslation } from 'react-i18next'
+import { Trash2, GraduationCap } from 'lucide-react'
+import { EducationItem, createEmptyEducation } from '../../types'
 
 interface EducationEditorProps {
-  items: EducationItem[];
-  onChange: (items: EducationItem[]) => void;
+  items: EducationItem[]
+  onChange: (items: EducationItem[]) => void
 }
 
 export default function EducationEditor({ items, onChange }: EducationEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   const addItem = () => {
-    onChange([...items, createEmptyEducation()]);
-  };
+    onChange([...items, createEmptyEducation()])
+  }
 
   const removeItem = (index: number) => {
-    onChange(items.filter((_, i) => i !== index));
-  };
+    onChange(items.filter((_, i) => i !== index))
+  }
 
   const updateItem = (index: number, field: keyof EducationItem, value: string) => {
-    const updated = [...items];
-    updated[index] = { ...updated[index], [field]: value };
-    onChange(updated);
-  };
+    const updated = [...items]
+    updated[index] = { ...updated[index], [field]: value }
+    onChange(updated)
+  }
 
   return (
     <div className="space-y-4">
@@ -105,5 +105,5 @@ export default function EducationEditor({ items, onChange }: EducationEditorProp
         {t('editors.education.addEducation')}
       </button>
     </div>
-  );
+  )
 }

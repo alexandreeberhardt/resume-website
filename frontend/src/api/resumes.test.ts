@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import {
-  createResume,
-  listResumes,
-  getResume,
-  updateResume,
-  deleteResume,
-} from './resumes'
+import { createResume, listResumes, getResume, updateResume, deleteResume } from './resumes'
 
 // Mock the api client
 vi.mock('./client', () => ({

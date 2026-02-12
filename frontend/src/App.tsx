@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   DndContext,
   closestCenter,
@@ -7,12 +7,12 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from '@dnd-kit/core'
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+} from '@dnd-kit/sortable'
 import {
   FileDown,
   Loader2,
@@ -30,7 +30,7 @@ import {
   Save,
   FolderOpen,
   User,
-} from 'lucide-react';
+} from 'lucide-react'
 import {
   ResumeData,
   emptyResumeData,
@@ -40,42 +40,42 @@ import {
   applyTemplateSizeVariant,
   getTemplateSizeVariant,
   getBaseTemplateId,
-} from './types';
-import { getTranslatedSectionTitle, isDefaultTitle } from './utils/sectionTitles';
-import { useViewNavigation } from './hooks/useViewNavigation';
-import { useResumeManager } from './hooks/useResumeManager';
-import { usePdfGeneration } from './hooks/usePdfGeneration';
-import { usePdfImport } from './hooks/usePdfImport';
-import { useSectionManager } from './hooks/useSectionManager';
-import { useAutoSize } from './hooks/useAutoSize';
-import PersonalSection from './components/PersonalSection';
-import SortableSection from './components/SortableSection';
-import AddSectionModal from './components/AddSectionModal';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import ThemeToggle from './components/ThemeToggle';
-import CVPreview from './components/CVPreview';
-import AuthPage from './components/auth/AuthPage';
-import Footer from './components/Footer';
-import GuestUpgradeBanner from './components/GuestUpgradeBanner';
-import FeatureCard from './components/FeatureCard';
-import ResumeCard from './components/ResumeCard';
-import { useAuth } from './context/AuthContext';
-import { Link } from 'react-router-dom';
+} from './types'
+import { getTranslatedSectionTitle, isDefaultTitle } from './utils/sectionTitles'
+import { useViewNavigation } from './hooks/useViewNavigation'
+import { useResumeManager } from './hooks/useResumeManager'
+import { usePdfGeneration } from './hooks/usePdfGeneration'
+import { usePdfImport } from './hooks/usePdfImport'
+import { useSectionManager } from './hooks/useSectionManager'
+import { useAutoSize } from './hooks/useAutoSize'
+import PersonalSection from './components/PersonalSection'
+import SortableSection from './components/SortableSection'
+import AddSectionModal from './components/AddSectionModal'
+import LanguageSwitcher from './components/LanguageSwitcher'
+import ThemeToggle from './components/ThemeToggle'
+import CVPreview from './components/CVPreview'
+import AuthPage from './components/auth/AuthPage'
+import Footer from './components/Footer'
+import GuestUpgradeBanner from './components/GuestUpgradeBanner'
+import FeatureCard from './components/FeatureCard'
+import ResumeCard from './components/ResumeCard'
+import { useAuth } from './context/AuthContext'
+import { Link } from 'react-router-dom'
 
 function App() {
-  const { t, i18n } = useTranslation();
-  const { isAuthenticated, isLoading: authLoading, user, logout, loginAsGuest } = useAuth();
+  const { t, i18n } = useTranslation()
+  const { isAuthenticated, isLoading: authLoading, user, logout, loginAsGuest } = useAuth()
 
-  const [data, setData] = useState<ResumeData>(emptyResumeData);
-  const [error, setError] = useState<string | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [hasImported, setHasImported] = useState(false);
-  const [editorStep, setEditorStep] = useState(0);
-  const [showMobilePreview, setShowMobilePreview] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [data, setData] = useState<ResumeData>(emptyResumeData)
+  const [error, setError] = useState<string | null>(null)
+  const [initialLoading, setInitialLoading] = useState(true)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [hasImported, setHasImported] = useState(false)
+  const [editorStep, setEditorStep] = useState(0)
+  const [showMobilePreview, setShowMobilePreview] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
-  const { showLanding, setShowLanding, showResumesPage, setShowResumesPage } = useViewNavigation();
+  const { showLanding, setShowLanding, showResumesPage, setShowResumesPage } = useViewNavigation()
 
   const resumeManager = useResumeManager({
     isAuthenticated,
@@ -86,9 +86,9 @@ function App() {
     setEditorStep,
     setError,
     data,
-  });
+  })
 
-  const { loading, handleGenerate } = usePdfGeneration({ data, setError });
+  const { loading, handleGenerate } = usePdfGeneration({ data, setError })
 
   const { importLoading, importStep, fileInputRef, handleImport } = usePdfImport({
     setData,
@@ -96,16 +96,16 @@ function App() {
     setHasImported,
     setEditorStep,
     setError,
-  });
+  })
 
   const { handleDragEnd, updateSection, deleteSection, addSection } = useSectionManager({
     setData,
     setShowAddModal,
     hasImported,
     setEditorStep,
-  });
+  })
 
-  const { autoSize, setAutoSize, recommendedSize, autoSizeLoading } = useAutoSize({ data, setData });
+  const { autoSize, setAutoSize, recommendedSize, autoSizeLoading } = useAutoSize({ data, setData })
 
   const importMessages = [
     t('import.analyzing'),
@@ -113,7 +113,7 @@ function App() {
     t('import.identifying'),
     t('import.structuring'),
     t('import.finalizing'),
-  ];
+  ]
 
   const templatePreviews: { id: TemplateId; name: string; imgBase: string }[] = [
     { id: 'harvard', name: 'Harvard', imgBase: '/exemples/Luffy_Harvard' },
@@ -121,39 +121,39 @@ function App() {
     { id: 'michel', name: 'Michel', imgBase: '/exemples/Luke_Michel' },
     { id: 'stephane', name: 'Stephane', imgBase: '/exemples/Luke_Stephane' },
     { id: 'aurianne', name: 'Aurianne', imgBase: '/exemples/Homer_Aurianne' },
-  ];
+  ]
 
   const getTemplateImage = (imgBase: string, size: string) => {
-    if (size === 'normal') return `${imgBase}.png`;
-    return `${imgBase}_${size}.png`;
-  };
+    if (size === 'normal') return `${imgBase}.png`
+    return `${imgBase}_${size}.png`
+  }
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+    }),
+  )
 
   useEffect(() => {
-    setData(getEmptyResumeData());
-    setInitialLoading(false);
-  }, []);
+    setData(getEmptyResumeData())
+    setInitialLoading(false)
+  }, [])
 
   // Update default section titles when language changes
   useEffect(() => {
-    document.title = t('landing.pageTitle');
+    document.title = t('landing.pageTitle')
 
-    setData(prev => ({
+    setData((prev) => ({
       ...prev,
-      sections: prev.sections.map(section => {
+      sections: prev.sections.map((section) => {
         if (isDefaultTitle(section.type, section.title)) {
-          return { ...section, title: getTranslatedSectionTitle(section.type, t) };
+          return { ...section, title: getTranslatedSectionTitle(section.type, t) }
         }
-        return section;
+        return section
       }),
-    }));
-  }, [i18n.language]);
+    }))
+  }, [i18n.language])
 
   // Show loading during auth check
   if (authLoading || initialLoading) {
@@ -164,12 +164,12 @@ function App() {
           <p className="text-sm text-primary-500">{t('common.loading')}</p>
         </div>
       </div>
-    );
+    )
   }
 
   // Show auth page if not authenticated
   if (!isAuthenticated) {
-    return <AuthPage onContinueWithoutAuth={loginAsGuest} />;
+    return <AuthPage onContinueWithoutAuth={loginAsGuest} />
   }
 
   // Landing Page
@@ -181,15 +181,17 @@ function App() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="w-7 h-7 text-primary-900" />
-              <span className="text-lg font-semibold text-primary-900 hidden xs:inline">{t('landing.appName')}</span>
+              <span className="text-lg font-semibold text-primary-900 hidden xs:inline">
+                {t('landing.appName')}
+              </span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-3">
               <ThemeToggle />
               <LanguageSwitcher />
               <button
                 onClick={() => {
-                  setShowLanding(false);
-                  setShowResumesPage(true);
+                  setShowLanding(false)
+                  setShowResumesPage(true)
                 }}
                 className="btn-brand text-sm px-2.5 sm:px-4 py-2"
               >
@@ -223,7 +225,6 @@ function App() {
         {/* Hero Section */}
         <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center">
-
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-900 mb-4 sm:mb-6 text-balance">
               {t('landing.heroTitle')}
             </h1>
@@ -235,8 +236,8 @@ function App() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
               <button
                 onClick={() => {
-                  setShowLanding(false);
-                  window.scrollTo(0, 0);
+                  setShowLanding(false)
+                  window.scrollTo(0, 0)
                 }}
                 className="btn-brand px-6 py-3 text-base w-full sm:w-auto"
               >
@@ -270,8 +271,6 @@ function App() {
           </div>
         </section>
 
-
-
         {/* Templates Preview */}
         <section className="py-12 sm:py-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
@@ -295,9 +294,9 @@ function App() {
                   key={template.id}
                   className="group card p-2 sm:p-3 text-center hover:shadow-medium transition-all cursor-pointer active:scale-[0.98]"
                   onClick={() => {
-                    setData((prev) => ({ ...prev, template_id: template.id as TemplateId }));
-                    setShowLanding(false);
-                    window.scrollTo(0, 0);
+                    setData((prev) => ({ ...prev, template_id: template.id as TemplateId }))
+                    setShowLanding(false)
+                    window.scrollTo(0, 0)
                   }}
                 >
                   <div className="w-full aspect-[3/4] rounded-lg mb-2 sm:mb-3 overflow-hidden bg-primary-50">
@@ -315,8 +314,8 @@ function App() {
             <div className="text-center mt-8">
               <button
                 onClick={() => {
-                  setShowLanding(false);
-                  window.scrollTo(0, 0);
+                  setShowLanding(false)
+                  window.scrollTo(0, 0)
                 }}
                 className="btn-ghost text-primary-600"
               >
@@ -367,8 +366,8 @@ function App() {
             </p>
             <button
               onClick={() => {
-                setShowLanding(false);
-                window.scrollTo(0, 0);
+                setShowLanding(false)
+                window.scrollTo(0, 0)
               }}
               className="btn-brand px-6 sm:px-8 py-3 text-base w-full sm:w-auto"
             >
@@ -379,9 +378,8 @@ function App() {
 
         {/* Footer */}
         <Footer />
-
       </div>
-    );
+    )
   }
 
   // Resumes Page
@@ -393,8 +391,8 @@ function App() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <button
               onClick={() => {
-                setShowResumesPage(false);
-                setShowLanding(true);
+                setShowResumesPage(false)
+                setShowLanding(true)
               }}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
@@ -436,12 +434,11 @@ function App() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-2xl font-semibold text-primary-900">{t('resumes.myResumes')}</h1>
-              <p className="text-sm text-primary-500 mt-1">{t('resumes.pageSubtitle') || 'Gérez et accédez à tous vos CV'}</p>
+              <p className="text-sm text-primary-500 mt-1">
+                {t('resumes.pageSubtitle') || 'Gérez et accédez à tous vos CV'}
+              </p>
             </div>
-            <button
-              onClick={resumeManager.handleNewResume}
-              className="btn-brand"
-            >
+            <button onClick={resumeManager.handleNewResume} className="btn-brand">
               <Plus className="w-4 h-4" />
               {t('resumes.createNew')}
             </button>
@@ -452,12 +449,11 @@ function App() {
               <div className="w-20 h-20 bg-primary-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
                 <FolderOpen className="w-10 h-10 text-primary-400" />
               </div>
-              <h2 className="text-xl font-semibold text-primary-900 mb-2">{t('resumes.noResumes')}</h2>
+              <h2 className="text-xl font-semibold text-primary-900 mb-2">
+                {t('resumes.noResumes')}
+              </h2>
               <p className="text-primary-500 mb-6 max-w-md mx-auto">{t('resumes.noResumesHint')}</p>
-              <button
-                onClick={resumeManager.handleNewResume}
-                className="btn-brand"
-              >
+              <button onClick={resumeManager.handleNewResume} className="btn-brand">
                 <Plus className="w-4 h-4" />
                 {t('resumes.createNew')}
               </button>
@@ -478,7 +474,7 @@ function App() {
           )}
         </main>
       </div>
-    );
+    )
   }
 
   // Editor Interface
@@ -493,7 +489,9 @@ function App() {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
             <FileText className="w-7 h-7 text-primary-900" />
-            <span className="hidden sm:inline text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
+            <span className="hidden sm:inline text-lg font-semibold text-primary-900">
+              {t('landing.appName')}
+            </span>
           </button>
 
           {/* Desktop actions */}
@@ -504,17 +502,18 @@ function App() {
             <div className="w-px h-5 bg-primary-200/60 mx-1" />
 
             {/* My Resumes */}
-            <button
-              onClick={() => setShowResumesPage(true)}
-              className="btn-ghost"
-            >
+            <button onClick={() => setShowResumesPage(true)} className="btn-ghost">
               <FolderOpen className="w-4 h-4" />
               <span className="hidden lg:inline">{t('resumes.myResumes')}</span>
             </button>
 
             {/* Save */}
             <button
-              onClick={() => resumeManager.currentResumeId ? resumeManager.handleSaveResume() : resumeManager.setShowSaveModal(true)}
+              onClick={() =>
+                resumeManager.currentResumeId
+                  ? resumeManager.handleSaveResume()
+                  : resumeManager.setShowSaveModal(true)
+              }
               disabled={resumeManager.saveLoading}
               className="btn-ghost"
             >
@@ -536,11 +535,7 @@ function App() {
             />
 
             {/* Primary Export button */}
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="btn-brand"
-            >
+            <button onClick={handleGenerate} disabled={loading} className="btn-brand">
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -582,21 +577,14 @@ function App() {
           <div className="flex md:hidden items-center gap-1.5">
             <ThemeToggle />
             <LanguageSwitcher />
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="btn-brand !px-3"
-            >
+            <button onClick={handleGenerate} disabled={loading} className="btn-brand !px-3">
               {loading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <FileDown className="w-4 h-4" />
               )}
             </button>
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="btn-ghost !p-2"
-            >
+            <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="btn-ghost !p-2">
               {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
@@ -629,8 +617,8 @@ function App() {
               {/* My Resumes */}
               <button
                 onClick={() => {
-                  setShowResumesPage(true);
-                  setShowMobileMenu(false);
+                  setShowResumesPage(true)
+                  setShowMobileMenu(false)
                 }}
                 className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
               >
@@ -641,8 +629,10 @@ function App() {
               {/* Save */}
               <button
                 onClick={() => {
-                  resumeManager.currentResumeId ? resumeManager.handleSaveResume() : resumeManager.setShowSaveModal(true);
-                  setShowMobileMenu(false);
+                  resumeManager.currentResumeId
+                    ? resumeManager.handleSaveResume()
+                    : resumeManager.setShowSaveModal(true)
+                  setShowMobileMenu(false)
                 }}
                 disabled={resumeManager.saveLoading}
                 className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors disabled:opacity-50"
@@ -664,8 +654,8 @@ function App() {
               />
               <button
                 onClick={() => {
-                  fileInputRef.current?.click();
-                  setShowMobileMenu(false);
+                  fileInputRef.current?.click()
+                  setShowMobileMenu(false)
                 }}
                 disabled={importLoading}
                 className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors disabled:opacity-50"
@@ -680,8 +670,8 @@ function App() {
 
               <button
                 onClick={() => {
-                  setShowAddModal(true);
-                  setShowMobileMenu(false);
+                  setShowAddModal(true)
+                  setShowMobileMenu(false)
                 }}
                 className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
               >
@@ -701,8 +691,8 @@ function App() {
               {/* Logout */}
               <button
                 onClick={() => {
-                  logout();
-                  setShowMobileMenu(false);
+                  logout()
+                  setShowMobileMenu(false)
                 }}
                 className="w-full px-2 py-2.5 text-left text-sm text-error-600 hover:bg-error-50 rounded-lg flex items-center gap-3 transition-colors"
               >
@@ -728,7 +718,12 @@ function App() {
             >
               <span className="sr-only">Fermer</span>
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -739,157 +734,133 @@ function App() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 flex gap-4 lg:gap-8">
         {/* Left: Form */}
         <main className="flex-1 space-y-4 sm:space-y-6 min-w-0">
-        {/* Import suggestion card - only if not imported and at step 0 */}
-        {!hasImported && editorStep === 0 && (
-          <div className="card p-4 sm:p-6 border-2 border-dashed border-primary-200 bg-primary-50/30 animate-fade-in">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-brand/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <FileUp className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
+          {/* Import suggestion card - only if not imported and at step 0 */}
+          {!hasImported && editorStep === 0 && (
+            <div className="card p-4 sm:p-6 border-2 border-dashed border-primary-200 bg-primary-50/30 animate-fade-in">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-brand/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FileUp className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-primary-900 mb-1 text-sm sm:text-base">
+                    {t('import.title')}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-primary-600">{t('import.description')}</p>
+                </div>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={importLoading}
+                  className="btn-brand w-full sm:w-auto mt-2 sm:mt-0"
+                >
+                  {importLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="truncate">{importMessages[importStep]}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      {t('landing.importPdf')}
+                    </>
+                  )}
+                </button>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-primary-900 mb-1 text-sm sm:text-base">
-                  {t('import.title')}
-                </h3>
-                <p className="text-xs sm:text-sm text-primary-600">
-                  {t('import.description')}
-                </p>
-              </div>
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                disabled={importLoading}
-                className="btn-brand w-full sm:w-auto mt-2 sm:mt-0"
-              >
-                {importLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="truncate">{importMessages[importStep]}</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4" />
-                    {t('landing.importPdf')}
-                  </>
-                )}
+            </div>
+          )}
+
+          {/* Step 0: Personal Information */}
+          {editorStep >= 0 && (
+            <PersonalSection
+              data={data.personal}
+              onChange={(personal) => setData((prev) => ({ ...prev, personal }))}
+            />
+          )}
+
+          {/* Add section button after personal info if in step mode */}
+          {editorStep === 0 && !hasImported && (
+            <div className="flex justify-end">
+              <button onClick={() => setShowAddModal(true)} className="btn-secondary">
+                <Plus className="w-4 h-4" />
+                {t('addSection.title')}
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Step 0: Personal Information */}
-        {editorStep >= 0 && (
-          <PersonalSection
-            data={data.personal}
-            onChange={(personal) => setData((prev) => ({ ...prev, personal }))}
-          />
-        )}
+          {/* Sections - show based on step or all if imported */}
+          {editorStep >= 1 && (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={data.sections.map((s) => s.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {data.sections.map((section) => (
+                  <SortableSection
+                    key={section.id}
+                    section={section}
+                    onUpdate={(updates) => updateSection(section.id, updates)}
+                    onDelete={() => deleteSection(section.id)}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )}
 
-        {/* Add section button after personal info if in step mode */}
-        {editorStep === 0 && !hasImported && (
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-secondary"
-            >
-              <Plus className="w-4 h-4" />
-              {t('addSection.title')}
-            </button>
-          </div>
-        )}
-
-        {/* Sections - show based on step or all if imported */}
-        {editorStep >= 1 && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={data.sections.map((s) => s.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {data.sections.map((section) => (
-                <SortableSection
-                  key={section.id}
-                  section={section}
-                  onUpdate={(updates) => updateSection(section.id, updates)}
-                  onDelete={() => deleteSection(section.id)}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        )}
-
-        {/* Action buttons for sections in step mode */}
-        {!hasImported && editorStep >= 1 && (
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-secondary"
-            >
-              <Plus className="w-4 h-4" />
-              {t('addSection.title')}
-            </button>
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="btn-brand"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <FileDown className="w-4 h-4" />
-              )}
-              {t('common.export')}
-            </button>
-          </div>
-        )}
-
-        {/* Action buttons when imported (all sections visible) */}
-        {hasImported && data.sections.length > 0 && (
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-secondary"
-            >
-              <Plus className="w-4 h-4" />
-              {t('addSection.addButton')}
-            </button>
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="btn-brand"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <FileDown className="w-4 h-4" />
-              )}
-              {t('common.export')}
-            </button>
-          </div>
-        )}
-
-        {/* Empty state - only when imported but no sections */}
-        {hasImported && data.sections.length === 0 && (
-          <div className="card p-12 text-center animate-fade-in">
-            <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Plus className="w-8 h-8 text-primary-400" />
+          {/* Action buttons for sections in step mode */}
+          {!hasImported && editorStep >= 1 && (
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowAddModal(true)} className="btn-secondary">
+                <Plus className="w-4 h-4" />
+                {t('addSection.title')}
+              </button>
+              <button onClick={handleGenerate} disabled={loading} className="btn-brand">
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FileDown className="w-4 h-4" />
+                )}
+                {t('common.export')}
+              </button>
             </div>
-            <h3 className="text-lg font-semibold text-primary-900 mb-2">
-              {t('sections.noSections')}
-            </h3>
-            <p className="text-primary-500 mb-6">
-              {t('sections.noSectionsHint')}
-            </p>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-brand"
-            >
-              <Plus className="w-4 h-4" />
-              {t('addSection.addButton')}
-            </button>
-          </div>
-        )}
+          )}
+
+          {/* Action buttons when imported (all sections visible) */}
+          {hasImported && data.sections.length > 0 && (
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowAddModal(true)} className="btn-secondary">
+                <Plus className="w-4 h-4" />
+                {t('addSection.addButton')}
+              </button>
+              <button onClick={handleGenerate} disabled={loading} className="btn-brand">
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FileDown className="w-4 h-4" />
+                )}
+                {t('common.export')}
+              </button>
+            </div>
+          )}
+
+          {/* Empty state - only when imported but no sections */}
+          {hasImported && data.sections.length === 0 && (
+            <div className="card p-12 text-center animate-fade-in">
+              <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Plus className="w-8 h-8 text-primary-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-primary-900 mb-2">
+                {t('sections.noSections')}
+              </h3>
+              <p className="text-primary-500 mb-6">{t('sections.noSectionsHint')}</p>
+              <button onClick={() => setShowAddModal(true)} className="btn-brand">
+                <Plus className="w-4 h-4" />
+                {t('addSection.addButton')}
+              </button>
+            </div>
+          )}
         </main>
 
         {/* Right: Preview and Template Selector */}
@@ -900,125 +871,140 @@ function App() {
 
             {/* Template Selector */}
             <div>
-            <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
+              <h3 className="text-base font-semibold text-primary-900 mb-3">
+                {t('sections.templates')}
+              </h3>
 
-            {/* Size selector */}
-            <div className="mb-3 space-y-2">
-              <div className="flex rounded-lg bg-primary-100/50 p-0.5">
-                {/* Auto button */}
-                <button
-                  onClick={() => setAutoSize(true)}
-                  className={`flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md transition-all ${
-                    autoSize
-                      ? 'bg-brand text-white shadow-sm'
-                      : 'text-primary-500 hover:text-primary-700'
-                  }`}
-                  title={t('templates.autoSizeDesc')}
-                >
-                  <Sparkles className="w-3 h-3" />
-                  <span>Auto</span>
-                </button>
-                {(['compact', 'normal', 'large'] as const).map((size) => {
-                  const currentSize = getTemplateSizeVariant(data.template_id);
-                  const isSelected = !autoSize && currentSize === size;
+              {/* Size selector */}
+              <div className="mb-3 space-y-2">
+                <div className="flex rounded-lg bg-primary-100/50 p-0.5">
+                  {/* Auto button */}
+                  <button
+                    onClick={() => setAutoSize(true)}
+                    className={`flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md transition-all ${
+                      autoSize
+                        ? 'bg-brand text-white shadow-sm'
+                        : 'text-primary-500 hover:text-primary-700'
+                    }`}
+                    title={t('templates.autoSizeDesc')}
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Auto</span>
+                  </button>
+                  {(['compact', 'normal', 'large'] as const).map((size) => {
+                    const currentSize = getTemplateSizeVariant(data.template_id)
+                    const isSelected = !autoSize && currentSize === size
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => {
+                          setAutoSize(false)
+                          const currentBase = getBaseTemplateId(data.template_id)
+                          const newId = applyTemplateSizeVariant(currentBase as TemplateId, size)
+                          setData((prev) => ({ ...prev, template_id: newId }))
+                        }}
+                        className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
+                          isSelected
+                            ? 'bg-surface-0 text-primary-900 shadow-sm'
+                            : 'text-primary-500 hover:text-primary-700'
+                        }`}
+                      >
+                        {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
+                      </button>
+                    )
+                  })}
+                </div>
+                {/* Auto-size indicator */}
+                {autoSize && (
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-brand/5 rounded-md">
+                    {autoSizeLoading ? (
+                      <>
+                        <Loader2 className="w-3 h-3 text-brand animate-spin" />
+                        <span className="text-[10px] text-brand font-medium">
+                          {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3 h-3 text-brand" />
+                        <span className="text-[10px] text-brand font-medium">
+                          {t('templates.autoSizeOptimized')}:{' '}
+                          {recommendedSize === 'compact'
+                            ? 'Compact'
+                            : recommendedSize === 'large'
+                              ? 'Large'
+                              : 'Normal'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {templatePreviews.map((template) => {
+                  const currentBase = data.template_id.replace(/_compact|_large/, '')
+                  const currentSize = data.template_id.includes('_compact')
+                    ? 'compact'
+                    : data.template_id.includes('_large')
+                      ? 'large'
+                      : 'normal'
+                  const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`
+                  const isSelected = currentBase === template.id
+                  const imgSrc = getTemplateImage(template.imgBase, currentSize)
+                  const fallbackSrc = `${template.imgBase}.png`
                   return (
                     <button
-                      key={size}
+                      key={template.id}
                       onClick={() => {
-                        setAutoSize(false);
-                        const currentBase = getBaseTemplateId(data.template_id);
-                        const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
-                        setData((prev) => ({ ...prev, template_id: newId }));
+                        const newId = `${template.id}${currentSizeSuffix}` as TemplateId
+                        setData((prev) => ({ ...prev, template_id: newId }))
                       }}
-                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${
+                      className={`w-full text-left rounded-xl overflow-hidden transition-all ${
                         isSelected
-                          ? 'bg-surface-0 text-primary-900 shadow-sm'
-                          : 'text-primary-500 hover:text-primary-700'
+                          ? 'ring-2 ring-brand ring-offset-2 ring-offset-surface-50'
+                          : 'ring-1 ring-primary-100 hover:ring-primary-200'
                       }`}
                     >
-                      {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
+                      <div className="bg-white">
+                        <img
+                          src={imgSrc}
+                          alt={template.name}
+                          className="w-full h-auto"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            if (target.src !== fallbackSrc) {
+                              target.src = fallbackSrc
+                            }
+                          }}
+                        />
+                      </div>
+                      <div
+                        className={`p-1.5 border-t transition-colors ${
+                          isSelected
+                            ? 'bg-brand/5 border-brand/10'
+                            : 'bg-surface-0 border-primary-50'
+                        }`}
+                      >
+                        <p
+                          className={`text-xs font-medium text-center ${
+                            isSelected ? 'text-brand' : 'text-primary-700'
+                          }`}
+                        >
+                          {template.name}
+                        </p>
+                      </div>
                     </button>
-                  );
+                  )
                 })}
               </div>
-              {/* Auto-size indicator */}
-              {autoSize && (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-brand/5 rounded-md">
-                  {autoSizeLoading ? (
-                    <>
-                      <Loader2 className="w-3 h-3 text-brand animate-spin" />
-                      <span className="text-[10px] text-brand font-medium">
-                        {t('templates.autoSizeCalculating') || 'Calcul en cours...'}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-3 h-3 text-brand" />
-                      <span className="text-[10px] text-brand font-medium">
-                        {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              {templatePreviews.map((template) => {
-                const currentBase = data.template_id.replace(/_compact|_large/, '');
-                const currentSize = data.template_id.includes('_compact') ? 'compact'
-                  : data.template_id.includes('_large') ? 'large' : 'normal';
-                const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`;
-                const isSelected = currentBase === template.id;
-                const imgSrc = getTemplateImage(template.imgBase, currentSize);
-                const fallbackSrc = `${template.imgBase}.png`;
-                return (
-                  <button
-                    key={template.id}
-                    onClick={() => {
-                      const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
-                      setData((prev) => ({ ...prev, template_id: newId }));
-                    }}
-                    className={`w-full text-left rounded-xl overflow-hidden transition-all ${
-                      isSelected
-                        ? 'ring-2 ring-brand ring-offset-2 ring-offset-surface-50'
-                        : 'ring-1 ring-primary-100 hover:ring-primary-200'
-                    }`}
-                  >
-                    <div className="bg-white">
-                      <img
-                        src={imgSrc}
-                        alt={template.name}
-                        className="w-full h-auto"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          if (target.src !== fallbackSrc) {
-                            target.src = fallbackSrc;
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className={`p-1.5 border-t transition-colors ${
-                      isSelected ? 'bg-brand/5 border-brand/10' : 'bg-surface-0 border-primary-50'
-                    }`}>
-                      <p className={`text-xs font-medium text-center ${
-                        isSelected ? 'text-brand' : 'text-primary-700'
-                      }`}>{template.name}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
             </div>
           </div>
         </aside>
       </div>
 
       {showAddModal && (
-        <AddSectionModal
-          onAdd={addSection}
-          onClose={() => setShowAddModal(false)}
-        />
+        <AddSectionModal onAdd={addSection} onClose={() => setShowAddModal(false)} />
       )}
 
       {/* Save Modal */}
@@ -1105,7 +1091,9 @@ function App() {
 
             {/* Template Selector in mobile */}
             <div className="mt-6">
-              <h3 className="text-base font-semibold text-primary-900 mb-3">{t('sections.templates')}</h3>
+              <h3 className="text-base font-semibold text-primary-900 mb-3">
+                {t('sections.templates')}
+              </h3>
 
               {/* Size selector */}
               <div className="mb-3 space-y-2">
@@ -1114,9 +1102,7 @@ function App() {
                   <button
                     onClick={() => setAutoSize(true)}
                     className={`flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${
-                      autoSize
-                        ? 'bg-brand text-white shadow-sm'
-                        : 'text-primary-500'
+                      autoSize ? 'bg-brand text-white shadow-sm' : 'text-primary-500'
                     }`}
                     title={t('templates.autoSizeDesc')}
                   >
@@ -1124,16 +1110,16 @@ function App() {
                     <span>Auto</span>
                   </button>
                   {(['compact', 'normal', 'large'] as const).map((size) => {
-                    const currentSize = getTemplateSizeVariant(data.template_id);
-                    const isSelected = !autoSize && currentSize === size;
+                    const currentSize = getTemplateSizeVariant(data.template_id)
+                    const isSelected = !autoSize && currentSize === size
                     return (
                       <button
                         key={size}
                         onClick={() => {
-                          setAutoSize(false);
-                          const currentBase = getBaseTemplateId(data.template_id);
-                          const newId = applyTemplateSizeVariant(currentBase as TemplateId, size);
-                          setData((prev) => ({ ...prev, template_id: newId }));
+                          setAutoSize(false)
+                          const currentBase = getBaseTemplateId(data.template_id)
+                          const newId = applyTemplateSizeVariant(currentBase as TemplateId, size)
+                          setData((prev) => ({ ...prev, template_id: newId }))
                         }}
                         className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                           isSelected
@@ -1143,7 +1129,7 @@ function App() {
                       >
                         {size === 'compact' ? 'Compact' : size === 'normal' ? 'Normal' : 'Large'}
                       </button>
-                    );
+                    )
                   })}
                 </div>
                 {/* Auto-size indicator */}
@@ -1160,7 +1146,12 @@ function App() {
                       <>
                         <Sparkles className="w-3.5 h-3.5 text-brand" />
                         <span className="text-xs text-brand font-medium">
-                          {t('templates.autoSizeOptimized')}: {recommendedSize === 'compact' ? 'Compact' : recommendedSize === 'large' ? 'Large' : 'Normal'}
+                          {t('templates.autoSizeOptimized')}:{' '}
+                          {recommendedSize === 'compact'
+                            ? 'Compact'
+                            : recommendedSize === 'large'
+                              ? 'Large'
+                              : 'Normal'}
                         </span>
                       </>
                     )}
@@ -1170,19 +1161,22 @@ function App() {
 
               <div className="grid grid-cols-3 gap-2">
                 {templatePreviews.map((template) => {
-                  const currentBase = data.template_id.replace(/_compact|_large/, '');
-                  const currentSize = data.template_id.includes('_compact') ? 'compact'
-                    : data.template_id.includes('_large') ? 'large' : 'normal';
-                  const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`;
-                  const isSelected = currentBase === template.id;
-                  const imgSrc = getTemplateImage(template.imgBase, currentSize);
-                  const fallbackSrc = `${template.imgBase}.png`;
+                  const currentBase = data.template_id.replace(/_compact|_large/, '')
+                  const currentSize = data.template_id.includes('_compact')
+                    ? 'compact'
+                    : data.template_id.includes('_large')
+                      ? 'large'
+                      : 'normal'
+                  const currentSizeSuffix = currentSize === 'normal' ? '' : `_${currentSize}`
+                  const isSelected = currentBase === template.id
+                  const imgSrc = getTemplateImage(template.imgBase, currentSize)
+                  const fallbackSrc = `${template.imgBase}.png`
                   return (
                     <button
                       key={template.id}
                       onClick={() => {
-                        const newId = `${template.id}${currentSizeSuffix}` as TemplateId;
-                        setData((prev) => ({ ...prev, template_id: newId }));
+                        const newId = `${template.id}${currentSizeSuffix}` as TemplateId
+                        setData((prev) => ({ ...prev, template_id: newId }))
                       }}
                       className={`w-full text-left rounded-xl overflow-hidden transition-all active:scale-[0.98] ${
                         isSelected
@@ -1196,22 +1190,30 @@ function App() {
                           alt={template.name}
                           className="w-full h-auto"
                           onError={(e) => {
-                            const target = e.target as HTMLImageElement;
+                            const target = e.target as HTMLImageElement
                             if (target.src !== fallbackSrc) {
-                              target.src = fallbackSrc;
+                              target.src = fallbackSrc
                             }
                           }}
                         />
                       </div>
-                      <div className={`p-1.5 border-t transition-colors ${
-                        isSelected ? 'bg-brand/5 border-brand/10' : 'bg-surface-0 border-primary-50'
-                      }`}>
-                        <p className={`text-xs font-medium text-center ${
-                          isSelected ? 'text-brand' : 'text-primary-700'
-                        }`}>{template.name}</p>
+                      <div
+                        className={`p-1.5 border-t transition-colors ${
+                          isSelected
+                            ? 'bg-brand/5 border-brand/10'
+                            : 'bg-surface-0 border-primary-50'
+                        }`}
+                      >
+                        <p
+                          className={`text-xs font-medium text-center ${
+                            isSelected ? 'text-brand' : 'text-primary-700'
+                          }`}
+                        >
+                          {template.name}
+                        </p>
                       </div>
                     </button>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -1219,7 +1221,7 @@ function App() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

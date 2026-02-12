@@ -3,31 +3,31 @@
  */
 
 // API base URL - always use /api prefix
-const API_BASE_URL = '/api';
+const API_BASE_URL = '/api'
 
 // Token storage keys
-const TOKEN_KEY = 'access_token';
+const TOKEN_KEY = 'access_token'
 
 /**
  * Get stored token from localStorage
  */
 export const getStoredToken = (): string | null => {
-  return localStorage.getItem(TOKEN_KEY);
-};
+  return localStorage.getItem(TOKEN_KEY)
+}
 
 /**
  * Store token in localStorage
  */
 export const setStoredToken = (token: string): void => {
-  localStorage.setItem(TOKEN_KEY, token);
-};
+  localStorage.setItem(TOKEN_KEY, token)
+}
 
 /**
  * Remove token from localStorage
  */
 export const removeStoredToken = (): void => {
-  localStorage.removeItem(TOKEN_KEY);
-};
+  localStorage.removeItem(TOKEN_KEY)
+}
 
 /**
  * Custom API error class
@@ -36,91 +36,88 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public detail?: string
+    public detail?: string,
   ) {
-    super(message);
-    this.name = 'ApiError';
+    super(message)
+    this.name = 'ApiError'
   }
 }
 
 /**
  * Callback for handling 401 errors (token expired)
  */
-let onUnauthorized: (() => void) | null = null;
+let onUnauthorized: (() => void) | null = null
 
 export const setOnUnauthorized = (callback: () => void): void => {
-  onUnauthorized = callback;
-};
+  onUnauthorized = callback
+}
 
 /**
  * API client with automatic token injection and error handling
  */
-export async function apiClient<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const token = getStoredToken();
+export async function apiClient<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const token = getStoredToken()
 
   const headers: HeadersInit = {
     ...options.headers,
-  };
+  }
 
   // Add Content-Type for JSON requests (unless it's FormData or already set)
   if (!(options.body instanceof FormData) && !(headers as Record<string, string>)['Content-Type']) {
-    (headers as Record<string, string>)['Content-Type'] = 'application/json';
+    ;(headers as Record<string, string>)['Content-Type'] = 'application/json'
   }
 
   // Add Authorization header if token exists
   if (token) {
-    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    ;(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 15000)
 
-  let response: Response;
+  let response: Response
   try {
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
       signal: controller.signal,
-    });
+    })
   } catch (error) {
-    clearTimeout(timeoutId);
+    clearTimeout(timeoutId)
     if (error instanceof DOMException && error.name === 'AbortError') {
-      throw new ApiError('Request timeout', 408, 'The server took too long to respond');
+      throw new ApiError('Request timeout', 408, 'The server took too long to respond')
     }
-    throw error;
+    throw error
   }
-  clearTimeout(timeoutId);
+  clearTimeout(timeoutId)
 
   // Handle 401 Unauthorized
   if (response.status === 401) {
-    removeStoredToken();
+    removeStoredToken()
     if (onUnauthorized) {
-      onUnauthorized();
+      onUnauthorized()
     }
-    throw new ApiError('Session expired', 401, 'Please log in again');
+    throw new ApiError('Session expired', 401, 'Please log in again')
   }
 
   // Handle other errors
   if (!response.ok) {
-    let detail = 'An error occurred';
+    let detail = 'An error occurred'
     try {
-      const errorData = await response.json();
-      detail = errorData.detail || detail;
+      const errorData = await response.json()
+      detail = errorData.detail || detail
     } catch {
       // Ignore JSON parse errors
     }
-    throw new ApiError(detail, response.status, detail);
+    throw new ApiError(detail, response.status, detail)
   }
 
   // Return empty for 204 No Content
   if (response.status === 204) {
-    return undefined as T;
+    return undefined as T
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
@@ -150,4 +147,4 @@ export const api = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: data.toString(),
     }),
-};
+}

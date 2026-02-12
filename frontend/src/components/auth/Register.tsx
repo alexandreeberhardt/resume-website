@@ -1,32 +1,42 @@
 /**
  * Register component - Matching CV form design system
  */
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Loader2, Mail, Lock, UserPlus, AlertCircle, CheckCircle, Eye, EyeOff, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { ApiError } from '../../api/client';
-import { loginWithGoogle } from '../../api/auth';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+  Loader2,
+  Mail,
+  Lock,
+  UserPlus,
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Check,
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import { ApiError } from '../../api/client'
+import { loginWithGoogle } from '../../api/auth'
 
 interface RegisterProps {
-  onSwitchToLogin: () => void;
+  onSwitchToLogin: () => void
 }
 
 export default function Register({ onSwitchToLogin }: RegisterProps) {
-  const { t, i18n } = useTranslation();
-  const { register, login } = useAuth();
+  const { t, i18n } = useTranslation()
+  const { register, login } = useAuth()
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const isFrench = i18n.language.startsWith('fr');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const isFrench = i18n.language.startsWith('fr')
 
   // Password validation - must match backend requirements (12 chars + special char)
   const passwordChecks = {
@@ -35,52 +45,52 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
     lowercase: /[a-z]/.test(password),
     digit: /\d/.test(password),
     special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
-  };
-  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
-  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0;
-  const allChecksValid = isPasswordValid && passwordsMatch && acceptedTerms;
+  }
+  const isPasswordValid = Object.values(passwordChecks).every(Boolean)
+  const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
+  const allChecksValid = isPasswordValid && passwordsMatch && acceptedTerms
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
 
     if (!isPasswordValid) {
-      setError(t('auth.errors.passwordRequirements'));
-      return;
+      setError(t('auth.errors.passwordRequirements'))
+      return
     }
 
     if (!passwordsMatch) {
-      setError(t('auth.errors.passwordMismatch'));
-      return;
+      setError(t('auth.errors.passwordMismatch'))
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
 
     try {
-      await register({ email, password });
-      setSuccess(true);
-      setLoading(false);
+      await register({ email, password })
+      setSuccess(true)
+      setLoading(false)
 
       // Auto-login after successful registration
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500))
       try {
-        await login({ email, password });
+        await login({ email, password })
       } catch {
-        onSwitchToLogin();
+        onSwitchToLogin()
       }
     } catch (err) {
-      setLoading(false);
+      setLoading(false)
       if (err instanceof ApiError) {
         if (err.status === 400) {
-          setError(t('auth.errors.emailExists'));
+          setError(t('auth.errors.emailExists'))
         } else {
-          setError(err.detail || t('auth.errors.generic'));
+          setError(err.detail || t('auth.errors.generic'))
         }
       } else {
-        setError(t('auth.errors.generic'));
+        setError(t('auth.errors.generic'))
       }
     }
-  };
+  }
 
   if (success) {
     return (
@@ -91,13 +101,15 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
           {t('auth.register.success')}
         </h2>
-        <p className="text-sm text-black dark:text-white mb-5">{t('auth.register.successMessage')}</p>
+        <p className="text-sm text-black dark:text-white mb-5">
+          {t('auth.register.successMessage')}
+        </p>
         <div className="flex items-center justify-center gap-2 text-brand">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-sm font-medium">{t('auth.loggingIn')}</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -110,9 +122,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
           {t('auth.register.title')}
         </h2>
-        <p className="text-sm text-black dark:text-white">
-          {t('auth.register.subtitle')}
-        </p>
+        <p className="text-sm text-black dark:text-white">{t('auth.register.subtitle')}</p>
       </div>
 
       {/* Error message */}
@@ -216,11 +226,26 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
           {password && (
             <div className="mt-2.5 p-2.5 bg-primary-50 dark:bg-primary-200/50 rounded-lg border border-primary-100 dark:border-primary-700/50">
               <div className="grid grid-cols-1 xs:grid-cols-2 gap-1.5">
-                <PasswordCheck passed={passwordChecks.length} label={t('auth.passwordRules.length')} />
-                <PasswordCheck passed={passwordChecks.uppercase} label={t('auth.passwordRules.uppercase')} />
-                <PasswordCheck passed={passwordChecks.lowercase} label={t('auth.passwordRules.lowercase')} />
-                <PasswordCheck passed={passwordChecks.digit} label={t('auth.passwordRules.digit')} />
-                <PasswordCheck passed={passwordChecks.special} label={t('auth.passwordRules.special')} />
+                <PasswordCheck
+                  passed={passwordChecks.length}
+                  label={t('auth.passwordRules.length')}
+                />
+                <PasswordCheck
+                  passed={passwordChecks.uppercase}
+                  label={t('auth.passwordRules.uppercase')}
+                />
+                <PasswordCheck
+                  passed={passwordChecks.lowercase}
+                  label={t('auth.passwordRules.lowercase')}
+                />
+                <PasswordCheck
+                  passed={passwordChecks.digit}
+                  label={t('auth.passwordRules.digit')}
+                />
+                <PasswordCheck
+                  passed={passwordChecks.special}
+                  label={t('auth.passwordRules.special')}
+                />
               </div>
             </div>
           )}
@@ -242,8 +267,8 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
                 confirmPassword && !passwordsMatch
                   ? 'border-error-300 focus:border-error-400 focus:ring-error-100 dark:focus:ring-error-900/30'
                   : confirmPassword && passwordsMatch
-                  ? 'border-success-300 focus:border-success-400 focus:ring-success-100 dark:focus:ring-success-900/30'
-                  : ''
+                    ? 'border-success-300 focus:border-success-400 focus:ring-success-100 dark:focus:ring-success-900/30'
+                    : ''
               }`}
               required
               autoComplete="new-password"
@@ -281,11 +306,13 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
-                acceptedTerms
-                  ? 'bg-brand border-brand'
-                  : 'border-primary-300 dark:border-primary-600 group-hover:border-primary-400'
-              }`}>
+              <div
+                className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                  acceptedTerms
+                    ? 'bg-brand border-brand'
+                    : 'border-primary-300 dark:border-primary-600 group-hover:border-primary-400'
+                }`}
+              >
                 {acceptedTerms && <Check className="w-3.5 h-3.5 text-white" />}
               </div>
             </div>
@@ -293,14 +320,10 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
               {isFrench ? (
                 <>
                   J'accepte les{' '}
-                  <Link
-                    to="/cgu"
-                    className="text-brand hover:underline"
-                    target="_blank"
-                  >
+                  <Link to="/cgu" className="text-brand hover:underline" target="_blank">
                     conditions d'utilisation
-                  </Link>
-                  {' '}et la{' '}
+                  </Link>{' '}
+                  et la{' '}
                   <Link
                     to="/politique-confidentialite"
                     className="text-brand hover:underline"
@@ -312,19 +335,11 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
               ) : (
                 <>
                   I accept the{' '}
-                  <Link
-                    to="/terms"
-                    className="text-brand hover:underline"
-                    target="_blank"
-                  >
+                  <Link to="/terms" className="text-brand hover:underline" target="_blank">
                     Terms of Service
-                  </Link>
-                  {' '}and{' '}
-                  <Link
-                    to="/privacy-policy"
-                    className="text-brand hover:underline"
-                    target="_blank"
-                  >
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy-policy" className="text-brand hover:underline" target="_blank">
                     Privacy Policy
                   </Link>
                 </>
@@ -363,20 +378,24 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 function PasswordCheck({ passed, label }: { passed: boolean; label: string }) {
   return (
-    <div className={`flex items-center gap-1.5 text-[11px] transition-all duration-200 ${
-      passed ? 'text-success-600 dark:text-success-400' : 'text-primary-500 dark:text-primary-400'
-    }`}>
-      <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
-        passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-600'
-      }`}>
+    <div
+      className={`flex items-center gap-1.5 text-[11px] transition-all duration-200 ${
+        passed ? 'text-success-600 dark:text-success-400' : 'text-primary-500 dark:text-primary-400'
+      }`}
+    >
+      <div
+        className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
+          passed ? 'bg-success-500 text-white' : 'bg-primary-200 dark:bg-primary-600'
+        }`}
+      >
         {passed && <Check className="w-2.5 h-2.5" />}
       </div>
       <span>{label}</span>
     </div>
-  );
+  )
 }

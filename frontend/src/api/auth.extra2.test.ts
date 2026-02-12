@@ -49,12 +49,20 @@ describe('decodeToken', () => {
 
 describe('isTokenExpired', () => {
   it('returns false for future expiry', () => {
-    const token = makeToken({ sub: '1', email: 'a@b.com', exp: Math.floor(Date.now() / 1000) + 3600 })
+    const token = makeToken({
+      sub: '1',
+      email: 'a@b.com',
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    })
     expect(isTokenExpired(token)).toBe(false)
   })
 
   it('returns true for past expiry', () => {
-    const token = makeToken({ sub: '1', email: 'a@b.com', exp: Math.floor(Date.now() / 1000) - 100 })
+    const token = makeToken({
+      sub: '1',
+      email: 'a@b.com',
+      exp: Math.floor(Date.now() / 1000) - 100,
+    })
     expect(isTokenExpired(token)).toBe(true)
   })
 

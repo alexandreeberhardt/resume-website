@@ -3,7 +3,6 @@
  */
 import { describe, it, expect, vi } from 'vitest'
 import { screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '../../test/render'
 import EducationEditor from './EducationEditor'
 import ExperienceEditor from './ExperienceEditor'
@@ -12,8 +11,6 @@ import LeadershipEditor from './LeadershipEditor'
 import CustomEditor from './CustomEditor'
 
 describe('EducationEditor edge cases', () => {
-  const user = userEvent.setup()
-
   it('renders with empty items array', () => {
     renderWithProviders(<EducationEditor items={[]} onChange={vi.fn()} />)
     // Should have an "add" button
@@ -57,9 +54,7 @@ describe('ProjectEditor edge cases', () => {
   })
 
   it('renders project with highlights', () => {
-    const items = [
-      { name: 'My Project', year: '2023', highlights: ['Feature 1'] },
-    ]
+    const items = [{ name: 'My Project', year: '2023', highlights: ['Feature 1'] }]
     renderWithProviders(<ProjectEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('My Project')).toBeInTheDocument()
   })
@@ -73,9 +68,7 @@ describe('LeadershipEditor edge cases', () => {
   })
 
   it('renders leadership item', () => {
-    const items = [
-      { role: 'President', place: 'Club', dates: '2023', highlights: [] },
-    ]
+    const items = [{ role: 'President', place: 'Club', dates: '2023', highlights: [] }]
     renderWithProviders(<LeadershipEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('President')).toBeInTheDocument()
   })
@@ -89,9 +82,7 @@ describe('CustomEditor edge cases', () => {
   })
 
   it('renders custom item with all fields', () => {
-    const items = [
-      { title: 'Hobby', subtitle: 'Sport', dates: '2020', highlights: ['Football'] },
-    ]
+    const items = [{ title: 'Hobby', subtitle: 'Sport', dates: '2020', highlights: ['Football'] }]
     renderWithProviders(<CustomEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('Hobby')).toBeInTheDocument()
   })

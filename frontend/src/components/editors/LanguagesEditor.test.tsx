@@ -8,7 +8,9 @@ describe('LanguagesEditor', () => {
   const user = userEvent.setup()
 
   it('renders input with current value', () => {
-    renderWithProviders(<LanguagesEditor value="French (native), English (fluent)" onChange={vi.fn()} />)
+    renderWithProviders(
+      <LanguagesEditor value="French (native), English (fluent)" onChange={vi.fn()} />,
+    )
     expect(screen.getByDisplayValue('French (native), English (fluent)')).toBeInTheDocument()
   })
 

@@ -1,34 +1,35 @@
 /**
  * Authentication page - Modern split-screen design
  */
-import { useState } from 'react';
-import { FileText, Sparkles, Shield, Zap } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import Login from './Login';
-import Register from './Register';
-import ThemeToggle from '../ThemeToggle';
-import LanguageSwitcher from '../LanguageSwitcher';
+import { useState } from 'react'
+import { FileText, Sparkles, Shield, Zap } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import Login from './Login'
+import Register from './Register'
+import ThemeToggle from '../ThemeToggle'
+import LanguageSwitcher from '../LanguageSwitcher'
 
-type AuthMode = 'login' | 'register';
+type AuthMode = 'login' | 'register'
 
 interface AuthPageProps {
-  onContinueWithoutAuth?: () => void;
+  onContinueWithoutAuth?: () => void
 }
 
 export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
-  const { t } = useTranslation();
-  const [mode, setMode] = useState<AuthMode>('login');
+  const { t } = useTranslation()
+  const [mode, setMode] = useState<AuthMode>('login')
 
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-gradient-to-br from-indigo-900 via-brand to-indigo-950">        {/* Decorative background patterns */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-gradient-to-br from-indigo-900 via-brand to-indigo-950">
+        {' '}
+        {/* Decorative background patterns */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/20 rounded-full blur-3xl" />
         </div>
-
         {/* Grid pattern overlay */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -36,7 +37,6 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}
         />
-
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
           {/* Logo */}
@@ -54,7 +54,8 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
                 {t('auth.brandingTitle') || 'Créez des CV professionnels en quelques minutes'}
               </h1>
               <p className="text-lg text-white/80 max-w-md">
-                {t('auth.brandingSubtitle') || 'Importez, éditez et exportez vos CV avec un rendu LaTeX impeccable.'}
+                {t('auth.brandingSubtitle') ||
+                  'Importez, éditez et exportez vos CV avec un rendu LaTeX impeccable.'}
               </p>
             </div>
 
@@ -90,17 +91,22 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
       {/* Right Panel - Auth Form */}
       <div className="flex-1 flex flex-col bg-surface-50 dark:bg-surface-100 relative">
         {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-          backgroundSize: '24px 24px',
-        }} />
+        <div
+          className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
+            backgroundSize: '24px 24px',
+          }}
+        />
 
         {/* Mobile Header */}
         <header className="lg:hidden relative z-10 bg-surface-0/80 dark:bg-surface-100/80 backdrop-blur-md border-b border-primary-100/50 dark:border-primary-800/50">
           <div className="px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="w-7 h-7 text-brand" />
-              <span className="text-lg font-semibold text-primary-900 dark:text-white">{t('landing.appName')}</span>
+              <span className="text-lg font-semibold text-primary-900 dark:text-white">
+                {t('landing.appName')}
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <ThemeToggle />
@@ -121,10 +127,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
             {/* Glass card container */}
             <div className="bg-surface-0/90 dark:bg-surface-200/90 backdrop-blur-xl rounded-2xl border border-primary-200/30 dark:border-primary-700/30 shadow-xl shadow-primary-900/5 dark:shadow-primary-950/20 p-6 sm:p-8">
               {/* Animated content */}
-              <div
-                key={mode}
-                className="animate-fade-in"
-              >
+              <div key={mode} className="animate-fade-in">
                 {mode === 'login' ? (
                   <Login onSwitchToRegister={() => setMode('register')} />
                 ) : (
@@ -170,7 +173,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         </footer>
       </div>
     </div>
-  );
+  )
 }
 
 function Feature({ icon, text }: { icon: React.ReactNode; text: string }) {
@@ -181,5 +184,5 @@ function Feature({ icon, text }: { icon: React.ReactNode; text: string }) {
       </div>
       <span className="text-white/90 font-medium">{text}</span>
     </div>
-  );
+  )
 }

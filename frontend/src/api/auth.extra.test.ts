@@ -52,10 +52,7 @@ describe('loginUser', () => {
 
     const result = await loginUser({ email: 'user@test.com', password: 'mypass' })
 
-    expect(api.postForm).toHaveBeenCalledWith(
-      '/auth/login',
-      expect.any(URLSearchParams),
-    )
+    expect(api.postForm).toHaveBeenCalledWith('/auth/login', expect.any(URLSearchParams))
     // Check the form data was built correctly
     const formData = vi.mocked(api.postForm).mock.calls[0][1] as URLSearchParams
     expect(formData.get('username')).toBe('user@test.com')

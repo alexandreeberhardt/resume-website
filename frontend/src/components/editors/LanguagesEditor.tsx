@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import { Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next'
+import { Languages } from 'lucide-react'
 
 interface LanguagesEditorProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string
+  onChange: (value: string) => void
 }
 
 export default function LanguagesEditor({ value, onChange }: LanguagesEditorProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
 
   return (
     <div className="form-group">
@@ -22,9 +22,7 @@ export default function LanguagesEditor({ value, onChange }: LanguagesEditorProp
         placeholder={t('editors.languagesSpoken.placeholder')}
         className="input"
       />
-      <p className="text-xs text-primary-400 mt-1.5">
-        {t('editors.languagesSpoken.hint')}
-      </p>
+      <p className="text-xs text-primary-400 mt-1.5">{t('editors.languagesSpoken.hint')}</p>
     </div>
-  );
+  )
 }

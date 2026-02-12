@@ -39,9 +39,7 @@ describe('CustomEditor', () => {
     const addButton = buttons[buttons.length - 1] // Last button is the add button
     await user.click(addButton)
 
-    expect(onChange).toHaveBeenCalledWith([
-      expect.objectContaining({ title: '', highlights: [] }),
-    ])
+    expect(onChange).toHaveBeenCalledWith([expect.objectContaining({ title: '', highlights: [] })])
   })
 
   it('removes an item when clicking delete', async () => {
@@ -71,7 +69,7 @@ describe('CustomEditor', () => {
     renderWithProviders(<CustomEditor items={sampleItems} onChange={onChange} />)
 
     const allButtons = screen.getAllByRole('button')
-    const addHighlightBtn = allButtons.find(btn => {
+    const addHighlightBtn = allButtons.find((btn) => {
       const text = btn.textContent?.toLowerCase() || ''
       return (text === 'add' || text === 'ajouter') && !text.includes('item')
     })!
@@ -90,8 +88,9 @@ describe('CustomEditor', () => {
     ]
     renderWithProviders(<CustomEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 
-    const emptyMessage = screen.getByText((text, element) =>
-      element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0
+    const emptyMessage = screen.getByText(
+      (text, element) =>
+        element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0,
     )
     expect(emptyMessage).toBeInTheDocument()
   })

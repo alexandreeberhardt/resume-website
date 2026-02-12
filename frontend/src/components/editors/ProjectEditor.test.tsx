@@ -67,9 +67,13 @@ describe('ProjectEditor', () => {
     renderWithProviders(<ProjectEditor items={sampleItems} onChange={onChange} />)
 
     const allButtons = screen.getAllByRole('button')
-    const addHighlightBtn = allButtons.find(btn => {
+    const addHighlightBtn = allButtons.find((btn) => {
       const text = btn.textContent?.toLowerCase() || ''
-      return (text === 'add' || text === 'ajouter') && !text.includes('project') && !text.includes('projet')
+      return (
+        (text === 'add' || text === 'ajouter') &&
+        !text.includes('project') &&
+        !text.includes('projet')
+      )
     })!
     await user.click(addHighlightBtn)
 
@@ -81,13 +85,12 @@ describe('ProjectEditor', () => {
   })
 
   it('shows empty highlights message when no highlights', () => {
-    const itemsNoHighlights: ProjectItem[] = [
-      { name: 'Project', year: '2024', highlights: [] },
-    ]
+    const itemsNoHighlights: ProjectItem[] = [{ name: 'Project', year: '2024', highlights: [] }]
     renderWithProviders(<ProjectEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 
-    const emptyMessage = screen.getByText((text, element) =>
-      element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0
+    const emptyMessage = screen.getByText(
+      (text, element) =>
+        element?.tagName === 'P' && element?.classList.contains('italic') && text.length > 0,
     )
     expect(emptyMessage).toBeInTheDocument()
   })

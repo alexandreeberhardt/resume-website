@@ -16,7 +16,7 @@ describe('PrivacyPolicy', () => {
   it('has a back link to home', () => {
     renderWithProviders(<PrivacyPolicy />)
     const links = screen.getAllByRole('link')
-    const homeLink = links.find(l => l.getAttribute('href') === '/')
+    const homeLink = links.find((l) => l.getAttribute('href') === '/')
     expect(homeLink).toBeTruthy()
   })
 })

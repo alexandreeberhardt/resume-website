@@ -1,16 +1,16 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 
 const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation()
 
   const languages = [
     { code: 'fr', flag: '🇫🇷' },
     { code: 'en', flag: '🇬🇧' },
-  ];
+  ]
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-  };
+    i18n.changeLanguage(lng)
+  }
 
   return (
     <div className="flex items-center gap-1 bg-primary-200 dark:bg-primary-300 rounded-lg p-1">
@@ -20,9 +20,10 @@ const LanguageSwitcher = () => {
           onClick={() => changeLanguage(lang.code)}
           className={`
             p-1.5 rounded-md text-sm transition-all duration-200
-            ${i18n.language === lang.code
-              ? 'bg-surface-0 shadow-sm'
-              : 'hover:bg-surface-100 opacity-60 hover:opacity-100'
+            ${
+              i18n.language === lang.code
+                ? 'bg-surface-0 shadow-sm'
+                : 'hover:bg-surface-100 opacity-60 hover:opacity-100'
             }
           `}
           title={lang.code.toUpperCase()}
@@ -31,7 +32,7 @@ const LanguageSwitcher = () => {
         </button>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default LanguageSwitcher;
+export default LanguageSwitcher
