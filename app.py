@@ -4,13 +4,14 @@ Expose un endpoint POST /generate qui reçoit les données et retourne le PDF.
 Support des sections dynamiques et réorganisables.
 Authentification OAuth2 avec JWT.
 """
+
 import asyncio
 import os
+import shutil
 import sys
 import tempfile
-import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Literal
 
 # Ajouter le répertoire courant au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -20,15 +21,16 @@ from dotenv import load_dotenv
 # Charger le fichier .env depuis la racine du projet (dossier parent)
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-from fastapi import FastAPI, HTTPException, UploadFile, File
+import json
+import re
+
+import pdfplumber
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, field_validator, HttpUrl, Field
-import json
-import re
 from mistralai import Mistral
-import pdfplumber
+from pydantic import BaseModel, Field, field_validator
 
 from core.LatexRenderer import LatexRenderer
 from core.PdfCompiler import PdfCompiler
@@ -39,14 +41,15 @@ from translations import get_section_title
 MAX_CV_TEXT_LENGTH = 10_000
 
 # Authentication imports
-from auth.routes import router as auth_router
 from api.resumes import router as resumes_router
-
+from auth.routes import router as auth_router
 
 # === Modèles Pydantic ===
 
+
 class ProfessionalLink(BaseModel):
     """Un lien professionnel (LinkedIn, GitHub, Portfolio, etc.)"""
+
     platform: str = Field(default="linkedin", max_length=50)
     username: str = Field(default="", max_length=100)
     url: str = Field(default="", max_length=500)
@@ -62,50 +65,50 @@ class ProfessionalLink(BaseModel):
 
 class PersonalInfo(BaseModel):
     name: str = Field(default="", max_length=200)
-    title: Optional[str] = Field(default="", max_length=200)
+    title: str | None = Field(default="", max_length=200)
     location: str = Field(default="", max_length=200)
     email: str = Field(default="", max_length=254)  # RFC 5321 max email length
     phone: str = Field(default="", max_length=50)
-    links: List[ProfessionalLink] = Field(default_factory=list, max_length=20)
+    links: list[ProfessionalLink] = Field(default_factory=list, max_length=20)
     # Champs legacy pour la compatibilité ascendante
-    github: Optional[str] = Field(default=None, max_length=100)
-    github_url: Optional[str] = Field(default=None, max_length=500)
+    github: str | None = Field(default=None, max_length=100)
+    github_url: str | None = Field(default=None, max_length=500)
 
     def model_post_init(self, __context):
         """Migration silencieuse des anciennes données github vers links."""
         # Si links est vide et github/github_url sont définis, migrer
         if not self.links and (self.github or self.github_url):
-            self.links = [ProfessionalLink(
-                platform="github",
-                username=self.github or "",
-                url=self.github_url or ""
-            )]
+            self.links = [
+                ProfessionalLink(
+                    platform="github", username=self.github or "", url=self.github_url or ""
+                )
+            ]
         # Nettoyer les champs legacy après migration
-        object.__setattr__(self, 'github', None)
-        object.__setattr__(self, 'github_url', None)
+        object.__setattr__(self, "github", None)
+        object.__setattr__(self, "github_url", None)
 
 
 class EducationItem(BaseModel):
     school: str = Field(default="", max_length=300)
     degree: str = Field(default="", max_length=300)
     dates: str = Field(default="", max_length=100)
-    subtitle: Optional[str] = Field(default="", max_length=300)
-    description: Optional[str] = Field(default="", max_length=2000)
+    subtitle: str | None = Field(default="", max_length=300)
+    description: str | None = Field(default="", max_length=2000)
 
 
 class ExperienceItem(BaseModel):
     title: str = Field(default="", max_length=300)
     company: str = Field(default="", max_length=300)
     dates: str = Field(default="", max_length=100)
-    highlights: List[str] = Field(default_factory=list, max_length=50)
+    highlights: list[str] = Field(default_factory=list, max_length=50)
 
 
 class ProjectItem(BaseModel):
     name: str = Field(default="", max_length=300)
-    year: Union[str, int] = Field(default="", max_length=50)
-    highlights: List[str] = Field(default_factory=list, max_length=50)
+    year: str | int = Field(default="", max_length=50)
+    highlights: list[str] = Field(default_factory=list, max_length=50)
 
-    @field_validator('year', mode='before')
+    @field_validator("year", mode="before")
     @classmethod
     def convert_year_to_str(cls, v):
         return str(v) if v is not None else ""
@@ -118,31 +121,34 @@ class SkillsItem(BaseModel):
 
 class LeadershipItem(BaseModel):
     role: str = Field(default="", max_length=300)
-    place: Optional[str] = Field(default="", max_length=300)
+    place: str | None = Field(default="", max_length=300)
     dates: str = Field(default="", max_length=100)
-    highlights: List[str] = Field(default_factory=list, max_length=50)
+    highlights: list[str] = Field(default_factory=list, max_length=50)
 
 
 class CustomItem(BaseModel):
     title: str = Field(default="", max_length=300)
-    subtitle: Optional[str] = Field(default="", max_length=300)
-    dates: Optional[str] = Field(default="", max_length=100)
-    highlights: List[str] = Field(default_factory=list, max_length=50)
+    subtitle: str | None = Field(default="", max_length=300)
+    dates: str | None = Field(default="", max_length=100)
+    highlights: list[str] = Field(default_factory=list, max_length=50)
 
 
 # Types de sections supportés
-SectionType = Literal['summary', 'education', 'experiences', 'projects', 'skills', 'leadership', 'languages', 'custom']
+SectionType = Literal[
+    "summary", "education", "experiences", "projects", "skills", "leadership", "languages", "custom"
+]
 
 
 class CVSection(BaseModel):
     """Section du CV avec type, titre et contenu."""
+
     id: str = Field(..., max_length=50)
     type: SectionType
     title: str = Field(..., max_length=200)
     isVisible: bool = True
     items: Any  # Le type dépend du type de section
 
-    @field_validator('items', mode='before')
+    @field_validator("items", mode="before")
     @classmethod
     def validate_items(cls, v, info):
         # Les items peuvent être une liste, un dict (skills), ou une string (languages)
@@ -151,8 +157,9 @@ class CVSection(BaseModel):
 
 class ResumeData(BaseModel):
     """Données complètes du CV avec sections dynamiques."""
+
     personal: PersonalInfo
-    sections: List[CVSection] = []
+    sections: list[CVSection] = []
     template_id: str = "harvard"
     lang: str = "fr"  # Langue pour les titres de sections dans le PDF
 
@@ -162,7 +169,7 @@ class ResumeData(BaseModel):
 app = FastAPI(
     title="CV Generator API",
     description="API pour générer des CV en PDF à partir de données JSON",
-    version="2.0.0"
+    version="2.0.0",
 )
 
 # Configuration CORS - restreint aux domaines autorisés
@@ -170,7 +177,7 @@ app = FastAPI(
 # En développement, ajouter http://localhost:5173 (Vite) à ALLOWED_ORIGINS
 ALLOWED_ORIGINS = os.environ.get(
     "ALLOWED_ORIGINS",
-    "https://sivee.pro,https://www.sivee.pro,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
+    "https://sivee.pro,https://www.sivee.pro,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173",
 ).split(",")
 
 app.add_middleware(
@@ -190,13 +197,27 @@ TEMPLATE_DIR = Path(__file__).parent
 TEMPLATES_FOLDER = TEMPLATE_DIR / "templates"
 DEFAULT_TEMPLATE = "harvard"
 VALID_TEMPLATES = {
-    "harvard", "harvard_compact", "harvard_large",
-    "europass", "europass_compact", "europass_large",
-    "mckinsey", "mckinsey_compact", "mckinsey_large",
-    "aurianne", "aurianne_compact", "aurianne_large",
-    "stephane", "stephane_compact", "stephane_large",
-    "michel", "michel_compact", "michel_large",
-    "double", "double_compact", "double_large",
+    "harvard",
+    "harvard_compact",
+    "harvard_large",
+    "europass",
+    "europass_compact",
+    "europass_large",
+    "mckinsey",
+    "mckinsey_compact",
+    "mckinsey_large",
+    "aurianne",
+    "aurianne_compact",
+    "aurianne_large",
+    "stephane",
+    "stephane_compact",
+    "stephane_large",
+    "michel",
+    "michel_compact",
+    "michel_large",
+    "double",
+    "double_compact",
+    "double_large",
 }
 
 # Variantes de taille pour l'auto-sizing
@@ -237,7 +258,7 @@ def generate_pdf_and_count_pages(data: ResumeData, template_id: str) -> tuple[Pa
 
     # Préparer les données
     lang = data.lang if data.lang in ("fr", "en") else "fr"
-    render_data: Dict[str, Any] = {
+    render_data: dict[str, Any] = {
         "personal": data.personal.model_dump(),
         "sections": [convert_section_items(s, lang) for s in data.sections],
     }
@@ -262,7 +283,7 @@ def generate_pdf_and_count_pages(data: ResumeData, template_id: str) -> tuple[Pa
     return pdf_file, page_count, temp_path
 
 
-def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any]:
+def convert_section_items(section: CVSection, lang: str = "fr") -> dict[str, Any]:
     """Convertit une section en dictionnaire pour le rendu LaTeX.
 
     Note: On utilise 'content' au lieu de 'items' pour éviter le conflit
@@ -291,15 +312,14 @@ def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any
             section_dict["content"] = section.items
             # Vérifier si languages OU tools contiennent du contenu
             has_content = bool(
-                (section.items.get("languages") or "").strip() or
-                (section.items.get("tools") or "").strip()
+                (section.items.get("languages") or "").strip()
+                or (section.items.get("tools") or "").strip()
             )
-        elif hasattr(section.items, 'model_dump'):
+        elif hasattr(section.items, "model_dump"):
             content = section.items.model_dump()
             section_dict["content"] = content
             has_content = bool(
-                (content.get("languages") or "").strip() or
-                (content.get("tools") or "").strip()
+                (content.get("languages") or "").strip() or (content.get("tools") or "").strip()
             )
         else:
             section_dict["content"] = {"languages": "", "tools": ""}
@@ -313,8 +333,7 @@ def convert_section_items(section: CVSection, lang: str = "fr") -> Dict[str, Any
         # Les autres types sont des listes (education, experiences, projects, leadership, custom)
         if isinstance(section.items, list):
             section_dict["content"] = [
-                item.model_dump() if hasattr(item, 'model_dump') else item
-                for item in section.items
+                item.model_dump() if hasattr(item, "model_dump") else item for item in section.items
             ]
             has_content = len(section.items) > 0
         else:
@@ -355,7 +374,7 @@ async def generate_cv(data: ResumeData):
 
         # Préparer les données pour le rendu (avec titres traduits)
         lang = data.lang if data.lang in ("fr", "en") else "fr"
-        render_data: Dict[str, Any] = {
+        render_data: dict[str, Any] = {
             "personal": data.personal.model_dump(),
             "sections": [convert_section_items(s, lang) for s in data.sections],
         }
@@ -395,18 +414,20 @@ async def generate_cv(data: ResumeData):
 
     # Return PDF from memory (temp files already cleaned up)
     from io import BytesIO
+
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": "inline; filename=cv.pdf"}
+        headers={"Content-Disposition": "inline; filename=cv.pdf"},
     )
 
 
 class OptimalSizeResponse(BaseModel):
     """Réponse de l'endpoint optimal-size."""
+
     optimal_size: str
     template_id: str
-    tested_sizes: List[Dict[str, Any]]
+    tested_sizes: list[dict[str, Any]]
 
 
 @app.post("/optimal-size", response_model=OptimalSizeResponse)
@@ -438,31 +459,23 @@ async def find_optimal_size(data: ResumeData):
                 pdf_file, page_count, temp_path = generate_pdf_and_count_pages(data, template_id)
                 temp_dirs.append(temp_path)
 
-                tested_sizes.append({
-                    "size": size,
-                    "template_id": template_id,
-                    "page_count": page_count
-                })
+                tested_sizes.append(
+                    {"size": size, "template_id": template_id, "page_count": page_count}
+                )
 
                 # Si le PDF tient sur une page, on a trouvé la taille optimale
                 if page_count == 1:
                     return OptimalSizeResponse(
-                        optimal_size=size,
-                        template_id=template_id,
-                        tested_sizes=tested_sizes
+                        optimal_size=size, template_id=template_id, tested_sizes=tested_sizes
                     )
             except Exception as e:
-                tested_sizes.append({
-                    "size": size,
-                    "template_id": template_id,
-                    "error": str(e)
-                })
+                tested_sizes.append({"size": size, "template_id": template_id, "error": str(e)})
 
         # Si aucune taille ne permet de tenir sur une page, utiliser compact
         return OptimalSizeResponse(
             optimal_size="compact",
             template_id=get_template_with_size(base_template, "compact"),
-            tested_sizes=tested_sizes
+            tested_sizes=tested_sizes,
         )
 
     finally:
@@ -487,7 +500,7 @@ async def get_default_data():
     if not yaml_path.exists():
         raise HTTPException(status_code=404, detail="Fichier data.yml introuvable")
 
-    with open(yaml_path, "r", encoding="utf-8") as f:
+    with open(yaml_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     return data
@@ -508,15 +521,14 @@ async def import_cv(file: UploadFile = File(...)):
         ResumeData: Données structurées du CV.
     """
     # Vérifier que c'est un PDF
-    if not file.filename or not file.filename.lower().endswith('.pdf'):
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
 
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         raise HTTPException(
-            status_code=500,
-            detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
+            status_code=500, detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
         )
 
     try:
@@ -537,18 +549,15 @@ async def import_cv(file: UploadFile = File(...)):
             Path(temp_pdf.name).unlink()
 
         if not text_content.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="Impossible d'extraire le texte du PDF"
-            )
+            raise HTTPException(status_code=400, detail="Impossible d'extraire le texte du PDF")
 
         # Vérifier la taille du texte extrait (protection contre les abus)
         if len(text_content) > MAX_CV_TEXT_LENGTH:
             raise HTTPException(
                 status_code=400,
                 detail=f"Le document est trop volumineux ({len(text_content):,} caractères). "
-                       f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
-                       "Veuillez fournir un CV plus concis."
+                f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
+                "Veuillez fournir un CV plus concis.",
             )
 
         # Appeler Mistral pour structurer les données
@@ -642,9 +651,9 @@ IMPORTANT:
             model="mistral-small-latest",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"}
+                {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"},
             ],
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
         )
 
         result = json.loads(response.choices[0].message.content)
@@ -664,15 +673,14 @@ async def import_cv_stream(file: UploadFile = File(...)):
     Envoie les sections au fur et à mesure qu'elles sont extraites.
     """
     # Vérifier que c'est un PDF
-    if not file.filename or not file.filename.lower().endswith('.pdf'):
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
 
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
         raise HTTPException(
-            status_code=500,
-            detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
+            status_code=500, detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
         )
 
     # Lire le PDF avant de commencer le streaming
@@ -704,9 +712,11 @@ async def import_cv_stream(file: UploadFile = File(...)):
 
             # Vérifier la taille du texte extrait (protection contre les abus)
             if len(text_content) > MAX_CV_TEXT_LENGTH:
-                error_msg = (f"Le document est trop volumineux ({len(text_content):,} caractères). "
-                            f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
-                            "Veuillez fournir un CV plus concis.")
+                error_msg = (
+                    f"Le document est trop volumineux ({len(text_content):,} caractères). "
+                    f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
+                    "Veuillez fournir un CV plus concis."
+                )
                 yield f"data: {json.dumps({'type': 'error', 'message': error_msg})}\n\n"
                 return
 
@@ -820,9 +830,9 @@ IMPORTANT:
                 model="mistral-small-latest",
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"}
+                    {"role": "user", "content": f"Voici le texte extrait du CV:\n\n{text_content}"},
                 ],
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
             )
 
             accumulated_json = ""
@@ -841,24 +851,24 @@ IMPORTANT:
                     return None, -1
 
                 # Trouver le début de l'objet ou array
-                while start < len(text) and text[start] in ' \t\n\r':
+                while start < len(text) and text[start] in " \t\n\r":
                     start += 1
 
                 if start >= len(text):
                     return None, -1
 
                 open_char = text[start]
-                if open_char == '{':
-                    close_char = '}'
-                elif open_char == '[':
-                    close_char = ']'
+                if open_char == "{":
+                    close_char = "}"
+                elif open_char == "[":
+                    close_char = "]"
                 elif open_char == '"':
                     # C'est une string, chercher la fin
                     end = start + 1
                     while end < len(text):
-                        if text[end] == '"' and text[end-1] != '\\':
+                        if text[end] == '"' and text[end - 1] != "\\":
                             try:
-                                return json.loads(text[start:end+1]), end + 1
+                                return json.loads(text[start : end + 1]), end + 1
                             except:
                                 return None, -1
                         end += 1
@@ -873,7 +883,7 @@ IMPORTANT:
 
                 while pos < len(text) and depth > 0:
                     char = text[pos]
-                    if char == '"' and (pos == 0 or text[pos-1] != '\\'):
+                    if char == '"' and (pos == 0 or text[pos - 1] != "\\"):
                         in_string = not in_string
                     elif not in_string:
                         if char == open_char:
@@ -904,7 +914,9 @@ IMPORTANT:
 
                     # Extraire les sections individuellement au fur et à mesure
                     # Chercher tous les objets qui commencent par {"id": "sec-
-                    section_starts = [m.start() for m in re.finditer(r'\{\s*"id"\s*:\s*"sec-', accumulated_json)]
+                    section_starts = [
+                        m.start() for m in re.finditer(r'\{\s*"id"\s*:\s*"sec-', accumulated_json)
+                    ]
                     for start_pos in section_starts:
                         # Compter les brackets pour trouver la fin de cet objet
                         depth = 0
@@ -913,22 +925,25 @@ IMPORTANT:
 
                         while pos < len(accumulated_json):
                             char = accumulated_json[pos]
-                            if char == '"' and (pos == 0 or accumulated_json[pos-1] != '\\'):
+                            if char == '"' and (pos == 0 or accumulated_json[pos - 1] != "\\"):
                                 in_string = not in_string
                             elif not in_string:
-                                if char == '{':
+                                if char == "{":
                                     depth += 1
-                                elif char == '}':
+                                elif char == "}":
                                     depth -= 1
                                     if depth == 0:
                                         # Objet complet trouvé
                                         try:
-                                            section_json = accumulated_json[start_pos:pos+1]
+                                            section_json = accumulated_json[start_pos : pos + 1]
                                             section = json.loads(section_json)
-                                            if 'id' in section and section['id'] not in sent_section_ids:
+                                            if (
+                                                "id" in section
+                                                and section["id"] not in sent_section_ids
+                                            ):
                                                 yield f"data: {json.dumps({'type': 'section', 'data': section})}\n\n"
                                                 await asyncio.sleep(0)
-                                                sent_section_ids.add(section['id'])
+                                                sent_section_ids.add(section["id"])
                                         except json.JSONDecodeError:
                                             pass
                                         break
@@ -950,8 +965,8 @@ IMPORTANT:
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no"
-        }
+            "X-Accel-Buffering": "no",
+        },
     )
 
 
@@ -990,4 +1005,5 @@ if STATIC_DIR.exists():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

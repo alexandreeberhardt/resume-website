@@ -23,17 +23,28 @@ PDF_TRANSLATIONS = {
         "leadership": "Leadership & Community",
         "languages": "Languages",
         "custom": "Other",
-    }
+    },
 }
 
 # Titres par défaut du frontend (pour détecter si le titre a été personnalisé)
 DEFAULT_TITLES = {
     "summary": ["Summary", "Résumé"],
     "education": ["Education", "Formation"],
-    "experiences": ["Experiences", "Experience", "Expérience", "Expérience Professionnelle", "Professional Experience"],
+    "experiences": [
+        "Experiences",
+        "Experience",
+        "Expérience",
+        "Expérience Professionnelle",
+        "Professional Experience",
+    ],
     "projects": ["Projects", "Projets"],
     "skills": ["Technical Skills", "Skills", "Compétences", "Compétences Techniques"],
-    "leadership": ["Leadership", "Leadership & Community Involvement", "Leadership & Community", "Leadership & Engagement"],
+    "leadership": [
+        "Leadership",
+        "Leadership & Community Involvement",
+        "Leadership & Community",
+        "Leadership & Engagement",
+    ],
     "languages": ["Languages", "Langues"],
     "custom": ["Custom Section", "Custom", "Autre"],
 }
@@ -57,7 +68,9 @@ def get_section_title(section_type: str, lang: str = "fr", custom_title: str = "
     """
     # Pour les sections custom, toujours utiliser le titre fourni
     if section_type == "custom":
-        return custom_title or PDF_TRANSLATIONS.get(lang, PDF_TRANSLATIONS["fr"]).get("custom", "Other")
+        return custom_title or PDF_TRANSLATIONS.get(lang, PDF_TRANSLATIONS["fr"]).get(
+            "custom", "Other"
+        )
 
     # Vérifier si le titre est un titre par défaut
     default_titles = DEFAULT_TITLES.get(section_type, [])

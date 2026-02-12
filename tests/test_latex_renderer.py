@@ -1,10 +1,11 @@
-import unittest
 import tempfile
+import unittest
 from pathlib import Path
+
 from core import LatexRenderer
 
-class LatexRendererTest(unittest.TestCase):
 
+class LatexRendererTest(unittest.TestCase):
     def setUp(self):
         """Sets up a temporary directory for tests."""
         self.test_dir = tempfile.TemporaryDirectory()
@@ -41,7 +42,9 @@ class LatexRendererTest(unittest.TestCase):
         renderer = LatexRenderer(self.root, "template.tex")
         data = {"text": "a & b % c # d _ e {f} g ~ h ^ i"}
         # Braces are now escaped too (security: prevents LaTeX injection)
-        expected_output = r"Special chars: a \& b \% c \# d \_ e \{f\} g \textasciitilde{} h \textasciicircum{} i"
+        expected_output = (
+            r"Special chars: a \& b \% c \# d \_ e \{f\} g \textasciitilde{} h \textasciicircum{} i"
+        )
 
         result = renderer.render(data)
 
@@ -62,5 +65,6 @@ class LatexRendererTest(unittest.TestCase):
 
         self.assertEqual(result, expected_output)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -1,7 +1,8 @@
 """Pydantic schemas for authentication."""
-import re
-from pydantic import BaseModel, EmailStr, field_validator
 
+import re
+
+from pydantic import BaseModel, EmailStr, field_validator
 
 # Minimum password length for security compliance
 MIN_PASSWORD_LENGTH = 12
@@ -11,6 +12,7 @@ SPECIAL_CHARS = r"!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?"
 
 class UserCreate(BaseModel):
     """Schema for user registration."""
+
     email: EmailStr
     password: str
 
@@ -33,24 +35,28 @@ class UserCreate(BaseModel):
 
 class UserLogin(BaseModel):
     """Schema for user login (OAuth2 password flow)."""
+
     email: EmailStr
     password: str
 
 
 class Token(BaseModel):
     """Schema for JWT token response."""
+
     access_token: str
     token_type: str = "bearer"
 
 
 class TokenData(BaseModel):
     """Schema for decoded token data."""
+
     user_id: int | None = None
     email: str | None = None
 
 
 class UserResponse(BaseModel):
     """Schema for user response (without password)."""
+
     id: int
     email: str
     is_guest: bool = False
@@ -60,6 +66,7 @@ class UserResponse(BaseModel):
 
 class GuestUpgrade(BaseModel):
     """Schema for upgrading a guest account to a permanent account."""
+
     email: EmailStr
     password: str
 
@@ -82,6 +89,7 @@ class GuestUpgrade(BaseModel):
 
 class UserDataExport(BaseModel):
     """Schema for GDPR data export (right to portability)."""
+
     user: dict
     resumes: list[dict]
     exported_at: str

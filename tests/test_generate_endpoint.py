@@ -1,4 +1,5 @@
 """Tests for the /generate endpoint and related app functionality."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")

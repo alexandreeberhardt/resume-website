@@ -1,4 +1,5 @@
 """Tests for auth/schemas.py — Pydantic validation models."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
@@ -7,8 +8,7 @@ os.environ.setdefault("DATABASE_URL", "sqlite://")
 import pytest
 from pydantic import ValidationError
 
-from auth.schemas import UserCreate, GuestUpgrade, MIN_PASSWORD_LENGTH
-
+from auth.schemas import MIN_PASSWORD_LENGTH, GuestUpgrade, UserCreate
 
 VALID_PASSWORD = "TestPass123!@#"
 

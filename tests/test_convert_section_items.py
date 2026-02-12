@@ -1,18 +1,17 @@
 """Tests for convert_section_items() and helper functions in app.py."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 from app import (
-    convert_section_items,
-    get_template_with_size,
-    get_base_template,
     CVSection,
-    SkillsItem,
     EducationItem,
-    ExperienceItem,
+    SkillsItem,
+    convert_section_items,
+    get_base_template,
+    get_template_with_size,
 )
 
 
@@ -43,7 +42,9 @@ class TestConvertSectionSkillsDict:
 
     def test_skills_with_dict(self):
         section = CVSection(
-            id="s1", type="skills", title="Skills",
+            id="s1",
+            type="skills",
+            title="Skills",
             items={"languages": "Python, JS", "tools": "Git, Docker"},
         )
         result = convert_section_items(section, "fr")
@@ -52,7 +53,9 @@ class TestConvertSectionSkillsDict:
 
     def test_skills_empty_dict(self):
         section = CVSection(
-            id="s1", type="skills", title="Skills",
+            id="s1",
+            type="skills",
+            title="Skills",
             items={"languages": "", "tools": ""},
         )
         result = convert_section_items(section, "fr")
@@ -60,7 +63,9 @@ class TestConvertSectionSkillsDict:
 
     def test_skills_whitespace_only(self):
         section = CVSection(
-            id="s1", type="skills", title="Skills",
+            id="s1",
+            type="skills",
+            title="Skills",
             items={"languages": "   ", "tools": "  "},
         )
         result = convert_section_items(section, "fr")
@@ -170,6 +175,7 @@ class TestConvertSectionListTypes:
 
     def test_projects_with_models(self):
         from app import ProjectItem
+
         items = [ProjectItem(name="Proj", year="2023", highlights=["Built it"])]
         section = CVSection(id="s1", type="projects", title="Projects", items=items)
         result = convert_section_items(section, "fr")
@@ -177,6 +183,7 @@ class TestConvertSectionListTypes:
 
     def test_leadership_with_items(self):
         from app import LeadershipItem
+
         items = [LeadershipItem(role="President", place="Club", dates="2022")]
         section = CVSection(id="s1", type="leadership", title="Leadership", items=items)
         result = convert_section_items(section, "en")
@@ -184,6 +191,7 @@ class TestConvertSectionListTypes:
 
     def test_custom_with_items(self):
         from app import CustomItem
+
         items = [CustomItem(title="Hobby", highlights=["Reading"])]
         section = CVSection(id="s1", type="custom", title="Hobbies", items=items)
         result = convert_section_items(section, "fr")

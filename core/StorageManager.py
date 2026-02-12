@@ -1,9 +1,9 @@
 """S3 Storage Manager for uploading PDF files."""
+
 import os
 from pathlib import Path
 
 import boto3
-from botocore.exceptions import ClientError
 
 
 class StorageManager:

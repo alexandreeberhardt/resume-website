@@ -1,7 +1,8 @@
 """Smoke tests for the FastAPI application."""
-from fastapi.testclient import TestClient
-from app import app
 
+from fastapi.testclient import TestClient
+
+from app import app
 
 client = TestClient(app)
 

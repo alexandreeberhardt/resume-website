@@ -1,15 +1,15 @@
 """Resume API routes with JWT authentication."""
+
 import json
 import shutil
 import tempfile
+from io import BytesIO
 from pathlib import Path
 from typing import Annotated, Any
 
-from io import BytesIO
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from auth.dependencies import CurrentUser
@@ -31,20 +31,36 @@ TEMPLATE_DIR = Path(__file__).parent.parent
 TEMPLATES_FOLDER = TEMPLATE_DIR / "templates"
 DEFAULT_TEMPLATE = "harvard"
 VALID_TEMPLATES = {
-    "harvard", "harvard_compact", "harvard_large",
-    "europass", "europass_compact", "europass_large",
-    "mckinsey", "mckinsey_compact", "mckinsey_large",
-    "aurianne", "aurianne_compact", "aurianne_large",
-    "stephane", "stephane_compact", "stephane_large",
-    "michel", "michel_compact", "michel_large",
-    "double", "double_compact", "double_large",
+    "harvard",
+    "harvard_compact",
+    "harvard_large",
+    "europass",
+    "europass_compact",
+    "europass_large",
+    "mckinsey",
+    "mckinsey_compact",
+    "mckinsey_large",
+    "aurianne",
+    "aurianne_compact",
+    "aurianne_large",
+    "stephane",
+    "stephane_compact",
+    "stephane_large",
+    "michel",
+    "michel_compact",
+    "michel_large",
+    "double",
+    "double_compact",
+    "double_large",
 }
 
 
 # === Pydantic Schemas ===
 
+
 class ResumeCreate(BaseModel):
     """Schema for creating a resume."""
+
     name: str = Field(..., max_length=255)
     json_content: dict | None = None
 
@@ -64,6 +80,7 @@ class ResumeCreate(BaseModel):
 
 class ResumeUpdate(BaseModel):
     """Schema for updating a resume."""
+
     name: str | None = Field(default=None, max_length=255)
     json_content: dict | None = None
 
@@ -83,6 +100,7 @@ class ResumeUpdate(BaseModel):
 
 class ResumeResponse(BaseModel):
     """Schema for resume response."""
+
     id: int
     user_id: int
     name: str
@@ -94,11 +112,13 @@ class ResumeResponse(BaseModel):
 
 class ResumeListResponse(BaseModel):
     """Schema for listing resumes."""
+
     resumes: list[ResumeResponse]
     total: int
 
 
 # === Routes ===
+
 
 @router.post("", response_model=ResumeResponse, status_code=status.HTTP_201_CREATED)
 async def create_resume(
@@ -128,12 +148,12 @@ async def create_resume(
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail=f"Guest accounts are limited to {MAX_RESUMES_PER_GUEST} resumes. "
-                       "Create a free account to save more resumes.",
+                "Create a free account to save more resumes.",
             )
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail=f"Maximum number of resumes reached ({MAX_RESUMES_PER_USER}). "
-                   "Please delete some resumes before creating new ones.",
+            "Please delete some resumes before creating new ones.",
         )
 
     new_resume = Resume(
@@ -186,10 +206,14 @@ async def get_resume(
     Raises:
         HTTPException: 404 if resume not found or not owned by user.
     """
-    resume = db.query(Resume).filter(
-        Resume.id == resume_id,
-        Resume.user_id == current_user.id,  # Security: only own resumes
-    ).first()
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,  # Security: only own resumes
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(
@@ -221,10 +245,14 @@ async def update_resume(
     Raises:
         HTTPException: 404 if resume not found or not owned by user.
     """
-    resume = db.query(Resume).filter(
-        Resume.id == resume_id,
-        Resume.user_id == current_user.id,  # Security: only own resumes
-    ).first()
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,  # Security: only own resumes
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(
@@ -260,10 +288,14 @@ async def delete_resume(
     Raises:
         HTTPException: 404 if resume not found or not owned by user.
     """
-    resume = db.query(Resume).filter(
-        Resume.id == resume_id,
-        Resume.user_id == current_user.id,  # Security: only own resumes
-    ).first()
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,  # Security: only own resumes
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(
@@ -297,7 +329,9 @@ def _convert_section_items(section: dict[str, Any], lang: str = "fr") -> dict[st
 
     items = section.get("items", [])
     if section_type == "skills":
-        section_dict["content"] = items if isinstance(items, dict) else {"languages": "", "tools": ""}
+        section_dict["content"] = (
+            items if isinstance(items, dict) else {"languages": "", "tools": ""}
+        )
     elif section_type in ("languages", "summary"):
         section_dict["content"] = str(items) if items else ""
     else:
@@ -329,10 +363,14 @@ async def generate_resume_pdf(
     Raises:
         HTTPException: 404 if resume not found, 400 if no content.
     """
-    resume = db.query(Resume).filter(
-        Resume.id == resume_id,
-        Resume.user_id == current_user.id,
-    ).first()
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.id == resume_id,
+            Resume.user_id == current_user.id,
+        )
+        .first()
+    )
 
     if not resume:
         raise HTTPException(
@@ -370,10 +408,7 @@ async def generate_resume_pdf(
 
         render_data: dict[str, Any] = {
             "personal": json_content.get("personal", {}),
-            "sections": [
-                _convert_section_items(s, lang)
-                for s in json_content.get("sections", [])
-            ],
+            "sections": [_convert_section_items(s, lang) for s in json_content.get("sections", [])],
         }
 
         # Render LaTeX template
@@ -422,5 +457,5 @@ async def generate_resume_pdf(
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"inline; filename={resume_name}.pdf"}
+        headers={"Content-Disposition": f"inline; filename={resume_name}.pdf"},
     )

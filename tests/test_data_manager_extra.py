@@ -1,4 +1,5 @@
 """Additional edge-case tests for core/DataManager.py."""
+
 import pytest
 
 from core.DataManager import DataManager
@@ -10,6 +11,7 @@ def yaml_file(tmp_path):
         p = tmp_path / name
         p.write_text(content, encoding="utf-8")
         return p
+
     return _create
 
 

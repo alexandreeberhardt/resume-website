@@ -1,6 +1,8 @@
 """Tests for translations.py - pure logic, no mocks needed."""
+
 import pytest
-from translations import get_section_title, PDF_TRANSLATIONS, DEFAULT_TITLES
+
+from translations import PDF_TRANSLATIONS, get_section_title
 
 
 class TestGetSectionTitle:
@@ -20,18 +22,34 @@ class TestGetSectionTitle:
     def test_default_english_experiences(self):
         assert get_section_title("experiences", "en") == "Professional Experience"
 
-    @pytest.mark.parametrize("section_type", [
-        "summary", "education", "experiences", "projects",
-        "skills", "leadership", "languages",
-    ])
+    @pytest.mark.parametrize(
+        "section_type",
+        [
+            "summary",
+            "education",
+            "experiences",
+            "projects",
+            "skills",
+            "leadership",
+            "languages",
+        ],
+    )
     def test_all_section_types_have_french_translation(self, section_type):
         result = get_section_title(section_type, "fr")
         assert result == PDF_TRANSLATIONS["fr"][section_type]
 
-    @pytest.mark.parametrize("section_type", [
-        "summary", "education", "experiences", "projects",
-        "skills", "leadership", "languages",
-    ])
+    @pytest.mark.parametrize(
+        "section_type",
+        [
+            "summary",
+            "education",
+            "experiences",
+            "projects",
+            "skills",
+            "leadership",
+            "languages",
+        ],
+    )
     def test_all_section_types_have_english_translation(self, section_type):
         result = get_section_title(section_type, "en")
         assert result == PDF_TRANSLATIONS["en"][section_type]

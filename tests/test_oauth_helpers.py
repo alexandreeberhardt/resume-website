@@ -1,19 +1,17 @@
 """Tests for OAuth helper functions in auth/routes.py."""
+
 import os
 import time
-from unittest.mock import patch
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 
 from auth.routes import (
     _cleanup_expired_codes,
-    _store_oauth_code,
     _exchange_oauth_code,
     _oauth_code_store,
-    OAUTH_CODE_EXPIRE_SECONDS,
+    _store_oauth_code,
 )
 
 
@@ -81,16 +79,19 @@ class TestExtractS3Key:
 
     def test_standard_s3_url(self):
         from auth.routes import _extract_s3_key_from_url
+
         url = "https://mybucket.s3.eu-west-3.amazonaws.com/users/1/resume.pdf"
         assert _extract_s3_key_from_url(url) == "users/1/resume.pdf"
 
     def test_nested_path(self):
         from auth.routes import _extract_s3_key_from_url
+
         url = "https://bucket.s3.amazonaws.com/a/b/c/d.pdf"
         assert _extract_s3_key_from_url(url) == "a/b/c/d.pdf"
 
     def test_url_with_special_characters(self):
         from auth.routes import _extract_s3_key_from_url
+
         url = "https://bucket.s3.amazonaws.com/resumes/my%20resume.pdf"
         key = _extract_s3_key_from_url(url)
         assert key is not None

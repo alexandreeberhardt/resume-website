@@ -1,10 +1,10 @@
 """Tests for _convert_section_items in api/resumes.py."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 from api.resumes import _convert_section_items
 
 
@@ -12,7 +12,12 @@ class TestConvertSectionItemsAPI:
     """Test the resume API's section converter (dict-based, not Pydantic)."""
 
     def test_skills_dict(self):
-        section = {"id": "s1", "type": "skills", "title": "Skills", "items": {"languages": "Python", "tools": "Git"}}
+        section = {
+            "id": "s1",
+            "type": "skills",
+            "title": "Skills",
+            "items": {"languages": "Python", "tools": "Git"},
+        }
         result = _convert_section_items(section, "fr")
         assert result["content"]["languages"] == "Python"
 
@@ -75,7 +80,13 @@ class TestConvertSectionItemsAPI:
         assert result["isVisible"] is True
 
     def test_hidden_visibility(self):
-        section = {"id": "s1", "type": "summary", "title": "Summary", "isVisible": False, "items": "text"}
+        section = {
+            "id": "s1",
+            "type": "summary",
+            "title": "Summary",
+            "isVisible": False,
+            "items": "text",
+        }
         result = _convert_section_items(section, "fr")
         assert result["isVisible"] is False
 

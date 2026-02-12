@@ -1,20 +1,24 @@
 """Tests for auth/dependencies.py — get_current_user dependency."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 from datetime import timedelta
 
-from auth.security import create_access_token
-from tests.conftest import (
-    _engine, _TestSession, create_authenticated_user, register_user,
-    login_user, auth_header, VALID_PASSWORD,
-)
-from database.models import Base, Resume
+import pytest
 from sqlalchemy import JSON
 
+from auth.security import create_access_token
+from database.models import Base, Resume
+from tests.conftest import (
+    _engine,
+    _TestSession,
+    auth_header,
+    create_authenticated_user,
+    register_user,
+)
 
 # Re-map JSONB for SQLite tests
 Resume.__table__.c.json_content.type = JSON()
@@ -33,9 +37,10 @@ class TestGetCurrentUserViaAPI:
 
     @pytest.fixture()
     def client(self):
-        from database.db_config import get_db
-        from app import app
         from fastapi.testclient import TestClient
+
+        from app import app
+        from database.db_config import get_db
 
         def override():
             try:

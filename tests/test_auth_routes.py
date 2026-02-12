@@ -1,16 +1,22 @@
 """Integration tests for authentication API routes."""
-import pytest
+
 from conftest import (
-    VALID_PASSWORD, register_user, login_user, auth_header, create_authenticated_user,
+    VALID_PASSWORD,
+    auth_header,
+    create_authenticated_user,
+    register_user,
 )
 
 
 class TestRegister:
     def test_register_success(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "new@example.com",
-            "password": VALID_PASSWORD,
-        })
+        resp = client.post(
+            "/api/auth/register",
+            json={
+                "email": "new@example.com",
+                "password": VALID_PASSWORD,
+            },
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["email"] == "new@example.com"
@@ -19,41 +25,56 @@ class TestRegister:
 
     def test_register_duplicate_email(self, client):
         register_user(client, email="dup@example.com")
-        resp = client.post("/api/auth/register", json={
-            "email": "dup@example.com",
-            "password": VALID_PASSWORD,
-        })
+        resp = client.post(
+            "/api/auth/register",
+            json={
+                "email": "dup@example.com",
+                "password": VALID_PASSWORD,
+            },
+        )
         assert resp.status_code == 400
 
     def test_register_weak_password_too_short(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "a@b.com",
-            "password": "Short1!",
-        })
+        resp = client.post(
+            "/api/auth/register",
+            json={
+                "email": "a@b.com",
+                "password": "Short1!",
+            },
+        )
         assert resp.status_code == 422
 
     def test_register_weak_password_no_special_char(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "a@b.com",
-            "password": "NoSpecialChar123",
-        })
+        resp = client.post(
+            "/api/auth/register",
+            json={
+                "email": "a@b.com",
+                "password": "NoSpecialChar123",
+            },
+        )
         assert resp.status_code == 422
 
     def test_register_invalid_email(self, client):
-        resp = client.post("/api/auth/register", json={
-            "email": "not-an-email",
-            "password": VALID_PASSWORD,
-        })
+        resp = client.post(
+            "/api/auth/register",
+            json={
+                "email": "not-an-email",
+                "password": VALID_PASSWORD,
+            },
+        )
         assert resp.status_code == 422
 
 
 class TestLogin:
     def test_login_success(self, client):
         register_user(client)
-        resp = client.post("/api/auth/login", data={
-            "username": "test@example.com",
-            "password": VALID_PASSWORD,
-        })
+        resp = client.post(
+            "/api/auth/login",
+            data={
+                "username": "test@example.com",
+                "password": VALID_PASSWORD,
+            },
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert "access_token" in data
@@ -61,17 +82,23 @@ class TestLogin:
 
     def test_login_wrong_password(self, client):
         register_user(client)
-        resp = client.post("/api/auth/login", data={
-            "username": "test@example.com",
-            "password": "WrongPassword123!",
-        })
+        resp = client.post(
+            "/api/auth/login",
+            data={
+                "username": "test@example.com",
+                "password": "WrongPassword123!",
+            },
+        )
         assert resp.status_code == 401
 
     def test_login_unknown_email(self, client):
-        resp = client.post("/api/auth/login", data={
-            "username": "nobody@example.com",
-            "password": VALID_PASSWORD,
-        })
+        resp = client.post(
+            "/api/auth/login",
+            data={
+                "username": "nobody@example.com",
+                "password": VALID_PASSWORD,
+            },
+        )
         assert resp.status_code == 401
 
 
@@ -90,10 +117,14 @@ class TestGuestAccount:
 
     def test_upgrade_guest(self, client):
         token = client.post("/api/auth/guest").json()["access_token"]
-        resp = client.post("/api/auth/upgrade", json={
-            "email": "upgraded@example.com",
-            "password": VALID_PASSWORD,
-        }, headers=auth_header(token))
+        resp = client.post(
+            "/api/auth/upgrade",
+            json={
+                "email": "upgraded@example.com",
+                "password": VALID_PASSWORD,
+            },
+            headers=auth_header(token),
+        )
         assert resp.status_code == 200
         data = resp.json()
         assert data["email"] == "upgraded@example.com"
@@ -101,19 +132,27 @@ class TestGuestAccount:
 
     def test_upgrade_non_guest_fails(self, client):
         token = create_authenticated_user(client)
-        resp = client.post("/api/auth/upgrade", json={
-            "email": "new@example.com",
-            "password": VALID_PASSWORD,
-        }, headers=auth_header(token))
+        resp = client.post(
+            "/api/auth/upgrade",
+            json={
+                "email": "new@example.com",
+                "password": VALID_PASSWORD,
+            },
+            headers=auth_header(token),
+        )
         assert resp.status_code == 400
 
     def test_upgrade_to_existing_email_fails(self, client):
         register_user(client, email="taken@example.com")
         token = client.post("/api/auth/guest").json()["access_token"]
-        resp = client.post("/api/auth/upgrade", json={
-            "email": "taken@example.com",
-            "password": VALID_PASSWORD,
-        }, headers=auth_header(token))
+        resp = client.post(
+            "/api/auth/upgrade",
+            json={
+                "email": "taken@example.com",
+                "password": VALID_PASSWORD,
+            },
+            headers=auth_header(token),
+        )
         assert resp.status_code == 400
 
 

@@ -1,6 +1,4 @@
 """Comprehensive tests for LatexRenderer — escape_latex security and rendering."""
-import tempfile
-from pathlib import Path
 
 import pytest
 

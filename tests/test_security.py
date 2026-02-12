@@ -1,4 +1,5 @@
 """Tests for auth/security.py — password hashing and JWT management."""
+
 import os
 import time
 from datetime import timedelta
@@ -10,16 +11,15 @@ os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
 from auth.security import (
-    verify_password,
-    get_password_hash,
+    _get_secret_key,
     create_access_token,
     decode_access_token,
-    _get_secret_key,
-    ALGORITHM,
+    get_password_hash,
+    verify_password,
 )
 
-
 # === Password hashing ===
+
 
 class TestPasswordHashing:
     def test_hash_password_returns_bcrypt_string(self):
@@ -57,6 +57,7 @@ class TestPasswordHashing:
 
 # === JWT secret key ===
 
+
 class TestGetSecretKey:
     def test_returns_key_when_set(self):
         key = _get_secret_key()
@@ -74,6 +75,7 @@ class TestGetSecretKey:
 
 
 # === JWT creation and decoding ===
+
 
 class TestJWT:
     def test_create_and_decode_token(self):

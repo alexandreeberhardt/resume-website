@@ -1,7 +1,7 @@
 """Tests for core/StorageManager.py — S3 file operations (mocked)."""
+
 import os
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
@@ -98,9 +98,7 @@ class TestDeleteFile:
         result = sm.delete_file("resumes/old.pdf")
 
         assert result is True
-        sm.s3_client.delete_object.assert_called_once_with(
-            Bucket="bucket", Key="resumes/old.pdf"
-        )
+        sm.s3_client.delete_object.assert_called_once_with(Bucket="bucket", Key="resumes/old.pdf")
 
 
 class TestPresignedUrl:

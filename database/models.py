@@ -1,5 +1,6 @@
 """SQLAlchemy models for the CV SaaS application."""
-from datetime import datetime, timezone
+
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
@@ -8,11 +9,13 @@ from sqlalchemy.orm import DeclarativeBase, relationship
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy models."""
+
     pass
 
 
 class User(Base):
     """User model for authentication."""
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -20,7 +23,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=True)  # Nullable for OAuth users
     google_id = Column(String(255), unique=True, nullable=True, index=True)
     is_guest = Column(Boolean, default=False, nullable=False, index=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
 
@@ -30,6 +33,7 @@ class User(Base):
 
 class Resume(Base):
     """Resume model for storing CV data."""
+
     __tablename__ = "resumes"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -37,7 +41,7 @@ class Resume(Base):
     name = Column(String(255), nullable=False)
     json_content = Column(JSONB, nullable=True)
     s3_url = Column(Text, nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False)
 
     user = relationship("User", back_populates="resumes")
 

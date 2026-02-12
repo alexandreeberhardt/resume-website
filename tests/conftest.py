@@ -1,4 +1,5 @@
 """Shared fixtures for API integration tests."""
+
 import os
 
 # Set test environment variables BEFORE importing app modules
@@ -6,14 +7,13 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-unit-tests-only"
 os.environ["DATABASE_URL"] = "sqlite://"  # won't be used, but prevents ValueError
 
 import pytest
-from sqlalchemy import create_engine, event, JSON, StaticPool
-from sqlalchemy.orm import sessionmaker, Session
 from fastapi.testclient import TestClient
+from sqlalchemy import JSON, StaticPool, create_engine, event
+from sqlalchemy.orm import Session, sessionmaker
 
-from database.models import Base, Resume
-from database.db_config import get_db
 from app import app
-
+from database.db_config import get_db
+from database.models import Base, Resume
 
 # SQLite doesn't support PostgreSQL's JSONB type natively.
 # Re-map the JSONB column to JSON for test compatibility.
@@ -55,6 +55,7 @@ def db():
 @pytest.fixture()
 def client(db: Session):
     """FastAPI TestClient with the test database injected."""
+
     def override_get_db():
         try:
             yield db
@@ -72,14 +73,18 @@ def client(db: Session):
 VALID_PASSWORD = "TestPass123!@#"
 
 
-def register_user(client: TestClient, email: str = "test@example.com", password: str = VALID_PASSWORD) -> dict:
+def register_user(
+    client: TestClient, email: str = "test@example.com", password: str = VALID_PASSWORD
+) -> dict:
     """Register a user and return the response JSON."""
     resp = client.post("/api/auth/register", json={"email": email, "password": password})
     assert resp.status_code == 201, resp.text
     return resp.json()
 
 
-def login_user(client: TestClient, email: str = "test@example.com", password: str = VALID_PASSWORD) -> str:
+def login_user(
+    client: TestClient, email: str = "test@example.com", password: str = VALID_PASSWORD
+) -> str:
     """Login and return the access token."""
     resp = client.post("/api/auth/login", data={"username": email, "password": password})
     assert resp.status_code == 200, resp.text

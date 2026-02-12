@@ -1,15 +1,16 @@
 """Tests for Google OAuth routes (mocked external calls)."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import patch
+
 from sqlalchemy import JSON
 
 from database.models import Resume
-from tests.conftest import create_authenticated_user, register_user, auth_header, VALID_PASSWORD
+from tests.conftest import auth_header, create_authenticated_user
 
 Resume.__table__.c.json_content.type = JSON()
 
@@ -17,16 +18,20 @@ Resume.__table__.c.json_content.type = JSON()
 class TestGoogleLogin:
     def test_google_login_not_configured(self, client):
         """When GOOGLE_CLIENT_ID is not set, should return 500."""
-        with patch("auth.routes.GOOGLE_CLIENT_ID", ""), \
-             patch("auth.routes.GOOGLE_REDIRECT_URI", ""):
+        with (
+            patch("auth.routes.GOOGLE_CLIENT_ID", ""),
+            patch("auth.routes.GOOGLE_REDIRECT_URI", ""),
+        ):
             resp = client.get("/api/auth/google/login")
             assert resp.status_code == 500
             assert "not configured" in resp.json()["detail"]
 
     def test_google_login_redirects(self, client):
         """When configured, should redirect to Google."""
-        with patch("auth.routes.GOOGLE_CLIENT_ID", "test-client-id"), \
-             patch("auth.routes.GOOGLE_REDIRECT_URI", "https://sivee.pro/api/auth/google/callback"):
+        with (
+            patch("auth.routes.GOOGLE_CLIENT_ID", "test-client-id"),
+            patch("auth.routes.GOOGLE_REDIRECT_URI", "https://sivee.pro/api/auth/google/callback"),
+        ):
             resp = client.get("/api/auth/google/login", follow_redirects=False)
             assert resp.status_code == 307
             assert "accounts.google.com" in resp.headers["location"]
@@ -35,17 +40,23 @@ class TestGoogleLogin:
 
 class TestGoogleCallback:
     def test_callback_not_configured(self, client):
-        with patch("auth.routes.GOOGLE_CLIENT_ID", ""), \
-             patch("auth.routes.GOOGLE_CLIENT_SECRET", ""), \
-             patch("auth.routes.GOOGLE_REDIRECT_URI", ""):
+        with (
+            patch("auth.routes.GOOGLE_CLIENT_ID", ""),
+            patch("auth.routes.GOOGLE_CLIENT_SECRET", ""),
+            patch("auth.routes.GOOGLE_REDIRECT_URI", ""),
+        ):
             resp = client.get("/api/auth/google/callback", params={"code": "test", "state": "test"})
             assert resp.status_code == 500
 
     def test_callback_invalid_state(self, client):
-        with patch("auth.routes.GOOGLE_CLIENT_ID", "id"), \
-             patch("auth.routes.GOOGLE_CLIENT_SECRET", "secret"), \
-             patch("auth.routes.GOOGLE_REDIRECT_URI", "https://example.com/cb"):
-            resp = client.get("/api/auth/google/callback", params={"code": "test", "state": "invalid-jwt"})
+        with (
+            patch("auth.routes.GOOGLE_CLIENT_ID", "id"),
+            patch("auth.routes.GOOGLE_CLIENT_SECRET", "secret"),
+            patch("auth.routes.GOOGLE_REDIRECT_URI", "https://example.com/cb"),
+        ):
+            resp = client.get(
+                "/api/auth/google/callback", params={"code": "test", "state": "invalid-jwt"}
+            )
             assert resp.status_code == 400
             assert "state token" in resp.json()["detail"]
 
@@ -59,6 +70,7 @@ class TestOAuthCodeExchange:
     def test_exchange_valid_code(self, client):
         """Store a code and exchange it."""
         from auth.routes import _store_oauth_code
+
         code = _store_oauth_code("test-jwt-token-here")
 
         resp = client.post("/api/auth/google/exchange", params={"code": code})
@@ -68,6 +80,7 @@ class TestOAuthCodeExchange:
     def test_exchange_code_consumed(self, client):
         """Code can only be used once."""
         from auth.routes import _store_oauth_code
+
         code = _store_oauth_code("test-jwt")
 
         # First exchange succeeds
@@ -81,7 +94,8 @@ class TestOAuthCodeExchange:
     def test_exchange_expired_code(self, client):
         """Expired codes should fail."""
         import time
-        from auth.routes import _oauth_code_store, OAUTH_CODE_EXPIRE_SECONDS
+
+        from auth.routes import _oauth_code_store
 
         code = "test-expired-code"
         _oauth_code_store[code] = ("jwt-token", time.time() - 1)  # Already expired

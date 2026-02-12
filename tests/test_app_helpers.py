@@ -1,23 +1,23 @@
 """Tests for helper functions in app.py and api/resumes.py."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 
-from app import (
-    get_template_with_size,
-    get_base_template,
-    convert_section_items,
-    CVSection,
-    VALID_TEMPLATES,
-)
-from auth.routes import _extract_s3_key_from_url, _store_oauth_code, _exchange_oauth_code
 from api.resumes import _convert_section_items
-
+from app import (
+    VALID_TEMPLATES,
+    CVSection,
+    convert_section_items,
+    get_base_template,
+    get_template_with_size,
+)
+from auth.routes import _exchange_oauth_code, _extract_s3_key_from_url, _store_oauth_code
 
 # === Template size helpers ===
+
 
 class TestTemplateSizeHelpers:
     def test_normal_size_returns_base(self):
@@ -46,6 +46,7 @@ class TestTemplateSizeHelpers:
 
 # === S3 URL key extraction ===
 
+
 class TestExtractS3Key:
     def test_valid_s3_url(self):
         url = "https://mybucket.s3.eu-west-3.amazonaws.com/resumes/user1/cv.pdf"
@@ -70,6 +71,7 @@ class TestExtractS3Key:
 
 # === OAuth code store ===
 
+
 class TestOAuthCodeStore:
     def test_store_and_exchange(self):
         code = _store_oauth_code("jwt-token-abc")
@@ -89,10 +91,13 @@ class TestOAuthCodeStore:
 
 # === convert_section_items (app.py) ===
 
+
 class TestConvertSectionItems:
     def test_skills_section(self):
         section = CVSection(
-            id="sec-1", type="skills", title="Skills",
+            id="sec-1",
+            type="skills",
+            title="Skills",
             items={"languages": "Python, JS", "tools": "Git, Docker"},
         )
         result = convert_section_items(section, "en")
@@ -101,7 +106,9 @@ class TestConvertSectionItems:
 
     def test_skills_empty(self):
         section = CVSection(
-            id="sec-1", type="skills", title="Skills",
+            id="sec-1",
+            type="skills",
+            title="Skills",
             items={"languages": "", "tools": ""},
         )
         result = convert_section_items(section, "en")
@@ -109,7 +116,9 @@ class TestConvertSectionItems:
 
     def test_summary_section(self):
         section = CVSection(
-            id="sec-1", type="summary", title="Summary",
+            id="sec-1",
+            type="summary",
+            title="Summary",
             items="I am a developer.",
         )
         result = convert_section_items(section, "en")
@@ -118,7 +127,9 @@ class TestConvertSectionItems:
 
     def test_summary_empty(self):
         section = CVSection(
-            id="sec-1", type="summary", title="Summary",
+            id="sec-1",
+            type="summary",
+            title="Summary",
             items="",
         )
         result = convert_section_items(section, "en")
@@ -126,7 +137,9 @@ class TestConvertSectionItems:
 
     def test_languages_section(self):
         section = CVSection(
-            id="sec-1", type="languages", title="Languages",
+            id="sec-1",
+            type="languages",
+            title="Languages",
             items="French (native), English (fluent)",
         )
         result = convert_section_items(section, "fr")
@@ -135,7 +148,9 @@ class TestConvertSectionItems:
 
     def test_education_section(self):
         section = CVSection(
-            id="sec-1", type="education", title="Education",
+            id="sec-1",
+            type="education",
+            title="Education",
             items=[{"school": "MIT", "degree": "BS CS", "dates": "2020"}],
         )
         result = convert_section_items(section, "en")
@@ -144,7 +159,9 @@ class TestConvertSectionItems:
 
     def test_education_empty(self):
         section = CVSection(
-            id="sec-1", type="education", title="Education",
+            id="sec-1",
+            type="education",
+            title="Education",
             items=[],
         )
         result = convert_section_items(section, "en")
@@ -152,8 +169,11 @@ class TestConvertSectionItems:
 
     def test_hidden_section(self):
         section = CVSection(
-            id="sec-1", type="summary", title="Summary",
-            isVisible=False, items="Some text",
+            id="sec-1",
+            type="summary",
+            title="Summary",
+            isVisible=False,
+            items="Some text",
         )
         result = convert_section_items(section, "en")
         assert result["isVisible"] is False
@@ -161,10 +181,13 @@ class TestConvertSectionItems:
 
 # === _convert_section_items (api/resumes.py) ===
 
+
 class TestConvertSectionItemsAPI:
     def test_skills_dict(self):
         section = {
-            "id": "s1", "type": "skills", "title": "Skills",
+            "id": "s1",
+            "type": "skills",
+            "title": "Skills",
             "items": {"languages": "Python", "tools": "Docker"},
         }
         result = _convert_section_items(section, "en")
@@ -172,7 +195,9 @@ class TestConvertSectionItemsAPI:
 
     def test_skills_non_dict_fallback(self):
         section = {
-            "id": "s1", "type": "skills", "title": "Skills",
+            "id": "s1",
+            "type": "skills",
+            "title": "Skills",
             "items": "not a dict",
         }
         result = _convert_section_items(section, "en")
@@ -180,7 +205,9 @@ class TestConvertSectionItemsAPI:
 
     def test_summary_string(self):
         section = {
-            "id": "s1", "type": "summary", "title": "Summary",
+            "id": "s1",
+            "type": "summary",
+            "title": "Summary",
             "items": "My summary text",
         }
         result = _convert_section_items(section, "en")
@@ -188,7 +215,9 @@ class TestConvertSectionItemsAPI:
 
     def test_experiences_list(self):
         section = {
-            "id": "s1", "type": "experiences", "title": "Experience",
+            "id": "s1",
+            "type": "experiences",
+            "title": "Experience",
             "items": [{"title": "Dev", "company": "Co"}],
         }
         result = _convert_section_items(section, "en")

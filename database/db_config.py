@@ -1,11 +1,11 @@
 """Database configuration and session management."""
+
 import os
-from typing import Generator
+from collections.abc import Generator
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
-
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -31,7 +31,7 @@ def get_session_local() -> sessionmaker[Session]:
     return SessionLocal
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session]:
     """Dependency for FastAPI to get a database session."""
     session_factory = get_session_local()
     db = session_factory()

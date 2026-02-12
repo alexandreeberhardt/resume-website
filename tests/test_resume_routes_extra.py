@@ -1,17 +1,19 @@
 """Additional tests for resume and auth routes — edge cases and missing coverage."""
+
 import os
-import json
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 from sqlalchemy import JSON
 
 from database.models import Resume
 from tests.conftest import (
-    create_authenticated_user, register_user, login_user,
-    auth_header, VALID_PASSWORD,
+    VALID_PASSWORD,
+    auth_header,
+    create_authenticated_user,
+    login_user,
+    register_user,
 )
 
 Resume.__table__.c.json_content.type = JSON()

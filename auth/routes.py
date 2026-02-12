@@ -1,4 +1,5 @@
 """Authentication routes for the CV SaaS application."""
+
 import os
 import secrets
 import time
@@ -14,10 +15,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from auth.dependencies import CurrentUser
-from auth.schemas import Token, UserCreate, UserResponse, UserDataExport, GuestUpgrade
-from auth.security import create_access_token, decode_access_token, get_password_hash, verify_password
+from auth.schemas import GuestUpgrade, Token, UserCreate, UserDataExport, UserResponse
+from auth.security import (
+    create_access_token,
+    decode_access_token,
+    get_password_hash,
+    verify_password,
+)
 from database.db_config import get_db
-from database.models import User, Resume
+from database.models import Resume, User
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -470,6 +476,7 @@ def _extract_s3_key_from_url(s3_url: str) -> str | None:
     try:
         # URL format: https://bucket.s3.region.amazonaws.com/key
         from urllib.parse import urlparse
+
         parsed = urlparse(s3_url)
         if parsed.path:
             # Remove leading slash
@@ -509,6 +516,7 @@ async def delete_user_account(
     if s3_keys_to_delete:
         try:
             from core.StorageManager import StorageManager
+
             storage = StorageManager()
             for s3_key in s3_keys_to_delete:
                 try:

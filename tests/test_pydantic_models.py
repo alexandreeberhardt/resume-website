@@ -1,4 +1,5 @@
 """Tests for Pydantic models in app.py — input validation for CV data."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
@@ -8,22 +9,24 @@ import pytest
 from pydantic import ValidationError
 
 from app import (
-    ProfessionalLink,
-    PersonalInfo,
-    EducationItem,
-    ExperienceItem,
-    ProjectItem,
-    SkillsItem,
-    LeadershipItem,
     CustomItem,
     CVSection,
+    EducationItem,
+    ExperienceItem,
+    LeadershipItem,
+    PersonalInfo,
+    ProfessionalLink,
+    ProjectItem,
     ResumeData,
+    SkillsItem,
 )
 
 
 class TestProfessionalLink:
     def test_valid_link(self):
-        link = ProfessionalLink(platform="github", username="johndoe", url="https://github.com/johndoe")
+        link = ProfessionalLink(
+            platform="github", username="johndoe", url="https://github.com/johndoe"
+        )
         assert link.platform == "github"
 
     def test_empty_url_is_valid(self):
@@ -48,8 +51,11 @@ class TestProfessionalLink:
 class TestPersonalInfo:
     def test_valid_info(self):
         info = PersonalInfo(
-            name="John Doe", title="Dev", location="Paris",
-            email="john@test.com", phone="+33612345678",
+            name="John Doe",
+            title="Dev",
+            location="Paris",
+            email="john@test.com",
+            phone="+33612345678",
         )
         assert info.name == "John Doe"
 
@@ -62,7 +68,9 @@ class TestPersonalInfo:
         info = PersonalInfo(
             links=[
                 ProfessionalLink(platform="github", username="j", url="https://github.com/j"),
-                ProfessionalLink(platform="linkedin", username="j", url="https://linkedin.com/in/j"),
+                ProfessionalLink(
+                    platform="linkedin", username="j", url="https://linkedin.com/in/j"
+                ),
             ]
         )
         assert len(info.links) == 2
@@ -80,7 +88,9 @@ class TestPersonalInfo:
     def test_legacy_not_migrated_if_links_exist(self):
         info = PersonalInfo(
             github="old",
-            links=[ProfessionalLink(platform="linkedin", username="j", url="https://linkedin.com/in/j")],
+            links=[
+                ProfessionalLink(platform="linkedin", username="j", url="https://linkedin.com/in/j")
+            ],
         )
         # links already exist, so github is NOT migrated
         assert len(info.links) == 1
@@ -160,29 +170,38 @@ class TestCustomItem:
 class TestCVSection:
     def test_valid_education_section(self):
         section = CVSection(
-            id="sec-1", type="education", title="Education",
+            id="sec-1",
+            type="education",
+            title="Education",
             items=[{"school": "MIT", "degree": "BS", "dates": "2020"}],
         )
         assert section.type == "education"
 
     def test_valid_skills_section(self):
         section = CVSection(
-            id="sec-2", type="skills", title="Skills",
+            id="sec-2",
+            type="skills",
+            title="Skills",
             items={"languages": "Python", "tools": "Git"},
         )
         assert section.items["languages"] == "Python"
 
     def test_valid_summary_section(self):
         section = CVSection(
-            id="sec-3", type="summary", title="Summary",
+            id="sec-3",
+            type="summary",
+            title="Summary",
             items="I am a developer",
         )
         assert section.items == "I am a developer"
 
     def test_hidden_section(self):
         section = CVSection(
-            id="sec-4", type="education", title="Edu",
-            isVisible=False, items=[],
+            id="sec-4",
+            type="education",
+            title="Edu",
+            isVisible=False,
+            items=[],
         )
         assert section.isVisible is False
 
@@ -218,7 +237,9 @@ class TestResumeData:
                 CVSection(id="sec-2", type="education", title="Edu", items=[]),
                 CVSection(id="sec-3", type="experiences", title="Exp", items=[]),
                 CVSection(id="sec-4", type="projects", title="Proj", items=[]),
-                CVSection(id="sec-5", type="skills", title="Skills", items={"languages": "", "tools": ""}),
+                CVSection(
+                    id="sec-5", type="skills", title="Skills", items={"languages": "", "tools": ""}
+                ),
                 CVSection(id="sec-6", type="leadership", title="Lead", items=[]),
                 CVSection(id="sec-7", type="languages", title="Lang", items="French"),
                 CVSection(id="sec-8", type="custom", title="Custom", items=[]),

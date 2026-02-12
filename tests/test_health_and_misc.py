@@ -1,4 +1,5 @@
 """Tests for health endpoints, CORS, and miscellaneous app features."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
@@ -6,7 +7,8 @@ os.environ.setdefault("DATABASE_URL", "sqlite://")
 
 import pytest
 from fastapi.testclient import TestClient
-from app import app, VALID_TEMPLATES, SIZE_VARIANTS
+
+from app import SIZE_VARIANTS, VALID_TEMPLATES, app
 
 
 @pytest.fixture()
@@ -125,12 +127,48 @@ class TestGenerateEndpoint:
         data = {
             "personal": {"name": "John Doe", "email": "john@example.com"},
             "sections": [
-                {"id": "s1", "type": "summary", "title": "Summary", "isVisible": True, "items": "A developer."},
-                {"id": "s2", "type": "education", "title": "Education", "isVisible": True, "items": []},
-                {"id": "s3", "type": "experiences", "title": "Experience", "isVisible": True, "items": []},
-                {"id": "s4", "type": "skills", "title": "Skills", "isVisible": True, "items": {"languages": "Python", "tools": "Git"}},
-                {"id": "s5", "type": "languages", "title": "Languages", "isVisible": True, "items": "French, English"},
-                {"id": "s6", "type": "projects", "title": "Projects", "isVisible": True, "items": []},
+                {
+                    "id": "s1",
+                    "type": "summary",
+                    "title": "Summary",
+                    "isVisible": True,
+                    "items": "A developer.",
+                },
+                {
+                    "id": "s2",
+                    "type": "education",
+                    "title": "Education",
+                    "isVisible": True,
+                    "items": [],
+                },
+                {
+                    "id": "s3",
+                    "type": "experiences",
+                    "title": "Experience",
+                    "isVisible": True,
+                    "items": [],
+                },
+                {
+                    "id": "s4",
+                    "type": "skills",
+                    "title": "Skills",
+                    "isVisible": True,
+                    "items": {"languages": "Python", "tools": "Git"},
+                },
+                {
+                    "id": "s5",
+                    "type": "languages",
+                    "title": "Languages",
+                    "isVisible": True,
+                    "items": "French, English",
+                },
+                {
+                    "id": "s6",
+                    "type": "projects",
+                    "title": "Projects",
+                    "isVisible": True,
+                    "items": [],
+                },
             ],
             "template_id": "harvard",
             "lang": "fr",

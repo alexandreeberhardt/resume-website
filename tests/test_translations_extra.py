@@ -1,5 +1,6 @@
 """Additional edge-case tests for translations.py."""
-from translations import get_section_title, PDF_TRANSLATIONS, DEFAULT_TITLES
+
+from translations import DEFAULT_TITLES, PDF_TRANSLATIONS, get_section_title
 
 
 class TestTranslationConsistency:
@@ -36,8 +37,9 @@ class TestGetSectionTitleEdgeCases:
                 continue
             for title in titles:
                 result_fr = get_section_title(section_type, "fr", title)
-                assert result_fr == PDF_TRANSLATIONS["fr"][section_type], \
+                assert result_fr == PDF_TRANSLATIONS["fr"][section_type], (
                     f"'{title}' for {section_type}/fr → '{result_fr}'"
+                )
 
     def test_custom_with_default_title_string(self):
         """custom + 'Custom Section' title → 'Custom Section' preserved."""

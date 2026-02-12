@@ -1,4 +1,5 @@
 """Comprehensive tests for Pydantic models in app.py."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
@@ -8,17 +9,17 @@ import pytest
 from pydantic import ValidationError
 
 from app import (
-    ProfessionalLink,
-    PersonalInfo,
-    EducationItem,
-    ExperienceItem,
-    ProjectItem,
-    SkillsItem,
-    LeadershipItem,
     CustomItem,
     CVSection,
-    ResumeData,
+    EducationItem,
+    ExperienceItem,
+    LeadershipItem,
     OptimalSizeResponse,
+    PersonalInfo,
+    ProfessionalLink,
+    ProjectItem,
+    ResumeData,
+    SkillsItem,
 )
 
 
@@ -71,8 +72,12 @@ class TestPersonalInfo:
 
     def test_no_migration_when_links_present(self):
         """If links are already set, github fields should not add duplicates."""
-        existing_link = ProfessionalLink(platform="linkedin", username="me", url="https://linkedin.com/in/me")
-        info = PersonalInfo(links=[existing_link], github="user", github_url="https://github.com/user")
+        existing_link = ProfessionalLink(
+            platform="linkedin", username="me", url="https://linkedin.com/in/me"
+        )
+        info = PersonalInfo(
+            links=[existing_link], github="user", github_url="https://github.com/user"
+        )
         assert len(info.links) == 1
         assert info.links[0].platform == "linkedin"
 
@@ -115,7 +120,9 @@ class TestCVSection:
         assert section.items == "My bio text"
 
     def test_skills_section_dict(self):
-        section = CVSection(id="s2", type="skills", title="Skills", items={"languages": "Python", "tools": "Git"})
+        section = CVSection(
+            id="s2", type="skills", title="Skills", items={"languages": "Python", "tools": "Git"}
+        )
         assert section.items["languages"] == "Python"
 
     def test_education_section_list(self):
@@ -181,7 +188,13 @@ class TestEducationItem:
         assert item.description is None or item.description == ""
 
     def test_full_item(self):
-        item = EducationItem(school="MIT", degree="BSc CS", dates="2020-2024", subtitle="GPA 3.9", description="Thesis on AI")
+        item = EducationItem(
+            school="MIT",
+            degree="BSc CS",
+            dates="2020-2024",
+            subtitle="GPA 3.9",
+            description="Thesis on AI",
+        )
         assert item.school == "MIT"
 
 
@@ -191,7 +204,9 @@ class TestExperienceItem:
         assert item.highlights == []
 
     def test_with_highlights(self):
-        item = ExperienceItem(title="SWE", company="Google", dates="2023", highlights=["Built X", "Led Y"])
+        item = ExperienceItem(
+            title="SWE", company="Google", dates="2023", highlights=["Built X", "Led Y"]
+        )
         assert len(item.highlights) == 2
 
 

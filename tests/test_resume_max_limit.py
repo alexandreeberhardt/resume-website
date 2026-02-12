@@ -1,13 +1,14 @@
 """Tests for resume creation limits (guest vs regular user)."""
+
 import os
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 
-import pytest
 from sqlalchemy import JSON
+
 from database.models import Resume
-from tests.conftest import create_authenticated_user, auth_header, VALID_PASSWORD
+from tests.conftest import auth_header, create_authenticated_user
 
 Resume.__table__.c.json_content.type = JSON()
 

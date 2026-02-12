@@ -1,6 +1,6 @@
 """Tests for database/db_config.py — engine creation, session management, connection check."""
+
 import os
-from unittest.mock import patch, MagicMock
 
 import pytest
 

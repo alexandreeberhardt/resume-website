@@ -1,4 +1,5 @@
 """Tests for core/ResumeConfig.py."""
+
 from pathlib import Path
 
 from core.ResumeConfig import ResumeConfig
