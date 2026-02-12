@@ -1,5 +1,14 @@
 # Development Guide
 
+## Prerequisites
+
+| Tool | Version | Install |
+|------|---------|---------|
+| Node.js | 18+ | [nodejs.org](https://nodejs.org/) |
+| Python | 3.13+ | [python.org](https://www.python.org/) |
+| uv | latest | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| Docker | 20+ | [docker.com](https://www.docker.com/) |
+
 ## Tech Stack
 
 **Backend**
@@ -14,6 +23,7 @@
 - React 18 + TypeScript
 - Tailwind CSS
 - dnd-kit (drag and drop)
+- i18next (internationalization)
 - Vite
 
 **Infrastructure**
@@ -24,30 +34,34 @@
 ## Project Structure
 
 ```text
-site-CV/
-├── curriculum-vitae/     # Backend (git submodule)
-│   ├── core/             # Business logic (LaTeX, PDF)
-│   ├── database/         # SQLAlchemy models
-│   ├── alembic/          # Database migrations
-│   ├── app.py            # FastAPI application
-│   └── templates/        # LaTeX templates
-├── frontend/             # React application
-├── vps/                  # VPS deployment configs
-│   ├── nginx_saas.conf   # Nginx configuration
-│   ├── SECURITY.md       # Security checklist
-│   ├── backup_db.sh      # DB backup script
-│   └── restore_db.sh     # DB restore script
-├── docker-compose.yml    # Production setup
-├── docker-compose.dev.yml # Development setup
-├── deploy.sh             # Deployment script
-├── migrate.sh            # Migration script
-└── test.sh               # Test suite
-
+sivee/
+├── curriculum-vitae/          # Backend (git submodule)
+│   ├── core/                  # Business logic (LaTeX, PDF)
+│   ├── database/              # SQLAlchemy models
+│   ├── alembic/               # Database migrations
+│   ├── app.py                 # FastAPI application
+│   ├── tests/                 # Backend tests (pytest)
+│   └── templates/             # LaTeX templates
+├── frontend/                  # React application
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   ├── contexts/          # Auth, theme contexts
+│   │   ├── locales/           # i18n translations (fr/en)
+│   │   └── test/              # Test setup and helpers
+│   └── package.json
+├── vps/                       # VPS deployment configs
+│   ├── nginx_saas.conf        # Nginx configuration
+│   ├── SECURITY.md            # Security checklist
+│   ├── backup_db.sh           # DB backup script
+│   └── restore_db.sh          # DB restore script
+├── docker-compose.yml         # Production setup
+├── docker-compose.dev.yml     # Development setup
+├── deploy.sh                  # Deployment script
+├── migrate.sh                 # Migration script
+└── test.sh                    # Test suite runner
 ```
 
 ## Local Installation (Without Docker)
-
-If you prefer not to use Docker for development:
 
 ### Backend
 
@@ -55,8 +69,9 @@ If you prefer not to use Docker for development:
 cd curriculum-vitae
 uv sync
 uv run uvicorn app:app --reload --port 8000
-
 ```
+
+The API docs are available at http://localhost:8000/docs (Swagger UI).
 
 ### Frontend (in a new terminal)
 
@@ -64,17 +79,34 @@ uv run uvicorn app:app --reload --port 8000
 cd frontend
 npm install
 npm run dev
-
 ```
 
 ## Tests
 
-To run all tests (backend pytest and frontend Vitest):
+### Run all tests
 
 ```bash
 ./test.sh
-
 ```
+
+### Backend tests only
+
+```bash
+cd curriculum-vitae
+uv run pytest tests/ -v
+```
+
+The backend test suite uses SQLite in-memory for speed. See `curriculum-vitae/tests/conftest.py` for the test database setup and authentication helpers.
+
+### Frontend tests only
+
+```bash
+cd frontend
+npm test              # Single run
+npm run test:watch    # Watch mode (re-runs on changes)
+```
+
+Frontend tests use Vitest + React Testing Library + jsdom. A custom `renderWithProviders` helper in `src/test/render.tsx` wraps components with Router, AuthProvider, and i18n.
 
 ## Development Troubleshooting
 
@@ -88,5 +120,12 @@ docker compose -f docker-compose.dev.yml down -v
 
 # Restart
 docker compose -f docker-compose.dev.yml up --build
+```
 
+### Submodule not initialized
+
+If the `curriculum-vitae/` folder is empty after cloning:
+
+```bash
+git submodule update --init --recursive
 ```

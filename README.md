@@ -1,12 +1,18 @@
-# CV Generator SaaS
+# Sivee.pro
 
-A web application to generate professional PDF resumes from a dynamic form interface. Built with FastAPI (Python) and React, with LaTeX-based PDF generation.
+[![Live](https://img.shields.io/badge/live-sivee.pro-blue)](https://sivee.pro)
+[![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/frontend-React_18-61DAFB)](https://react.dev/)
+[![LaTeX](https://img.shields.io/badge/PDF-LaTeX-008080)]()
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
-## Live demo:  [sivee.pro](https://sivee.pro)
+A web application to generate professional PDF resumes from a dynamic form interface. LaTeX-based PDF generation ensures high-quality typographic output.
+
+**[Live demo: sivee.pro](https://sivee.pro)**
 
 ## Examples
 
-Here are examples of professional resumes generated with the application using different templates:
+Professional resumes generated with different templates:
 
 <p align="center">
   <img src="docs/AE1.png" width="45%" alt="Classic Template Example" style="margin-right: 10px;">
@@ -16,64 +22,65 @@ Here are examples of professional resumes generated with the application using d
 ## Features
 
 ### PDF Generation & Templates
-- **LaTeX Engine**: High-quality typographic PDF generation (superior to standard HTML-to-PDF).
-- **Professional Templates**: Varied choices including Harvard, McKinsey, and Europass styles.
-- **Smart Sizing**: Automatic content fitting to a single page.
-- **PDF Import**: (Experimental) Import existing CVs via AI extraction.
+- **LaTeX Engine** — High-quality typographic PDF generation (superior to HTML-to-PDF)
+- **Professional Templates** — Harvard, McKinsey, Europass styles and more
+- **Smart Sizing** — Automatic content fitting to a single page
+- **PDF Import** — (Experimental) Import existing CVs via AI extraction (Mistral)
 
 ### Editor & Customization
-- **Real-time Editing**: Visualize changes instantly as you type.
-- **Drag and Drop**: Easily reorganize your CV sections.
-- **Dynamic Sections**: Add, rename, hide, or remove any section (Experience, Education, etc.).
-- **Dark/Light Mode**: Interface adapted to your visual preferences.
-- **Multi-language**: Interface available in French and English.
+- **Real-time Editing** — Visualize changes instantly as you type
+- **Drag and Drop** — Reorganize CV sections freely
+- **Dynamic Sections** — Add, rename, hide, or remove any section
+- **Dark/Light Mode** — Interface adapted to your preferences
+- **Multi-language** — French and English
 
 ### Accounts & Security
-- **Guest Mode**: Test the application immediately without creating an account (limited to 3 CVs).
-- **Seamless Upgrade**: Convert guest account to permanent without data loss.
-- **Google OAuth**: Fast and secure sign-in with Google.
-- **Privacy (GDPR)**: Export all data or permanently delete account in one click.
-- **Secure Architecture**: Hashed passwords and secure JWT session management.
+- **Guest Mode** — Try immediately without creating an account (limited to 3 CVs)
+- **Seamless Upgrade** — Convert guest account to permanent without data loss
+- **Google OAuth** — Fast sign-in with Google
+- **GDPR** — Export all data or delete account in one click
+- **Secure Architecture** — Hashed passwords, JWT sessions
 
 ## Quick Install (Docker)
 
-Recommended method to start the project quickly.
-
-1. Clone the repository
 ```bash
-git clone --recursive <repository-url> site-CV
-cd site-CV
+# Clone the repository
+git clone --recursive git@github.com:alexandreeberhardt/resume-website.git sivee
+cd sivee
 
-```
-
-2. Copy environment variables
-
-```bash
+# Configure environment
 cp .env.example .env
+# Edit .env with your values (see .env.example for documentation)
 
-```
-
-3. Start development environment
-
-```bash
+# Start development environment
 docker compose -f docker-compose.dev.yml up --build
-
 ```
 
 The application will be accessible at:
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:8000
+- **API docs (Swagger)**: http://localhost:8000/docs
 
-* **Frontend**: http://localhost:5173
-* **Backend**: http://localhost:8000
-* **Database**: localhost:5432
+## Architecture
+
+```
+Frontend (React + TypeScript + Vite)
+    ↕  REST API
+Backend (FastAPI + SQLAlchemy)
+    ↕               ↕
+PostgreSQL    LaTeX → PDF
+                ↕
+              S3 Storage
+```
 
 ## Documentation
 
-Detailed documentation is available in the `docs/` folder:
-
-* [Development Guide](docs/DEVELOPMENT.md)
-* [Database](docs/DATABASE.md)
-* [Deployment](docs/DEPLOYMENT.md)
-* [API](docs/API.md)
+| Document | Description |
+|----------|-------------|
+| [Development Guide](docs/DEVELOPMENT.md) | Local setup, project structure, tests |
+| [API Reference](docs/API.md) | Endpoints, authentication, examples |
+| [Database](docs/DATABASE.md) | Schema, migrations, backups |
+| [Deployment](docs/DEPLOYMENT.md) | VPS setup, Nginx, SSL, operations |
 
 ## License
 
