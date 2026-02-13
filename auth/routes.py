@@ -9,7 +9,7 @@ from typing import Annotated
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -22,6 +22,7 @@ from auth.security import (
     get_password_hash,
     verify_password,
 )
+from core.email import send_welcome_email
 from database.db_config import get_db
 from database.models import Resume, User
 
@@ -74,6 +75,7 @@ def _exchange_oauth_code(code: str) -> str | None:
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(
     user_data: UserCreate,
+    background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
     """Register a new user.
@@ -106,6 +108,8 @@ async def register(
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    background_tasks.add_task(send_welcome_email, new_user.email)
 
     return new_user
 
@@ -190,6 +194,7 @@ async def create_guest_account(
 @router.post("/upgrade", response_model=UserResponse)
 async def upgrade_guest_account(
     upgrade_data: GuestUpgrade,
+    background_tasks: BackgroundTasks,
     current_user: CurrentUser,
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
@@ -232,6 +237,8 @@ async def upgrade_guest_account(
     db.commit()
     db.refresh(current_user)
 
+    background_tasks.add_task(send_welcome_email, current_user.email)
+
     return current_user
 
 
@@ -273,6 +280,7 @@ async def google_login() -> RedirectResponse:
 async def google_callback(
     code: str,
     state: str,
+    background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
 ) -> RedirectResponse:
     """Handle Google OAuth2 callback.
@@ -346,6 +354,7 @@ async def google_callback(
 
     # Find or create user
     user = db.query(User).filter(User.google_id == google_id).first()
+    is_new_user = False
 
     if not user:
         # Check if email already exists (user registered with password)
@@ -357,6 +366,7 @@ async def google_callback(
             user = existing_user
         else:
             # Create new user
+            is_new_user = True
             user = User(
                 email=email,
                 google_id=google_id,
@@ -365,6 +375,9 @@ async def google_callback(
             db.add(user)
             db.commit()
             db.refresh(user)
+
+    if is_new_user:
+        background_tasks.add_task(send_welcome_email, user.email)
 
     # Create JWT token
     jwt_token = create_access_token(data={"sub": str(user.id), "email": user.email})
