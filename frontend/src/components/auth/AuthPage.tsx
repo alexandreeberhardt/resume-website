@@ -6,10 +6,11 @@ import { FileText, Sparkles, Shield, Zap } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Login from './Login'
 import Register from './Register'
+import ForgotPassword from './ForgotPassword'
 import ThemeToggle from '../ThemeToggle'
 import LanguageSwitcher from '../LanguageSwitcher'
 
-type AuthMode = 'login' | 'register'
+type AuthMode = 'login' | 'register' | 'forgot-password'
 
 interface AuthPageProps {
   onContinueWithoutAuth?: () => void
@@ -129,9 +130,14 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
               {/* Animated content */}
               <div key={mode} className="animate-fade-in">
                 {mode === 'login' ? (
-                  <Login onSwitchToRegister={() => setMode('register')} />
-                ) : (
+                  <Login
+                    onSwitchToRegister={() => setMode('register')}
+                    onSwitchToForgotPassword={() => setMode('forgot-password')}
+                  />
+                ) : mode === 'register' ? (
                   <Register onSwitchToLogin={() => setMode('login')} />
+                ) : (
+                  <ForgotPassword onSwitchToLogin={() => setMode('login')} />
                 )}
               </div>
             </div>

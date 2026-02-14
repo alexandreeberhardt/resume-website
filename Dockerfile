@@ -41,6 +41,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lmodern \
     latexmk \
     curl \
+    ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Installation de uv pour la gestion des dépendances Python

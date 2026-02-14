@@ -10,9 +10,10 @@ import { loginWithGoogle } from '../../api/auth'
 
 interface LoginProps {
   onSwitchToRegister: () => void
+  onSwitchToForgotPassword: () => void
 }
 
-export default function Login({ onSwitchToRegister }: LoginProps) {
+export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginProps) {
   const { t } = useTranslation()
   const { login } = useAuth()
 
@@ -149,6 +150,17 @@ export default function Login({ onSwitchToRegister }: LoginProps) {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
+        </div>
+
+        {/* Forgot password link */}
+        <div className="text-right -mt-1">
+          <button
+            type="button"
+            onClick={onSwitchToForgotPassword}
+            className="text-xs font-medium text-brand hover:text-brand-hover transition-colors"
+          >
+            {t('auth.forgotPassword.link')}
+          </button>
         </div>
 
         {/* Submit button - CV brand button style */}

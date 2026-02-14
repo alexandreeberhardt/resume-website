@@ -32,6 +32,9 @@ services:
       - PYTHONUNBUFFERED=1
       # SECURITY: No default values - .env MUST define these variables
       - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}@db:5432/${POSTGRES_DB:?POSTGRES_DB required}
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     depends_on:
       db:
         condition: service_healthy
