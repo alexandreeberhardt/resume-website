@@ -95,7 +95,11 @@ function App() {
     data,
   })
 
-  const { loading, handleGenerate } = usePdfGeneration({ data, setError, onLimitError: handleLimitError })
+  const { loading, handleGenerate } = usePdfGeneration({
+    data,
+    setError,
+    onLimitError: handleLimitError,
+  })
 
   const { importLoading, importStep, fileInputRef, handleImport } = usePdfImport({
     setData,
@@ -160,7 +164,7 @@ function App() {
         return section
       }),
     }))
-  }, [i18n.language])
+  }, [i18n.language, t])
 
   // Show loading during auth check
   if (authLoading || initialLoading) {
@@ -636,9 +640,11 @@ function App() {
               {/* Save */}
               <button
                 onClick={() => {
-                  resumeManager.currentResumeId
-                    ? resumeManager.handleSaveResume()
-                    : resumeManager.setShowSaveModal(true)
+                  if (resumeManager.currentResumeId) {
+                    resumeManager.handleSaveResume()
+                  } else {
+                    resumeManager.setShowSaveModal(true)
+                  }
                   setShowMobileMenu(false)
                 }}
                 disabled={resumeManager.saveLoading}
@@ -714,10 +720,18 @@ function App() {
       {/* Error Banner */}
       {error && (
         <div className="max-w-5xl mx-auto px-6 pt-4">
-          <div className={`${isLimitError ? 'bg-amber-50 border-amber-200' : 'bg-error-50 border-error-200'} border rounded-xl p-4 flex items-start gap-3 animate-slide-up`}>
-            <AlertCircle className={`w-5 h-5 ${isLimitError ? 'text-amber-500' : 'text-error-500'} flex-shrink-0 mt-0.5`} />
+          <div
+            className={`${isLimitError ? 'bg-amber-50 border-amber-200' : 'bg-error-50 border-error-200'} border rounded-xl p-4 flex items-start gap-3 animate-slide-up`}
+          >
+            <AlertCircle
+              className={`w-5 h-5 ${isLimitError ? 'text-amber-500' : 'text-error-500'} flex-shrink-0 mt-0.5`}
+            />
             <div className="flex-1">
-              <p className={`text-sm font-medium ${isLimitError ? 'text-amber-700' : 'text-error-700'}`}>{error}</p>
+              <p
+                className={`text-sm font-medium ${isLimitError ? 'text-amber-700' : 'text-error-700'}`}
+              >
+                {error}
+              </p>
               {isLimitError && !user?.isGuest && !user?.feedbackCompleted && (
                 <button
                   onClick={() => {
@@ -733,7 +747,10 @@ function App() {
               )}
             </div>
             <button
-              onClick={() => { setError(null); setIsLimitError(false) }}
+              onClick={() => {
+                setError(null)
+                setIsLimitError(false)
+              }}
               className={`${isLimitError ? 'text-amber-400 hover:text-amber-600' : 'text-error-400 hover:text-error-600'} transition-colors`}
             >
               <span className="sr-only">Fermer</span>

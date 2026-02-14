@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { createResume, listResumes, getResume, updateResume, deleteResume } from './resumes'
+import type { ResumeData } from '../types'
 
 // Mock the api client
 vi.mock('./client', () => ({
@@ -33,7 +34,9 @@ describe('Resumes API', () => {
     })
 
     it('calls POST /resumes with name and content', async () => {
-      const content = { personal: { name: 'John' }, sections: [] } as any
+      const content = { personal: { name: 'John' }, sections: [] } as Parameters<
+        typeof createResume
+      >[1]
       vi.mocked(api.post).mockResolvedValue({ id: 1, name: 'CV', json_content: content })
 
       await createResume('CV', content)
@@ -81,7 +84,7 @@ describe('Resumes API', () => {
     })
 
     it('calls PUT /resumes/:id with json_content', async () => {
-      const content = { personal: { name: 'Jane' } } as any
+      const content = { personal: { name: 'Jane' } } as unknown as ResumeData
       vi.mocked(api.put).mockResolvedValue({ id: 2, json_content: content })
 
       await updateResume(2, { json_content: content })

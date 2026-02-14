@@ -130,6 +130,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
         abortControllerRef.current.abort()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (isCollapsed) {

@@ -26,6 +26,13 @@ export default function Account() {
   const { user, logout, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
 
+  const [exportLoading, setExportLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
   // Redirect to home if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -37,13 +44,6 @@ export default function Account() {
   if (isLoading || !isAuthenticated) {
     return null
   }
-
-  const [exportLoading, setExportLoading] = useState(false)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [deleteConfirmText, setDeleteConfirmText] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
 
   const handleExportData = async () => {
     setExportLoading(true)

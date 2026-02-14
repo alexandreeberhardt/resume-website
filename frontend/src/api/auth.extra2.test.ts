@@ -115,7 +115,7 @@ describe('deleteUserAccount', () => {
     })
 
     await deleteUserAccount()
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('DELETE')
     expect(callArgs[0]).toBe('/api/auth/me')
   })
@@ -175,7 +175,7 @@ describe('upgradeGuestAccount', () => {
 
     const user = await upgradeGuestAccount('new@test.com', 'StrongPass123!')
     expect(user.email).toBe('new@test.com')
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     const body = JSON.parse(callArgs[1].body)
     expect(body.email).toBe('new@test.com')
     expect(body.password).toBe('StrongPass123!')

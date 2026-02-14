@@ -26,7 +26,7 @@ describe('GuestUpgradeBanner extra', () => {
   })
 
   it('renders for null user as nothing', () => {
-    renderWithProviders(<GuestUpgradeBanner user={null as any} onUpgrade={vi.fn()} />)
+    renderWithProviders(<GuestUpgradeBanner user={null!} onUpgrade={vi.fn()} />)
     // Should handle null gracefully
   })
 })

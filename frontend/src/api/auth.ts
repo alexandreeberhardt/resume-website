@@ -29,9 +29,13 @@ export async function loginUser(credentials: LoginCredentials): Promise<AuthResp
  * Decode JWT token to extract user info
  * Note: This is client-side decoding for convenience - the server still validates the token
  */
-export function decodeToken(
-  token: string,
-): { sub: string; email: string; exp: number; is_guest?: boolean; feedback_completed?: boolean } | null {
+export function decodeToken(token: string): {
+  sub: string
+  email: string
+  exp: number
+  is_guest?: boolean
+  feedback_completed?: boolean
+} | null {
   try {
     const payload = token.split('.')[1]
     const decoded = JSON.parse(atob(payload))

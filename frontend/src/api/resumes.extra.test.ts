@@ -28,7 +28,7 @@ describe('createResume', () => {
 
     const result = await createResume('My CV')
     expect(result.name).toBe('My CV')
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     const body = JSON.parse(callArgs[1].body)
     expect(body.name).toBe('My CV')
     expect(body.json_content).toBeNull()
@@ -42,8 +42,8 @@ describe('createResume', () => {
       json: () => Promise.resolve({ id: 1, name: 'CV', json_content: content }),
     })
 
-    await createResume('CV', content as any)
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    await createResume('CV', content as Parameters<typeof createResume>[1])
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     const body = JSON.parse(callArgs[1].body)
     expect(body.json_content.personal.name).toBe('John')
   })
@@ -107,7 +107,7 @@ describe('updateResume', () => {
     })
 
     await updateResume(1, { name: 'Updated' })
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('PUT')
     expect(callArgs[0]).toBe('/api/resumes/1')
   })
@@ -127,7 +127,7 @@ describe('deleteResume', () => {
     })
 
     await deleteResume(5)
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('DELETE')
     expect(callArgs[0]).toBe('/api/resumes/5')
   })
@@ -168,7 +168,7 @@ describe('generateResumePdf', () => {
 
     localStorage.setItem('access_token', 'my-jwt')
     await generateResumePdf(1)
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].headers.Authorization).toBe('Bearer my-jwt')
   })
 
@@ -181,7 +181,7 @@ describe('generateResumePdf', () => {
     })
 
     await generateResumePdf(42, 'europass', 'en')
-    const url = (globalThis.fetch as any).mock.calls[0][0]
+    const url = vi.mocked(globalThis.fetch).mock.calls[0][0]
     expect(url).toContain('template_id=europass')
     expect(url).toContain('lang=en')
   })
@@ -215,7 +215,7 @@ describe('generateResumePdf', () => {
     })
 
     await generateResumePdf(1)
-    const url = (globalThis.fetch as any).mock.calls[0][0]
+    const url = vi.mocked(globalThis.fetch).mock.calls[0][0]
     expect(url).toContain('template_id=harvard')
     expect(url).toContain('lang=fr')
   })

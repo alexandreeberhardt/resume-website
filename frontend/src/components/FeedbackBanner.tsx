@@ -174,7 +174,6 @@ export function FeedbackModal({
     }
   }
 
-
   if (success) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary-950/50 backdrop-blur-sm p-4">
@@ -241,7 +240,20 @@ export function FeedbackModal({
               {/* ── Section 1: About you ── */}
               <section className="space-y-4">
                 <SectionHeader
-                  icon={<svg className="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
+                  icon={
+                    <svg
+                      className="w-3.5 h-3.5 text-brand"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  }
                   title={t('feedback.sectionAboutYou')}
                 />
 
@@ -262,7 +274,9 @@ export function FeedbackModal({
                       <option value="employed">{t('feedback.profileOptions.employed')}</option>
                       <option value="freelance">{t('feedback.profileOptions.freelance')}</option>
                       <option value="unemployed">{t('feedback.profileOptions.unemployed')}</option>
-                      <option value="career_change">{t('feedback.profileOptions.career_change')}</option>
+                      <option value="career_change">
+                        {t('feedback.profileOptions.career_change')}
+                      </option>
                       <option value="other">{t('feedback.profileOptions.other')}</option>
                     </select>
                   </div>
@@ -280,7 +294,9 @@ export function FeedbackModal({
                       <option value="">—</option>
                       <option value="search">{t('feedback.sourceOptions.search')}</option>
                       <option value="social">{t('feedback.sourceOptions.social')}</option>
-                      <option value="word_of_mouth">{t('feedback.sourceOptions.wordOfMouth')}</option>
+                      <option value="word_of_mouth">
+                        {t('feedback.sourceOptions.wordOfMouth')}
+                      </option>
                       <option value="other">{t('feedback.sourceOptions.other')}</option>
                     </select>
                   </div>
@@ -305,7 +321,20 @@ export function FeedbackModal({
               {/* ── Section 2: Your experience ── */}
               <section className="space-y-4">
                 <SectionHeader
-                  icon={<svg className="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>}
+                  icon={
+                    <svg
+                      className="w-3.5 h-3.5 text-brand"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                  }
                   title={t('feedback.sectionExperience')}
                 />
 
@@ -319,10 +348,17 @@ export function FeedbackModal({
                       </span>
                     </label>
                     {easeRating > 0 && (
-                      <span className="text-sm text-brand font-bold tabular-nums">{easeRating}/10</span>
+                      <span className="text-sm text-brand font-bold tabular-nums">
+                        {easeRating}/10
+                      </span>
                     )}
                   </div>
-                  <RatingScale value={easeRating || null} onChange={setEaseRating} min={1} max={10} />
+                  <RatingScale
+                    value={easeRating || null}
+                    onChange={setEaseRating}
+                    min={1}
+                    max={10}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -358,7 +394,9 @@ export function FeedbackModal({
                       <option value="canva">{t('feedback.alternativeOptions.canva')}</option>
                       <option value="word">{t('feedback.alternativeOptions.word')}</option>
                       <option value="latex">{t('feedback.alternativeOptions.latex')}</option>
-                      <option value="other_tool">{t('feedback.alternativeOptions.other_tool')}</option>
+                      <option value="other_tool">
+                        {t('feedback.alternativeOptions.other_tool')}
+                      </option>
                       <option value="none">{t('feedback.alternativeOptions.none')}</option>
                     </select>
                   </div>
@@ -382,7 +420,19 @@ export function FeedbackModal({
               {/* ── Section 3: Your opinion ── */}
               <section className="space-y-4">
                 <SectionHeader
-                  icon={<svg className="w-3.5 h-3.5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>}
+                  icon={
+                    <svg
+                      className="w-3.5 h-3.5 text-brand"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                  }
                   title={t('feedback.sectionOpinion')}
                 />
 
@@ -396,8 +446,12 @@ export function FeedbackModal({
                   </div>
                   <RatingScale value={nps} onChange={setNps} min={0} max={10} />
                   <div className="flex justify-between mt-1.5 px-1">
-                    <span className="text-[10px] text-primary-400">{t('feedback.npsNotLikely')}</span>
-                    <span className="text-[10px] text-primary-400">{t('feedback.npsVeryLikely')}</span>
+                    <span className="text-[10px] text-primary-400">
+                      {t('feedback.npsNotLikely')}
+                    </span>
+                    <span className="text-[10px] text-primary-400">
+                      {t('feedback.npsVeryLikely')}
+                    </span>
                   </div>
                 </div>
 

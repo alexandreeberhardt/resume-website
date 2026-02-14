@@ -72,7 +72,9 @@ export default function ResetPassword() {
       <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-100 p-4">
         <div className="text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-error-500 mx-auto" />
-          <p className="text-primary-700 dark:text-primary-300">{t('auth.resetPassword.invalidLink')}</p>
+          <p className="text-primary-700 dark:text-primary-300">
+            {t('auth.resetPassword.invalidLink')}
+          </p>
           <Link to="/" className="btn-brand inline-flex py-2 px-4">
             {t('auth.forgotPassword.backToLogin')}
           </Link>
@@ -232,9 +234,7 @@ export default function ResetPassword() {
                         <p
                           className={`text-xs mt-1 ${passwordsMatch ? 'text-green-600 dark:text-green-400' : 'text-error-600 dark:text-error-400'}`}
                         >
-                          {passwordsMatch
-                            ? t('auth.passwordsMatch')
-                            : t('auth.passwordsDontMatch')}
+                          {passwordsMatch ? t('auth.passwordsMatch') : t('auth.passwordsDontMatch')}
                         </p>
                       )}
                     </div>

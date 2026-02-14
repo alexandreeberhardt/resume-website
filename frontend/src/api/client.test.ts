@@ -51,7 +51,7 @@ describe('apiClient', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch
     localStorage.clear()
-    setOnUnauthorized(null as any)
+    setOnUnauthorized(null!)
   })
 
   it('makes GET request and returns JSON', async () => {
@@ -78,7 +78,7 @@ describe('apiClient', () => {
     })
 
     await apiClient('/test')
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].headers['Authorization']).toBe('Bearer my-token')
   })
 
@@ -90,7 +90,7 @@ describe('apiClient', () => {
     })
 
     await apiClient('/test')
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].headers['Content-Type']).toBe('application/json')
   })
 
@@ -129,10 +129,10 @@ describe('apiClient', () => {
     try {
       await apiClient('/test')
       expect.fail('Should have thrown')
-    } catch (e: any) {
+    } catch (e) {
       expect(e).toBeInstanceOf(ApiError)
-      expect(e.status).toBe(400)
-      expect(e.detail).toBe('Bad request data')
+      expect((e as ApiError).status).toBe(400)
+      expect((e as ApiError).detail).toBe('Bad request data')
     }
   })
 
@@ -146,9 +146,9 @@ describe('apiClient', () => {
     try {
       await apiClient('/test')
       expect.fail('Should have thrown')
-    } catch (e: any) {
+    } catch (e) {
       expect(e).toBeInstanceOf(ApiError)
-      expect(e.status).toBe(500)
+      expect((e as ApiError).status).toBe(500)
     }
   })
 })
@@ -181,7 +181,7 @@ describe('api convenience methods', () => {
     })
 
     await api.post('/items', { name: 'test' })
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('POST')
     expect(callArgs[1].body).toBe(JSON.stringify({ name: 'test' }))
   })
@@ -194,7 +194,7 @@ describe('api convenience methods', () => {
     })
 
     await api.put('/items/1', { name: 'updated' })
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('PUT')
   })
 
@@ -205,7 +205,7 @@ describe('api convenience methods', () => {
     })
 
     await api.delete('/items/1')
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].method).toBe('DELETE')
   })
 
@@ -221,7 +221,7 @@ describe('api convenience methods', () => {
     params.append('password', 'pass')
 
     await api.postForm('/auth/login', params)
-    const callArgs = (globalThis.fetch as any).mock.calls[0]
+    const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
     expect(callArgs[1].headers['Content-Type']).toBe('application/x-www-form-urlencoded')
   })
 })

@@ -4,6 +4,7 @@ import { AuthProvider } from '../context/AuthContext'
 import type { ReactElement } from 'react'
 import '../i18n'
 
+// eslint-disable-next-line react-refresh/only-export-components
 function AllProviders({ children }: { children: React.ReactNode }) {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

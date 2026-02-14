@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useSectionManager } from './useSectionManager'
+import type { DragEndEvent } from '@dnd-kit/core'
 import type { ResumeData, CVSection } from '../types'
 
 // Mock createSection to return predictable IDs
@@ -27,7 +28,7 @@ const makeSections = (): CVSection[] => [
     type: 'skills',
     title: 'Skills',
     isVisible: true,
-    items: { categories: [] } as any,
+    items: { categories: [] } as unknown as CVSection['items'],
   },
 ]
 
@@ -66,7 +67,7 @@ describe('useSectionManager', () => {
         result.current.handleDragEnd({
           active: { id: 'sec-1' },
           over: { id: 'sec-3' },
-        } as any)
+        } as unknown as DragEndEvent)
       })
 
       expect(mockSetData).toHaveBeenCalledTimes(1)
@@ -87,7 +88,7 @@ describe('useSectionManager', () => {
         result.current.handleDragEnd({
           active: { id: 'sec-1' },
           over: { id: 'sec-1' },
-        } as any)
+        } as unknown as DragEndEvent)
       })
 
       expect(mockSetData).not.toHaveBeenCalled()
@@ -100,7 +101,7 @@ describe('useSectionManager', () => {
         result.current.handleDragEnd({
           active: { id: 'sec-1' },
           over: null,
-        } as any)
+        } as unknown as DragEndEvent)
       })
 
       expect(mockSetData).not.toHaveBeenCalled()

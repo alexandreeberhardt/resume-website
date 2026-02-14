@@ -48,6 +48,7 @@ export function useResumeManager({
       setShowResumesPage(false)
       setShowLanding(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated])
 
   const loadSavedResumes = async () => {

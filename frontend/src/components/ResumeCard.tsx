@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FileText, Pencil, Trash2, Check } from 'lucide-react'
 import { SavedResume } from '../types'
@@ -28,13 +28,7 @@ export default function ResumeCard({
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(resume.name)
 
-  useEffect(() => {
-    if (resume.json_content) {
-      generatePreview()
-    }
-  }, [resume.id])
-
-  const generatePreview = async () => {
+  const generatePreview = useCallback(async () => {
     if (!resume.json_content) return
 
     setLoading(true)
@@ -55,7 +49,13 @@ export default function ResumeCard({
     } finally {
       setLoading(false)
     }
-  }
+  }, [resume.json_content])
+
+  useEffect(() => {
+    if (resume.json_content) {
+      generatePreview()
+    }
+  }, [resume.id, resume.json_content, generatePreview])
 
   useEffect(() => {
     return () => {

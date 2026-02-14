@@ -44,7 +44,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     digit: /\d/.test(password),
-    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
   }
   const isPasswordValid = Object.values(passwordChecks).every(Boolean)
   const passwordsMatch = password === confirmPassword && confirmPassword.length > 0
