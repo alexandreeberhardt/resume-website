@@ -54,6 +54,24 @@
       "digit": "Au moins un chiffre",
       "special": "Au moins un caractère spécial (!@#$...)"
     },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Entrez votre email pour recevoir un lien de réinitialisation",
+      "button": "Envoyer le lien",
+      "sending": "Envoi...",
+      "link": "Mot de passe oublié ?",
+      "successMessage": "Si cette adresse email est associée à un compte, vous recevrez un lien de réinitialisation dans quelques instants.",
+      "backToLogin": "Retour à la connexion"
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Choisissez un nouveau mot de passe pour votre compte",
+      "newPassword": "Nouveau mot de passe",
+      "button": "Réinitialiser le mot de passe",
+      "resetting": "Réinitialisation...",
+      "successMessage": "Votre mot de passe a été réinitialisé avec succès. Redirection vers la connexion...",
+      "invalidLink": "Ce lien de réinitialisation est invalide ou a expiré."
+    },
     "errors": {
       "invalidCredentials": "Email ou mot de passe incorrect",
       "emailExists": "Cet email est déjà utilisé",

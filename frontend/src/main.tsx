@@ -8,6 +8,7 @@ import LegalNotice from './pages/LegalNotice'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import Account from './pages/Account'
+import ResetPassword from './pages/ResetPassword'
 import './index.css'
 import './i18n'
 
@@ -29,6 +30,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
           {/* Account page */}
           <Route path="/account" element={<Account />} />
+
+          {/* Password reset */}
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Main app */}
           <Route path="/*" element={<App />} />

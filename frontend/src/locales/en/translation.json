@@ -54,6 +54,24 @@
       "digit": "At least one digit",
       "special": "At least one special character (!@#$...)"
     },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter your email to receive a reset link",
+      "button": "Send reset link",
+      "sending": "Sending...",
+      "link": "Forgot password?",
+      "successMessage": "If this email address is associated with an account, you will receive a reset link shortly.",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "New password",
+      "subtitle": "Choose a new password for your account",
+      "newPassword": "New password",
+      "button": "Reset password",
+      "resetting": "Resetting...",
+      "successMessage": "Your password has been reset successfully. Redirecting to sign in...",
+      "invalidLink": "This reset link is invalid or has expired."
+    },
     "errors": {
       "invalidCredentials": "Invalid email or password",
       "emailExists": "This email is already in use",

@@ -81,6 +81,20 @@ export async function deleteUserAccount(): Promise<void> {
 }
 
 /**
+ * Request a password reset email
+ */
+export async function forgotPassword(email: string): Promise<{ message: string }> {
+  return api.post<{ message: string }>('/auth/forgot-password', { email })
+}
+
+/**
+ * Reset password with token
+ */
+export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+  return api.post<{ message: string }>('/auth/reset-password', { token, password })
+}
+
+/**
  * Get current user info
  */
 export async function getCurrentUser(): Promise<User> {
