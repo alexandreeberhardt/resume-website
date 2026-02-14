@@ -19,37 +19,52 @@ branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 
-def upgrade() -> None:
-    """Replace old feedback columns with new survey fields."""
-    # Remove old columns
-    op.drop_column("feedbacks", "rating")
-    op.drop_column("feedbacks", "liked")
-    op.drop_column("feedbacks", "improvement")
+def _column_exists(table: str, column: str) -> bool:
+    """Check if a column exists in a table."""
+    conn = op.get_bind()
+    result = conn.execute(
+        sa.text(
+            "SELECT 1 FROM information_schema.columns "
+            "WHERE table_name = :table AND column_name = :column"
+        ),
+        {"table": table, "column": column},
+    )
+    return result.fetchone() is not None
 
-    # Add new columns
-    op.add_column("feedbacks", sa.Column("profile", sa.String(100), nullable=True))
-    op.add_column("feedbacks", sa.Column("target_sector", sa.String(255), nullable=True))
-    op.add_column("feedbacks", sa.Column("ease_rating", sa.Integer(), nullable=False, server_default=sa.text("5")))
-    op.add_column("feedbacks", sa.Column("time_spent", sa.String(50), nullable=True))
-    op.add_column("feedbacks", sa.Column("obstacles", sa.Text(), nullable=True))
-    op.add_column("feedbacks", sa.Column("alternative", sa.String(255), nullable=True))
-    op.add_column("feedbacks", sa.Column("suggestions", sa.Text(), nullable=True))
-    op.add_column("feedbacks", sa.Column("nps", sa.Integer(), nullable=True))
-    op.add_column("feedbacks", sa.Column("future_help", sa.Text(), nullable=True))
+
+def upgrade() -> None:
+    """Replace old feedback columns with new survey fields (idempotent)."""
+    # Remove old columns if they exist
+    for col in ("rating", "liked", "improvement"):
+        if _column_exists("feedbacks", col):
+            op.drop_column("feedbacks", col)
+
+    # Add new columns if they don't exist
+    new_columns = [
+        sa.Column("profile", sa.String(100), nullable=True),
+        sa.Column("target_sector", sa.String(255), nullable=True),
+        sa.Column("ease_rating", sa.Integer(), nullable=False, server_default=sa.text("5")),
+        sa.Column("time_spent", sa.String(50), nullable=True),
+        sa.Column("obstacles", sa.Text(), nullable=True),
+        sa.Column("alternative", sa.String(255), nullable=True),
+        sa.Column("suggestions", sa.Text(), nullable=True),
+        sa.Column("nps", sa.Integer(), nullable=True),
+        sa.Column("future_help", sa.Text(), nullable=True),
+    ]
+    for col in new_columns:
+        if not _column_exists("feedbacks", col.name):
+            op.add_column("feedbacks", col)
 
 
 def downgrade() -> None:
     """Restore old feedback columns."""
-    op.drop_column("feedbacks", "future_help")
-    op.drop_column("feedbacks", "nps")
-    op.drop_column("feedbacks", "suggestions")
-    op.drop_column("feedbacks", "alternative")
-    op.drop_column("feedbacks", "obstacles")
-    op.drop_column("feedbacks", "time_spent")
-    op.drop_column("feedbacks", "ease_rating")
-    op.drop_column("feedbacks", "target_sector")
-    op.drop_column("feedbacks", "profile")
+    for col in ("future_help", "nps", "suggestions", "alternative", "obstacles", "time_spent", "ease_rating", "target_sector", "profile"):
+        if _column_exists("feedbacks", col):
+            op.drop_column("feedbacks", col)
 
-    op.add_column("feedbacks", sa.Column("rating", sa.Integer(), nullable=False, server_default=sa.text("3")))
-    op.add_column("feedbacks", sa.Column("liked", sa.Text(), nullable=True))
-    op.add_column("feedbacks", sa.Column("improvement", sa.Text(), nullable=True))
+    if not _column_exists("feedbacks", "rating"):
+        op.add_column("feedbacks", sa.Column("rating", sa.Integer(), nullable=False, server_default=sa.text("3")))
+    if not _column_exists("feedbacks", "liked"):
+        op.add_column("feedbacks", sa.Column("liked", sa.Text(), nullable=True))
+    if not _column_exists("feedbacks", "improvement"):
+        op.add_column("feedbacks", sa.Column("improvement", sa.Text(), nullable=True))
