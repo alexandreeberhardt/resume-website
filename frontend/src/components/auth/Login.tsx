@@ -44,11 +44,11 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
   return (
     <div className="w-full animate-fade-in">
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-100 dark:bg-primary-200 rounded-xl mb-4">
-          <LogIn className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+      <div className="text-center mb-5">
+        <div className="inline-flex items-center justify-center w-9 h-9 bg-primary-100 dark:bg-primary-200 rounded-xl mb-3">
+          <LogIn className="w-4 h-4 text-primary-600 dark:text-primary-400" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
+        <h2 className="text-lg sm:text-xl font-semibold text-primary-900 dark:text-white mb-1 tracking-tight">
           {t('auth.login.title')}
         </h2>
         <p className="text-sm text-black dark:text-white">{t('auth.login.subtitle')}</p>
@@ -68,7 +68,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
       <button
         type="button"
         onClick={loginWithGoogle}
-        className="btn-secondary w-full py-3 flex items-center justify-center gap-3"
+        className="btn-secondary w-full py-2.5 flex items-center justify-center gap-3"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -92,7 +92,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
       </button>
 
       {/* Divider - Style matching CV */}
-      <div className="relative my-6">
+      <div className="relative my-4">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-primary-200 dark:border-primary-700"></div>
         </div>
@@ -104,7 +104,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
       </div>
 
       {/* Form - Using CV form styling */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
         {/* Email field - CV style */}
         <div className="form-group">
           <label htmlFor="email" className="label">
@@ -164,7 +164,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
         </div>
 
         {/* Submit button - CV brand button style */}
-        <button type="submit" disabled={loading} className="btn-brand w-full py-3 mt-2">
+        <button type="submit" disabled={loading} className="btn-brand w-full py-2.5 mt-1">
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -177,7 +177,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
       </form>
 
       {/* Switch to register */}
-      <div className="mt-6 text-center">
+      <div className="mt-4 text-center">
         <p className="text-sm text-black dark:text-white">
           {t('auth.noAccount')}{' '}
           <button

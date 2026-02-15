@@ -2,7 +2,7 @@
  * Authentication page - Modern split-screen design
  */
 import { useState } from 'react'
-import { FileText, Sparkles, Shield, Zap } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Login from './Login'
 import Register from './Register'
@@ -21,76 +21,88 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
   const [mode, setMode] = useState<AuthMode>('login')
 
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden">
       {/* Left Panel - Branding (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-gradient-to-br from-indigo-900 via-brand to-indigo-950">
-        {' '}
-        {/* Decorative background patterns */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/20 rounded-full blur-3xl" />
-        </div>
-        {/* Grid pattern overlay */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-[#eef2f7]">
+        {/* Studio lighting radial */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            background:
+              'radial-gradient(ellipse 90% 50% at 50% 45%, rgba(255,255,255,0.75) 0%, transparent 70%)',
           }}
         />
+
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
+        <div className="relative z-10 flex flex-col h-full p-8 xl:p-10 w-full">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-              <FileText className="w-7 h-7 text-white" />
-            </div>
-            <span className="text-2xl font-bold text-white">{t('landing.appName')}</span>
+          <div className="flex items-center gap-2.5 mb-4">
+            <FileText className="w-7 h-7 text-slate-900" />
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">sivee.pro</span>
           </div>
 
-          {/* Main content */}
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-4">
-                {t('auth.brandingTitle') || 'Créez des CV professionnels en quelques minutes'}
-              </h1>
-              <p className="text-lg text-white/80 max-w-md">
-                {t('auth.brandingSubtitle') ||
-                  'Importez, éditez et exportez vos CV avec un rendu LaTeX impeccable.'}
-              </p>
-            </div>
+          {/* Hero text */}
+          <h1 className="text-2xl xl:text-3xl 2xl:text-4xl font-extrabold text-slate-900 leading-tight mb-4 text-center">
+            {t('auth.brandingTitle') || 'Fini Word et Canva. Voici le CV qui se met en page tout seul.'}
+          </h1>
 
-            {/* Features */}
-            <div className="space-y-4">
-              <Feature
-                icon={<Sparkles className="w-5 h-5" />}
-                text={t('auth.feature1') || 'Templates professionnels et modernes'}
-              />
-              <Feature
-                icon={<Zap className="w-5 h-5" />}
-                text={t('auth.feature2') || 'Export PDF haute qualité instantané'}
-              />
-              <Feature
-                icon={<Shield className="w-5 h-5" />}
-                text={t('auth.feature3') || 'Vos données sécurisées et sauvegardées'}
-              />
+          {/* Floating CVs - side by side with overlap */}
+          <div className="flex-1 relative min-h-0 flex items-center justify-center">
+            <div className="relative w-full max-w-[500px] xl:max-w-[560px] aspect-[4/3]">
+              {/* CV 1 - left, tilted back */}
+              <div
+                className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-[6deg] rounded-lg overflow-hidden z-10 w-[52%]"
+                style={{
+                  boxShadow:
+                    '0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 12px 24px -8px rgba(15, 23, 42, 0.12)',
+                }}
+              >
+                <img
+                  src="/Alexandre.png"
+                  alt="CV Example 1"
+                  className="w-full h-auto block"
+                />
+              </div>
+
+              {/* CV 2 - right, tilted opposite, overlapping */}
+              <div
+                className="absolute right-0 top-1/2 -translate-y-[45%] rotate-[5deg] rounded-lg overflow-hidden z-20 w-[52%]"
+                style={{
+                  boxShadow:
+                    '0 30px 60px -15px rgba(15, 23, 42, 0.30), 0 15px 30px -10px rgba(15, 23, 42, 0.15)',
+                }}
+              >
+                <img
+                  src="/Alexandre_2.png"
+                  alt="CV Example 2"
+                  className="w-full h-auto block"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Footer */}
-          <a
-            href="https://github.com/alexandreeberhardt/sivee.pro/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-white/60 hover:text-white/80 transition-colors"
-          >
-            {t('landing.openSource')}
-          </a>
+          {/* Bottom features */}
+          <div className="flex items-end justify-between pt-4 gap-6">
+            <div className="flex flex-col gap-3">
+              {[
+                t('auth.feature1') || 'Des modèles approuvés par les recruteurs.',
+                t('auth.feature2') || 'Déposez votre ancien CV, Sivee s\'occupe du reste.',
+              ].map((text) => (
+                <div key={text} className="flex items-start gap-2.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1.5" />
+                  <span className="text-sm xl:text-base font-semibold text-slate-600 leading-snug">
+                    {text}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* Right Panel - Auth Form */}
-      <div className="flex-1 flex flex-col bg-surface-50 dark:bg-surface-100 relative">
+      <div className="flex-1 flex flex-col bg-surface-50 dark:bg-surface-100 relative overflow-y-auto">
         {/* Subtle background pattern */}
         <div
           className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
@@ -117,16 +129,16 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         </header>
 
         {/* Desktop header with theme/language toggles */}
-        <div className="hidden lg:flex justify-end gap-1.5 p-4 relative z-10">
+        <div className="hidden lg:flex justify-end gap-1.5 p-3 relative z-10">
           <ThemeToggle />
           <LanguageSwitcher />
         </div>
 
         {/* Form Container */}
-        <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12 relative z-10">
+        <main className="flex-1 flex items-center justify-center px-4 py-4 sm:py-6 relative z-10">
           <div className="w-full max-w-[400px]">
             {/* Glass card container */}
-            <div className="bg-surface-0/90 dark:bg-surface-200/90 backdrop-blur-xl rounded-2xl border border-primary-200/30 dark:border-primary-700/30 shadow-xl shadow-primary-900/5 dark:shadow-primary-950/20 p-6 sm:p-8">
+            <div className="bg-surface-0/90 dark:bg-surface-200/90 backdrop-blur-xl rounded-2xl border border-primary-200/30 dark:border-primary-700/30 shadow-xl shadow-primary-900/5 dark:shadow-primary-950/20 p-5 sm:p-6">
               {/* Animated content */}
               <div key={mode} className="animate-fade-in">
                 {mode === 'login' ? (
@@ -182,13 +194,3 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
   )
 }
 
-function Feature({ icon, text }: { icon: React.ReactNode; text: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white">
-        {icon}
-      </div>
-      <span className="text-white/90 font-medium">{text}</span>
-    </div>
-  )
-}
