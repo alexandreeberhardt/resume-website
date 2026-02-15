@@ -23,6 +23,7 @@ import {
   CustomItem,
   SectionType,
 } from '../types'
+import { isDefaultTitle } from '../utils/sectionTitles'
 import EducationEditor from './editors/EducationEditor'
 import ExperienceEditor from './editors/ExperienceEditor'
 import ProjectEditor from './editors/ProjectEditor'
@@ -201,9 +202,11 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
-              <span className="badge hidden sm:inline-flex">
-                {getSectionTypeLabel(section.type)}
-              </span>
+              {!isDefaultTitle(section.type, section.title) && (
+                <span className="badge hidden sm:inline-flex">
+                  {getSectionTypeLabel(section.type)}
+                </span>
+              )}
             </div>
           )}
         </div>

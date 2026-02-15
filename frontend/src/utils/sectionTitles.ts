@@ -18,12 +18,12 @@ export const getTranslatedSectionTitle = (type: SectionType, t: TFunction): stri
 export const defaultTitlesAllLanguages: Record<SectionType, string[]> = {
   summary: ['Summary', 'Résumé'],
   education: ['Education', 'Formation'],
-  experiences: ['Experience', 'Expérience'],
+  experiences: ['Professional Experience', 'Expérience Professionnelle', 'Experience', 'Experiences', 'Expérience'],
   projects: ['Projects', 'Projets'],
-  skills: ['Skills', 'Compétences'],
-  leadership: ['Leadership', 'Leadership'],
+  skills: ['Technical Skills', 'Compétences Techniques', 'Skills', 'Compétences'],
+  leadership: ['Leadership & Community', 'Leadership & Engagement', 'Leadership & Community Involvement', 'Leadership'],
   languages: ['Languages', 'Langues'],
-  custom: ['Custom', 'Personnalisé'],
+  custom: ['Custom Section', 'Custom', 'Personnalisé', 'Autre'],
 }
 
 export const isDefaultTitle = (type: SectionType, title: string): boolean => {

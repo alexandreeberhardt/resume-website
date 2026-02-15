@@ -345,10 +345,10 @@ export const createSection = (type: SectionType, title: string): CVSection => {
 export const defaultSectionTitlesEn: Record<SectionType, string> = {
   summary: 'Summary',
   education: 'Education',
-  experiences: 'Experiences',
+  experiences: 'Professional Experience',
   projects: 'Projects',
   skills: 'Technical Skills',
-  leadership: 'Leadership & Community Involvement',
+  leadership: 'Leadership & Community',
   languages: 'Languages',
   custom: 'Custom Section',
 }

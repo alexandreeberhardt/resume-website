@@ -186,10 +186,10 @@
   "sections": {
     "summary": "Summary",
     "education": "Education",
-    "experience": "Experience",
+    "experience": "Professional Experience",
     "projects": "Projects",
-    "skills": "Skills",
-    "leadership": "Leadership",
+    "skills": "Technical Skills",
+    "leadership": "Leadership & Community",
     "languages": "Languages",
     "custom": "Custom",
     "noSections": "No sections",
