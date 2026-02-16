@@ -1,0 +1,419 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "next": "Seguinte",
+    "previous": "Anterior",
+    "cancel": "Cancelar",
+    "add": "Adicionar",
+    "delete": "Eliminar",
+    "export": "Exportar para PDF",
+    "exporting": "Gerando...",
+    "preview": "Pré-visualização",
+    "language": "Idioma",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "logout": "Terminar sessão",
+    "actions": "Ações"
+  },
+  "auth": {
+    "brandingTitle": "Crie currículos profissionais em minutos",
+    "brandingSubtitle": "Importe, edite e exporte os seus currículos com renderização LaTeX impecável.",
+    "feature1": "Modelos profissionais e modernos",
+    "feature2": "Exportação PDF de alta qualidade instantânea",
+    "feature3": "Os seus dados seguros e guardados",
+    "email": "Email",
+    "emailPlaceholder": "voce@exemplo.com",
+    "password": "Palavra-passe",
+    "passwordPlaceholder": "A sua palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "confirmPasswordPlaceholder": "Confirme a sua palavra-passe",
+    "passwordsMatch": "As palavras-passe coincidem",
+    "passwordsDontMatch": "As palavras-passe não coincidem",
+    "loggingIn": "A iniciar sessão...",
+    "registering": "A registar...",
+    "noAccount": "Não tem uma conta?",
+    "hasAccount": "Já tem uma conta?",
+    "login": {
+      "title": "Iniciar sessão",
+      "subtitle": "Inicie sessão para aceder aos seus currículos",
+      "button": "Iniciar sessão",
+      "link": "Iniciar sessão"
+    },
+    "register": {
+      "title": "Criar uma conta",
+      "subtitle": "Registe-se para guardar os seus currículos",
+      "button": "Registar",
+      "link": "Criar uma conta",
+      "success": "Conta criada!",
+      "successMessage": "A iniciar sessão..."
+    },
+    "passwordRules": {
+      "length": "Pelo menos 12 caracteres",
+      "uppercase": "Pelo menos uma maiúscula",
+      "lowercase": "Pelo menos uma minúscula",
+      "digit": "Pelo menos um dígito",
+      "special": "Pelo menos um carácter especial (!@#$...)"
+    },
+    "forgotPassword": {
+      "title": "Palavra-passe esquecida",
+      "subtitle": "Introduza o seu email para receber um link de redefinição",
+      "button": "Enviar link",
+      "sending": "A enviar...",
+      "link": "Esqueceu a palavra-passe?",
+      "successMessage": "Se este endereço de email estiver associado a uma conta, receberá um link de redefinição em breve.",
+      "backToLogin": "Voltar ao início de sessão"
+    },
+    "resetPassword": {
+      "title": "Nova palavra-passe",
+      "subtitle": "Escolha uma nova palavra-passe para a sua conta",
+      "newPassword": "Nova palavra-passe",
+      "button": "Redefinir palavra-passe",
+      "resetting": "A redefinir...",
+      "successMessage": "A sua palavra-passe foi redefinida com sucesso. A redirecionar para o início de sessão...",
+      "invalidLink": "Este link de redefinição é inválido ou expirou."
+    },
+    "errors": {
+      "invalidCredentials": "Email ou palavra-passe incorretos",
+      "emailExists": "Este email já está em uso",
+      "passwordMismatch": "As palavras-passe não coincidem",
+      "passwordRequirements": "A palavra-passe não cumpre os requisitos",
+      "generic": "Ocorreu um erro"
+    },
+    "loginWithGoogle": "Continuar com Google",
+    "orContinueWith": "ou continuar com o seu email",
+    "or": "ou",
+    "continueWithoutAccount": "Continuar sem conta",
+    "acceptTerms": "Aceito a",
+    "and": "e os",
+    "termsConsent": "Aceito as condições de utilização do serviço"
+  },
+  "resumes": {
+    "myResumes": "Os meus currículos",
+    "pageSubtitle": "Gerir e aceder a todos os seus currículos",
+    "noResumes": "Nenhum currículo guardado",
+    "noResumesHint": "Crie o seu primeiro currículo para o encontrar aqui",
+    "current": "Atual",
+    "createNew": "Novo currículo",
+    "lastModified": "Modificado em",
+    "delete": "Eliminar",
+    "deleteConfirm": "Tem a certeza de que quer eliminar este currículo?",
+    "open": "Abrir",
+    "rename": "Renomear",
+    "saveCurrent": "Guardar",
+    "saveAs": "Guardar como",
+    "resumeName": "Nome do currículo",
+    "resumeNamePlaceholder": "O meu currículo 2024"
+  },
+  "landing": {
+    "pageTitle": "Sivee - Crie o seu currículo profissional",
+    "appName": "Sivee",
+    "start": "Começar",
+    "heroTitle": "Crie um currículo profissional em minutos",
+    "heroSubtitle": "Importe o seu currículo existente ou comece do zero. Edite, personalize e exporte em PDF com renderização LaTeX impecável.",
+    "createCv": "Criar o meu currículo",
+    "importPdf": "Importar um PDF",
+    "templatesAvailable": "{{count}} modelos disponíveis",
+    "templatesDescription": "Do estilo clássico ao design moderno, 100% ATS friendly e profissionais",
+    "viewAllTemplates": "Ver todos os modelos",
+    "whyChoose": "Porquê escolher o Sivee?",
+    "whyDescription": "Ferramentas simples e poderosas para criar o currículo perfeito",
+    "ctaTitle": "Pronto para criar o seu currículo?",
+    "ctaSubtitle": "Comece gratuitamente, exporte em PDF em poucos cliques",
+    "startNow": "Começar agora",
+    "openSource": "Código aberto no GitHub"
+  },
+  "features": {
+    "professionalTemplates": "Modelos profissionais",
+    "professionalTemplatesDesc": "Designs elegantes e modernos, otimizados para ATS",
+    "intuitiveInterface": "Interface intuitiva",
+    "intuitiveInterfaceDesc": "Edite facilmente cada secção do seu currículo",
+    "highQualityExport": "Exportação PDF de alta qualidade",
+    "highQualityExportDesc": "Renderização LaTeX profissional e impecável"
+  },
+  "import": {
+    "title": "Já tem um currículo?",
+    "description": "Importe-o para preencher automaticamente as suas informações",
+    "analyzing": "A analisar PDF...",
+    "extracting": "A extrair texto...",
+    "identifying": "A identificar secções...",
+    "structuring": "A estruturar dados...",
+    "finalizing": "A finalizar..."
+  },
+  "errors": {
+    "generation": "Erro durante a geração",
+    "import": "Erro durante a importação"
+  },
+  "personal": {
+    "title": "Informações pessoais",
+    "subtitle": "Os seus contactos e links profissionais",
+    "fullName": "Nome completo",
+    "fullNamePlaceholder": "João Silva",
+    "professionalTitle": "Título profissional",
+    "professionalTitlePlaceholder": "Desenvolvedor Full Stack",
+    "location": "Localização",
+    "locationPlaceholder": "Lisboa, Portugal",
+    "email": "Email",
+    "emailPlaceholder": "joao@exemplo.com",
+    "phone": "Telefone",
+    "phonePlaceholder": "+351 912 345 678",
+    "links": {
+      "title": "Links profissionais",
+      "add": "Adicionar um link",
+      "empty": "Nenhum link adicionado. Adicione LinkedIn, GitHub, Portfolio...",
+      "usernamePlaceholder": "Nome de exibição",
+      "urlPlaceholder": "https://...",
+      "platforms": {
+        "linkedin": "LinkedIn",
+        "github": "GitHub",
+        "portfolio": "Portfolio",
+        "behance": "Behance",
+        "website": "Site pessoal",
+        "other": "Outro"
+      }
+    }
+  },
+  "preview": {
+    "title": "Pré-visualização",
+    "show": "Mostrar pré-visualização",
+    "hide": "Ocultar pré-visualização",
+    "refresh": "Atualizar",
+    "generating": "A gerar pré-visualização...",
+    "empty": "A pré-visualização aparecerá aqui",
+    "hint": "A pré-visualização atualiza-se automaticamente",
+    "fullscreen": "Ecrã inteiro",
+    "mobileHint": "Pré-visualização não disponível em dispositivo móvel",
+    "download": "Descarregar pré-visualização"
+  },
+  "sections": {
+    "summary": "Resumo",
+    "education": "Formação",
+    "experience": "Experiência Profissional",
+    "projects": "Projetos",
+    "skills": "Competências Técnicas",
+    "leadership": "Liderança e Envolvimento",
+    "languages": "Idiomas",
+    "custom": "Personalizado",
+    "noSections": "Sem secções",
+    "noSectionsHint": "Adicione secções para construir o seu currículo",
+    "hideInPdf": "Ocultar no PDF",
+    "showInPdf": "Mostrar no PDF",
+    "deleteSection": "Eliminar secção",
+    "hiddenMessage": "Esta secção está oculta no PDF final",
+    "templates": "Modelos"
+  },
+  "templates": {
+    "autoSize": "Auto",
+    "autoSizeDesc": "Ajusta automaticamente o tamanho conforme o conteúdo",
+    "autoSizeOptimized": "Tamanho otimizado",
+    "autoSizeCalculating": "A otimizar..."
+  },
+  "addSection": {
+    "title": "Adicionar uma secção",
+    "subtitle": "Escolha o tipo de conteúdo a adicionar",
+    "alreadyAdded": "já adicionado",
+    "customTitle": "Título da secção",
+    "customPlaceholder": "Ex: Publicações, Certificações, Hobbies...",
+    "addButton": "Adicionar a secção",
+    "summaryDesc": "Perfil e objetivo profissional",
+    "educationDesc": "Formação, diplomas, certificações",
+    "experienceDesc": "Experiências profissionais",
+    "projectsDesc": "Projetos pessoais ou profissionais",
+    "skillsDesc": "Competências técnicas",
+    "leadershipDesc": "Liderança e envolvimento associativo",
+    "languagesDesc": "Idiomas falados",
+    "customDesc": "Secção personalizada com título e pontos"
+  },
+  "editors": {
+    "education": {
+      "school": "Escola / Universidade",
+      "schoolPlaceholder": "Nome da instituição",
+      "degree": "Diploma",
+      "degreePlaceholder": "Mestrado em Informática",
+      "dates": "Datas",
+      "datesPlaceholder": "2021 - 2024",
+      "subtitle": "Subtítulo (média, menção...)",
+      "subtitlePlaceholder": "Com distinção",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Cursos principais, projetos notáveis...",
+      "addEducation": "Adicionar formação",
+      "deleteEducation": "Eliminar esta formação"
+    },
+    "experience": {
+      "position": "Cargo",
+      "positionPlaceholder": "Desenvolvedor Sénior",
+      "company": "Empresa",
+      "companyPlaceholder": "Nome da empresa",
+      "dates": "Datas",
+      "datesPlaceholder": "Jan 2023 - Presente",
+      "highlights": "Pontos-chave",
+      "highlightPlaceholder": "Descreva uma conquista ou responsabilidade...",
+      "noHighlights": "Adicione pontos-chave para descrever as suas missões",
+      "addExperience": "Adicionar experiência",
+      "deleteExperience": "Eliminar esta experiência"
+    },
+    "projects": {
+      "name": "Nome do projeto",
+      "namePlaceholder": "Nome do projeto",
+      "year": "Ano",
+      "yearPlaceholder": "2024",
+      "description": "Descrição",
+      "pointPlaceholder": "Tecnologia utilizada, funcionalidade chave...",
+      "noPoints": "Adicione pontos para descrever o projeto",
+      "addProject": "Adicionar projeto",
+      "deleteProject": "Eliminar este projeto"
+    },
+    "skills": {
+      "category": "Categoria",
+      "categoryPlaceholder": "Linguagens de programação, Frameworks, Ferramentas...",
+      "skills": "Competências",
+      "skillsPlaceholder": "Python, JavaScript, Docker, AWS...",
+      "skillsHint": "Separe as competências com vírgulas",
+      "addCategory": "Adicionar categoria",
+      "deleteCategory": "Eliminar esta categoria",
+      "emptyHint": "Adicione categorias para organizar as suas competências (ex: Linguagens, Ferramentas, Frameworks...)"
+    },
+    "leadership": {
+      "role": "Função",
+      "rolePlaceholder": "Presidente, Voluntário...",
+      "place": "Local / Organização",
+      "placePlaceholder": "Nome da associação",
+      "dates": "Datas",
+      "datesPlaceholder": "2022 - 2024",
+      "highlights": "Pontos-chave",
+      "highlightPlaceholder": "Descreva uma conquista ou responsabilidade...",
+      "noHighlights": "Adicione pontos para descrever as suas responsabilidades",
+      "addLeadership": "Adicionar envolvimento",
+      "deleteLeadership": "Eliminar este envolvimento"
+    },
+    "languagesSpoken": {
+      "label": "Idiomas falados",
+      "placeholder": "Português (Nativo), Inglês (Fluente), Espanhol (Intermédio)",
+      "hint": "Separe os idiomas com vírgulas e indique o nível entre parênteses"
+    },
+    "summary": {
+      "label": "Perfil / Objetivo profissional",
+      "placeholder": "Descreva o seu perfil profissional, competências-chave e objetivos de carreira...",
+      "hint": "Um parágrafo curto que resume o seu perfil e os seus objetivos. Seja conciso e impactante."
+    },
+    "custom": {
+      "title": "Título",
+      "titlePlaceholder": "Título do elemento",
+      "subtitle": "Subtítulo (opcional)",
+      "subtitlePlaceholder": "Subtítulo, local...",
+      "dates": "Datas (opcional)",
+      "datesPlaceholder": "2022 - 2024",
+      "points": "Pontos",
+      "pointPlaceholder": "Descreva um ponto...",
+      "noPoints": "Adicione pontos para esta secção",
+      "addItem": "Adicionar elemento",
+      "deleteItem": "Eliminar este elemento"
+    }
+  },
+  "legal": {
+    "backToHome": "Voltar",
+    "lastUpdated": "Última atualização",
+    "legalNotice": {
+      "title": "Aviso legal"
+    },
+    "privacyPolicy": {
+      "title": "Política de privacidade"
+    },
+    "termsOfService": {
+      "title": "Termos de utilização"
+    }
+  },
+  "guest": {
+    "upgradeBannerTitle": "Guarde o seu trabalho",
+    "upgradeBannerDesc": "Crie uma conta gratuita para manter os seus currículos e desbloquear mais funcionalidades.",
+    "createAccount": "Criar conta gratuita",
+    "limitReached": "As contas de visitante estão limitadas a 1 currículo. Crie uma conta gratuita para guardar mais.",
+    "downloadLimitReached": "Limite de downloads mensal atingido. Crie uma conta gratuita para mais downloads.",
+    "downloadLimitReachedUser": "Limite de downloads mensal atingido. Passe para Premium para mais downloads.",
+    "saveLimitReached": "Número máximo de currículos atingido. Passe para Premium para guardar mais.",
+    "upgradeSuccess": "Conta criada!",
+    "upgradeSuccessDesc": "Os seus currículos foram conservados. Desfrute da experiência completa!",
+    "upgradeModalSubtitle": "Mantenha os seus currículos seguros"
+  },
+  "feedback": {
+    "bannerTitle": "Dê a sua opinião",
+    "bannerDesc": "Ganhe +3 currículos e +5 exportações!",
+    "bannerCta": "Dar a minha opinião",
+    "modalTitle": "A sua opinião conta",
+    "modalSubtitle": "Ajude-nos a melhorar o Sivee",
+    "profileLabel": "Qual é a sua situação atual?",
+    "profileOptions": {
+      "student": "Estudante",
+      "graduate": "Recém-formado/a",
+      "employed": "Empregado/a",
+      "freelance": "Freelancer / Independente",
+      "unemployed": "À procura de emprego",
+      "career_change": "Em reconversão",
+      "other": "Outro"
+    },
+    "targetSectorLabel": "Em que setor procura?",
+    "targetSectorPlaceholder": "Ex: Tech, Finanças, Consultoria...",
+    "sourceLabel": "Como nos conheceu?",
+    "sourceOptions": {
+      "search": "Motor de busca",
+      "social": "Redes sociais",
+      "wordOfMouth": "Boca a boca",
+      "other": "Outro"
+    },
+    "easeRatingLabel": "Avalie a facilidade de utilização",
+    "timeSpentLabel": "Quanto tempo demorou a criar o seu currículo?",
+    "timeSpentOptions": {
+      "lt15": "< 15 min",
+      "15to30": "15 – 30 min",
+      "30to60": "30 min – 1h",
+      "gt60": "> 1h"
+    },
+    "obstaclesLabel": "O que foi mais difícil?",
+    "obstaclesPlaceholder": "Descreva as dificuldades encontradas...",
+    "alternativeLabel": "Sem o Sivee, que ferramenta teria usado?",
+    "alternativeOptions": {
+      "canva": "Canva",
+      "word": "Word / Google Docs",
+      "latex": "LaTeX (sozinho)",
+      "other_tool": "Outra ferramenta online",
+      "none": "Nenhuma"
+    },
+    "suggestionsLabel": "Que funcionalidade falta?",
+    "suggestionsPlaceholder": "As suas ideias de melhoria...",
+    "npsLabel": "Recomendaria o Sivee a um colega?",
+    "npsNotLikely": "De modo nenhum",
+    "npsVeryLikely": "Absolutamente",
+    "futureHelpLabel": "Como podemos ajudá-lo a conseguir mais entrevistas?",
+    "futureHelpPlaceholder": "As suas sugestões...",
+    "sectionAboutYou": "Sobre si",
+    "sectionExperience": "A sua experiência",
+    "sectionOpinion": "A sua opinião",
+    "optional": "Opcional",
+    "required": "Obrigatório",
+    "submit": "Enviar a minha opinião",
+    "submitting": "A enviar...",
+    "successTitle": "Obrigado pela sua opinião!",
+    "successDesc": "Recebeu +{{resumes}} currículos e +{{downloads}} exportações de bónus.",
+    "alreadyCompleted": "Obrigado, já enviou a sua opinião!"
+  },
+  "account": {
+    "title": "A minha conta",
+    "profile": "Perfil",
+    "exportData": "Exportar os meus dados",
+    "exportDataDesc": "Descarregue uma cópia de todos os seus dados pessoais em formato JSON (direito à portabilidade RGPD).",
+    "downloadData": "Descarregar os meus dados",
+    "exporting": "A exportar...",
+    "exportSuccess": "Dados exportados com sucesso",
+    "exportError": "Erro durante a exportação",
+    "deleteAccount": "Eliminar a minha conta",
+    "deleteAccountDesc": "Elimine permanentemente a sua conta e todos os dados associados. Esta ação é irreversível.",
+    "deleteAccountButton": "Eliminar a minha conta",
+    "deleteWarning": "Atenção: esta ação é irreversível. Todos os seus dados serão eliminados permanentemente.",
+    "deleteConfirmInstructions": "Escreva ELIMINAR para confirmar",
+    "deleteConfirmPlaceholder": "ELIMINAR",
+    "deleteConfirmError": "Por favor, escreva ELIMINAR para confirmar",
+    "confirmDelete": "Eliminar permanentemente",
+    "deleting": "A eliminar...",
+    "deleteError": "Erro durante a eliminação",
+    "legalLinks": "Links legais"
+  }
+}

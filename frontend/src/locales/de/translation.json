@@ -1,0 +1,419 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "cancel": "Abbrechen",
+    "add": "Hinzufügen",
+    "delete": "Löschen",
+    "export": "Als PDF exportieren",
+    "exporting": "Wird erstellt...",
+    "preview": "Vorschau",
+    "language": "Sprache",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "logout": "Abmelden",
+    "actions": "Aktionen"
+  },
+  "auth": {
+    "brandingTitle": "Erstellen Sie professionelle Lebensläufe in wenigen Minuten",
+    "brandingSubtitle": "Importieren, bearbeiten und exportieren Sie Ihre Lebensläufe mit perfektem LaTeX-Rendering.",
+    "feature1": "Professionelle und moderne Vorlagen",
+    "feature2": "Sofortiger PDF-Export in hoher Qualität",
+    "feature3": "Ihre Daten sicher gespeichert",
+    "email": "E-Mail",
+    "emailPlaceholder": "sie@beispiel.de",
+    "password": "Passwort",
+    "passwordPlaceholder": "Ihr Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Bestätigen Sie Ihr Passwort",
+    "passwordsMatch": "Passwörter stimmen überein",
+    "passwordsDontMatch": "Passwörter stimmen nicht überein",
+    "loggingIn": "Anmeldung...",
+    "registering": "Registrierung...",
+    "noAccount": "Noch kein Konto?",
+    "hasAccount": "Bereits ein Konto?",
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Melden Sie sich an, um auf Ihre Lebensläufe zuzugreifen",
+      "button": "Anmelden",
+      "link": "Anmelden"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Registrieren Sie sich, um Ihre Lebensläufe zu speichern",
+      "button": "Registrieren",
+      "link": "Konto erstellen",
+      "success": "Konto erstellt!",
+      "successMessage": "Anmeldung läuft..."
+    },
+    "passwordRules": {
+      "length": "Mindestens 12 Zeichen",
+      "uppercase": "Mindestens ein Großbuchstabe",
+      "lowercase": "Mindestens ein Kleinbuchstabe",
+      "digit": "Mindestens eine Ziffer",
+      "special": "Mindestens ein Sonderzeichen (!@#$...)"
+    },
+    "forgotPassword": {
+      "title": "Passwort vergessen",
+      "subtitle": "Geben Sie Ihre E-Mail ein, um einen Link zum Zurücksetzen zu erhalten",
+      "button": "Link senden",
+      "sending": "Wird gesendet...",
+      "link": "Passwort vergessen?",
+      "successMessage": "Wenn diese E-Mail-Adresse mit einem Konto verknüpft ist, erhalten Sie in Kürze einen Link zum Zurücksetzen.",
+      "backToLogin": "Zurück zur Anmeldung"
+    },
+    "resetPassword": {
+      "title": "Neues Passwort",
+      "subtitle": "Wählen Sie ein neues Passwort für Ihr Konto",
+      "newPassword": "Neues Passwort",
+      "button": "Passwort zurücksetzen",
+      "resetting": "Wird zurückgesetzt...",
+      "successMessage": "Ihr Passwort wurde erfolgreich zurückgesetzt. Weiterleitung zur Anmeldung...",
+      "invalidLink": "Dieser Link zum Zurücksetzen ist ungültig oder abgelaufen."
+    },
+    "errors": {
+      "invalidCredentials": "Ungültige E-Mail oder Passwort",
+      "emailExists": "Diese E-Mail wird bereits verwendet",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "passwordRequirements": "Passwort erfüllt nicht die Anforderungen",
+      "generic": "Ein Fehler ist aufgetreten"
+    },
+    "loginWithGoogle": "Mit Google fortfahren",
+    "orContinueWith": "oder mit E-Mail fortfahren",
+    "or": "oder",
+    "continueWithoutAccount": "Ohne Konto fortfahren",
+    "acceptTerms": "Ich akzeptiere die",
+    "and": "und die",
+    "termsConsent": "Ich akzeptiere die Nutzungsbedingungen des Dienstes"
+  },
+  "resumes": {
+    "myResumes": "Meine Lebensläufe",
+    "pageSubtitle": "Verwalten Sie alle Ihre Lebensläufe",
+    "noResumes": "Keine gespeicherten Lebensläufe",
+    "noResumesHint": "Erstellen Sie Ihren ersten Lebenslauf, um ihn hier zu finden",
+    "current": "Aktuell",
+    "createNew": "Neuer Lebenslauf",
+    "lastModified": "Geändert am",
+    "delete": "Löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Lebenslauf löschen möchten?",
+    "open": "Öffnen",
+    "rename": "Umbenennen",
+    "saveCurrent": "Speichern",
+    "saveAs": "Speichern unter",
+    "resumeName": "Name des Lebenslaufs",
+    "resumeNamePlaceholder": "Mein Lebenslauf 2024"
+  },
+  "landing": {
+    "pageTitle": "Sivee - Erstellen Sie Ihren professionellen Lebenslauf",
+    "appName": "Sivee",
+    "start": "Loslegen",
+    "heroTitle": "Erstellen Sie einen professionellen Lebenslauf in Minuten",
+    "heroSubtitle": "Importieren Sie Ihren bestehenden Lebenslauf oder starten Sie von Grund auf. Bearbeiten, anpassen und als PDF exportieren mit perfektem LaTeX-Rendering.",
+    "createCv": "Meinen Lebenslauf erstellen",
+    "importPdf": "PDF importieren",
+    "templatesAvailable": "{{count}} Vorlagen verfügbar",
+    "templatesDescription": "Vom klassischen Stil bis zum modernen Design, 100% ATS-freundlich und professionell",
+    "viewAllTemplates": "Alle Vorlagen ansehen",
+    "whyChoose": "Warum Sivee wählen?",
+    "whyDescription": "Einfache und leistungsstarke Tools für den perfekten Lebenslauf",
+    "ctaTitle": "Bereit, Ihren Lebenslauf zu erstellen?",
+    "ctaSubtitle": "Kostenlos starten, in wenigen Klicks als PDF exportieren",
+    "startNow": "Jetzt starten",
+    "openSource": "Open Source auf GitHub"
+  },
+  "features": {
+    "professionalTemplates": "Professionelle Vorlagen",
+    "professionalTemplatesDesc": "Elegante und moderne Designs, optimiert für ATS",
+    "intuitiveInterface": "Intuitive Oberfläche",
+    "intuitiveInterfaceDesc": "Bearbeiten Sie einfach jeden Abschnitt Ihres Lebenslaufs",
+    "highQualityExport": "PDF-Export in hoher Qualität",
+    "highQualityExportDesc": "Professionelles und makelloses LaTeX-Rendering"
+  },
+  "import": {
+    "title": "Haben Sie bereits einen Lebenslauf?",
+    "description": "Importieren Sie ihn, um Ihre Informationen automatisch auszufüllen",
+    "analyzing": "PDF wird analysiert...",
+    "extracting": "Text wird extrahiert...",
+    "identifying": "Abschnitte werden identifiziert...",
+    "structuring": "Daten werden strukturiert...",
+    "finalizing": "Wird abgeschlossen..."
+  },
+  "errors": {
+    "generation": "Fehler bei der Erstellung",
+    "import": "Fehler beim Import"
+  },
+  "personal": {
+    "title": "Persönliche Informationen",
+    "subtitle": "Ihre Kontaktdaten und professionellen Links",
+    "fullName": "Vollständiger Name",
+    "fullNamePlaceholder": "Max Mustermann",
+    "professionalTitle": "Berufsbezeichnung",
+    "professionalTitlePlaceholder": "Full Stack Entwickler",
+    "location": "Standort",
+    "locationPlaceholder": "Berlin, Deutschland",
+    "email": "E-Mail",
+    "emailPlaceholder": "max@beispiel.de",
+    "phone": "Telefon",
+    "phonePlaceholder": "+49 170 1234567",
+    "links": {
+      "title": "Professionelle Links",
+      "add": "Link hinzufügen",
+      "empty": "Keine Links hinzugefügt. Fügen Sie LinkedIn, GitHub, Portfolio hinzu...",
+      "usernamePlaceholder": "Anzeigename",
+      "urlPlaceholder": "https://...",
+      "platforms": {
+        "linkedin": "LinkedIn",
+        "github": "GitHub",
+        "portfolio": "Portfolio",
+        "behance": "Behance",
+        "website": "Persönliche Website",
+        "other": "Sonstiges"
+      }
+    }
+  },
+  "preview": {
+    "title": "Vorschau",
+    "show": "Vorschau anzeigen",
+    "hide": "Vorschau ausblenden",
+    "refresh": "Aktualisieren",
+    "generating": "Vorschau wird erstellt...",
+    "empty": "Die Vorschau erscheint hier",
+    "hint": "Die Vorschau aktualisiert sich automatisch",
+    "fullscreen": "Vollbild",
+    "mobileHint": "Vorschau auf Mobilgeräten nicht verfügbar",
+    "download": "Vorschau herunterladen"
+  },
+  "sections": {
+    "summary": "Zusammenfassung",
+    "education": "Ausbildung",
+    "experience": "Berufserfahrung",
+    "projects": "Projekte",
+    "skills": "Technische Fähigkeiten",
+    "leadership": "Führung & Engagement",
+    "languages": "Sprachen",
+    "custom": "Benutzerdefiniert",
+    "noSections": "Keine Abschnitte",
+    "noSectionsHint": "Fügen Sie Abschnitte hinzu, um Ihren Lebenslauf zu erstellen",
+    "hideInPdf": "Im PDF ausblenden",
+    "showInPdf": "Im PDF anzeigen",
+    "deleteSection": "Abschnitt löschen",
+    "hiddenMessage": "Dieser Abschnitt ist im endgültigen PDF ausgeblendet",
+    "templates": "Vorlagen"
+  },
+  "templates": {
+    "autoSize": "Auto",
+    "autoSizeDesc": "Passt die Größe automatisch an den Inhalt an",
+    "autoSizeOptimized": "Optimierte Größe",
+    "autoSizeCalculating": "Wird optimiert..."
+  },
+  "addSection": {
+    "title": "Abschnitt hinzufügen",
+    "subtitle": "Wählen Sie den Inhaltstyp aus",
+    "alreadyAdded": "bereits hinzugefügt",
+    "customTitle": "Abschnittstitel",
+    "customPlaceholder": "Z.B.: Publikationen, Zertifizierungen, Hobbys...",
+    "addButton": "Abschnitt hinzufügen",
+    "summaryDesc": "Profil und berufliches Ziel",
+    "educationDesc": "Ausbildung, Abschlüsse, Zertifizierungen",
+    "experienceDesc": "Berufserfahrungen",
+    "projectsDesc": "Persönliche oder berufliche Projekte",
+    "skillsDesc": "Technische Fähigkeiten",
+    "leadershipDesc": "Führung und ehrenamtliches Engagement",
+    "languagesDesc": "Gesprochene Sprachen",
+    "customDesc": "Benutzerdefinierter Abschnitt mit Titel und Aufzählungspunkten"
+  },
+  "editors": {
+    "education": {
+      "school": "Schule / Universität",
+      "schoolPlaceholder": "Name der Einrichtung",
+      "degree": "Abschluss",
+      "degreePlaceholder": "Master in Informatik",
+      "dates": "Zeitraum",
+      "datesPlaceholder": "2021 - 2024",
+      "subtitle": "Untertitel (Notendurchschnitt, Auszeichnung...)",
+      "subtitlePlaceholder": "Mit Auszeichnung",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Hauptkurse, bemerkenswerte Projekte...",
+      "addEducation": "Ausbildung hinzufügen",
+      "deleteEducation": "Diese Ausbildung löschen"
+    },
+    "experience": {
+      "position": "Position",
+      "positionPlaceholder": "Senior Entwickler",
+      "company": "Unternehmen",
+      "companyPlaceholder": "Unternehmensname",
+      "dates": "Zeitraum",
+      "datesPlaceholder": "Jan 2023 - Heute",
+      "highlights": "Kernpunkte",
+      "highlightPlaceholder": "Beschreiben Sie eine Leistung oder Verantwortung...",
+      "noHighlights": "Fügen Sie Kernpunkte hinzu, um Ihre Aufgaben zu beschreiben",
+      "addExperience": "Erfahrung hinzufügen",
+      "deleteExperience": "Diese Erfahrung löschen"
+    },
+    "projects": {
+      "name": "Projektname",
+      "namePlaceholder": "Projektname",
+      "year": "Jahr",
+      "yearPlaceholder": "2024",
+      "description": "Beschreibung",
+      "pointPlaceholder": "Verwendete Technologie, Schlüsselfunktion...",
+      "noPoints": "Fügen Sie Punkte hinzu, um das Projekt zu beschreiben",
+      "addProject": "Projekt hinzufügen",
+      "deleteProject": "Dieses Projekt löschen"
+    },
+    "skills": {
+      "category": "Kategorie",
+      "categoryPlaceholder": "Programmiersprachen, Frameworks, Tools...",
+      "skills": "Fähigkeiten",
+      "skillsPlaceholder": "Python, JavaScript, Docker, AWS...",
+      "skillsHint": "Trennen Sie die Fähigkeiten mit Kommas",
+      "addCategory": "Kategorie hinzufügen",
+      "deleteCategory": "Diese Kategorie löschen",
+      "emptyHint": "Fügen Sie Kategorien hinzu, um Ihre Fähigkeiten zu organisieren (z.B. Programmiersprachen, Tools, Frameworks...)"
+    },
+    "leadership": {
+      "role": "Rolle",
+      "rolePlaceholder": "Vorsitzender, Ehrenamtlicher...",
+      "place": "Ort / Organisation",
+      "placePlaceholder": "Name der Organisation",
+      "dates": "Zeitraum",
+      "datesPlaceholder": "2022 - 2024",
+      "highlights": "Kernpunkte",
+      "highlightPlaceholder": "Beschreiben Sie eine Leistung oder Verantwortung...",
+      "noHighlights": "Fügen Sie Punkte hinzu, um Ihre Verantwortungen zu beschreiben",
+      "addLeadership": "Engagement hinzufügen",
+      "deleteLeadership": "Dieses Engagement löschen"
+    },
+    "languagesSpoken": {
+      "label": "Gesprochene Sprachen",
+      "placeholder": "Deutsch (Muttersprache), Englisch (Fließend), Französisch (Mittelstufe)",
+      "hint": "Trennen Sie die Sprachen mit Kommas und geben Sie das Niveau in Klammern an"
+    },
+    "summary": {
+      "label": "Profil / Berufliches Ziel",
+      "placeholder": "Beschreiben Sie Ihr berufliches Profil, Ihre Schlüsselkompetenzen und Karriereziele...",
+      "hint": "Ein kurzer Absatz, der Ihr Profil und Ihre Ziele zusammenfasst. Seien Sie prägnant und überzeugend."
+    },
+    "custom": {
+      "title": "Titel",
+      "titlePlaceholder": "Elementtitel",
+      "subtitle": "Untertitel (optional)",
+      "subtitlePlaceholder": "Untertitel, Ort...",
+      "dates": "Zeitraum (optional)",
+      "datesPlaceholder": "2022 - 2024",
+      "points": "Punkte",
+      "pointPlaceholder": "Beschreiben Sie einen Punkt...",
+      "noPoints": "Fügen Sie Punkte für diesen Abschnitt hinzu",
+      "addItem": "Element hinzufügen",
+      "deleteItem": "Dieses Element löschen"
+    }
+  },
+  "legal": {
+    "backToHome": "Zurück",
+    "lastUpdated": "Letzte Aktualisierung",
+    "legalNotice": {
+      "title": "Impressum"
+    },
+    "privacyPolicy": {
+      "title": "Datenschutzerklärung"
+    },
+    "termsOfService": {
+      "title": "Nutzungsbedingungen"
+    }
+  },
+  "guest": {
+    "upgradeBannerTitle": "Speichern Sie Ihre Arbeit",
+    "upgradeBannerDesc": "Erstellen Sie ein kostenloses Konto, um Ihre Lebensläufe zu behalten und mehr Funktionen freizuschalten.",
+    "createAccount": "Kostenloses Konto erstellen",
+    "limitReached": "Gastkonten sind auf 1 Lebenslauf beschränkt. Erstellen Sie ein kostenloses Konto, um mehr zu speichern.",
+    "downloadLimitReached": "Monatliches Download-Limit erreicht. Erstellen Sie ein kostenloses Konto für mehr Downloads.",
+    "downloadLimitReachedUser": "Monatliches Download-Limit erreicht. Upgraden Sie auf Premium für mehr Downloads.",
+    "saveLimitReached": "Maximale Anzahl an Lebensläufen erreicht. Upgraden Sie auf Premium, um mehr zu speichern.",
+    "upgradeSuccess": "Konto erstellt!",
+    "upgradeSuccessDesc": "Ihre Lebensläufe wurden beibehalten. Genießen Sie das volle Erlebnis!",
+    "upgradeModalSubtitle": "Bewahren Sie Ihre Lebensläufe sicher auf"
+  },
+  "feedback": {
+    "bannerTitle": "Geben Sie Feedback",
+    "bannerDesc": "Erhalten Sie +3 Lebensläufe und +5 Exporte!",
+    "bannerCta": "Feedback geben",
+    "modalTitle": "Ihr Feedback zählt",
+    "modalSubtitle": "Helfen Sie uns, Sivee zu verbessern",
+    "profileLabel": "Was ist Ihre aktuelle Situation?",
+    "profileOptions": {
+      "student": "Student/in",
+      "graduate": "Berufseinsteiger/in",
+      "employed": "Berufstätig",
+      "freelance": "Freelancer / Selbstständig",
+      "unemployed": "Arbeitssuchend",
+      "career_change": "Berufliche Neuorientierung",
+      "other": "Sonstiges"
+    },
+    "targetSectorLabel": "In welcher Branche suchen Sie?",
+    "targetSectorPlaceholder": "Z.B.: Tech, Finanzen, Beratung...",
+    "sourceLabel": "Wie haben Sie von uns erfahren?",
+    "sourceOptions": {
+      "search": "Suchmaschine",
+      "social": "Soziale Medien",
+      "wordOfMouth": "Mundpropaganda",
+      "other": "Sonstiges"
+    },
+    "easeRatingLabel": "Bewerten Sie die Benutzerfreundlichkeit",
+    "timeSpentLabel": "Wie lange haben Sie für Ihren Lebenslauf gebraucht?",
+    "timeSpentOptions": {
+      "lt15": "< 15 Min",
+      "15to30": "15 – 30 Min",
+      "30to60": "30 Min – 1 Std",
+      "gt60": "> 1 Std"
+    },
+    "obstaclesLabel": "Was war am schwierigsten?",
+    "obstaclesPlaceholder": "Beschreiben Sie die aufgetretenen Schwierigkeiten...",
+    "alternativeLabel": "Welches Tool hätten Sie ohne Sivee verwendet?",
+    "alternativeOptions": {
+      "canva": "Canva",
+      "word": "Word / Google Docs",
+      "latex": "LaTeX (allein)",
+      "other_tool": "Anderes Online-Tool",
+      "none": "Keines"
+    },
+    "suggestionsLabel": "Welche Funktion fehlt?",
+    "suggestionsPlaceholder": "Ihre Verbesserungsvorschläge...",
+    "npsLabel": "Würden Sie Sivee einem Kollegen empfehlen?",
+    "npsNotLikely": "Überhaupt nicht",
+    "npsVeryLikely": "Auf jeden Fall",
+    "futureHelpLabel": "Wie können wir Ihnen helfen, mehr Vorstellungsgespräche zu bekommen?",
+    "futureHelpPlaceholder": "Ihre Vorschläge...",
+    "sectionAboutYou": "Über Sie",
+    "sectionExperience": "Ihre Erfahrung",
+    "sectionOpinion": "Ihre Meinung",
+    "optional": "Optional",
+    "required": "Erforderlich",
+    "submit": "Feedback senden",
+    "submitting": "Wird gesendet...",
+    "successTitle": "Vielen Dank für Ihr Feedback!",
+    "successDesc": "Sie haben +{{resumes}} Lebensläufe und +{{downloads}} Exporte als Bonus erhalten.",
+    "alreadyCompleted": "Danke, Sie haben bereits Ihr Feedback abgegeben!"
+  },
+  "account": {
+    "title": "Mein Konto",
+    "profile": "Profil",
+    "exportData": "Meine Daten exportieren",
+    "exportDataDesc": "Laden Sie eine Kopie aller Ihrer persönlichen Daten im JSON-Format herunter (DSGVO-Recht auf Datenübertragbarkeit).",
+    "downloadData": "Meine Daten herunterladen",
+    "exporting": "Wird exportiert...",
+    "exportSuccess": "Daten erfolgreich exportiert",
+    "exportError": "Fehler beim Export",
+    "deleteAccount": "Mein Konto löschen",
+    "deleteAccountDesc": "Löschen Sie Ihr Konto und alle zugehörigen Daten dauerhaft. Diese Aktion ist unwiderruflich.",
+    "deleteAccountButton": "Mein Konto löschen",
+    "deleteWarning": "Achtung: Diese Aktion ist unwiderruflich. Alle Ihre Daten werden dauerhaft gelöscht.",
+    "deleteConfirmInstructions": "Geben Sie LÖSCHEN ein, um zu bestätigen",
+    "deleteConfirmPlaceholder": "LÖSCHEN",
+    "deleteConfirmError": "Bitte geben Sie LÖSCHEN ein, um zu bestätigen",
+    "confirmDelete": "Dauerhaft löschen",
+    "deleting": "Wird gelöscht...",
+    "deleteError": "Fehler beim Löschen",
+    "legalLinks": "Rechtliche Links"
+  }
+}
