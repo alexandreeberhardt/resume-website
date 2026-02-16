@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2, Download } from 'lucide-react'
+import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2 } from 'lucide-react'
 import { ResumeData } from '../types'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
@@ -191,18 +191,9 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
                     <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                       <Eye className="w-8 h-8 text-brand" />
                     </div>
-                    <p className="text-sm text-primary-600 mb-4">
+                    <p className="text-sm text-primary-600">
                       {t('preview.mobileHint') || 'Aperçu non disponible sur mobile'}
                     </p>
-                    <a
-                      href={pdfUrl}
-                      download="CV_preview.pdf"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-lg text-sm font-medium hover:bg-brand-hover transition-colors"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Download className="w-4 h-4" />
-                      {t('preview.download') || 'Télécharger'}
-                    </a>
                   </div>
                 </div>
               ) : (
@@ -290,6 +281,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
                   height: 'min(90vh, calc(90vw * 297 / 210))',
                 }}
                 onClick={(e) => e.stopPropagation()}
+                onContextMenu={(e) => e.preventDefault()}
               >
                 {/* Paper shadows */}
                 <div className="absolute inset-0 bg-black/10 rounded-xl translate-y-2 translate-x-1" />
@@ -297,13 +289,15 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
 
                 {/* Main paper */}
                 <div className="relative bg-white rounded-xl shadow-2xl overflow-hidden w-full h-full">
-                  <object data={pdfUrl} type="application/pdf" className="w-full h-full">
+                  <object data={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`} type="application/pdf" className="w-full h-full">
                     <iframe
-                      src={pdfUrl}
+                      src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                       className="w-full h-full border-0"
                       title="CV Preview Fullscreen"
                     />
                   </object>
+                  {/* Overlay to block Safari's floating PDF toolbar at the bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 h-12 z-10" />
                 </div>
               </div>
             </div>
