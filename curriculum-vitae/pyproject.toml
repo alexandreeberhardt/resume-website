@@ -19,3 +19,8 @@ dependencies = [
     "boto3>=1.42.38",
     "gunicorn>=24.1.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
