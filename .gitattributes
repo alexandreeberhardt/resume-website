@@ -1,0 +1,4 @@
+# Mark generated/vendored files so GitHub excludes them from language stats
+package-lock.json linguist-generated=true
+uv.lock linguist-generated=true
+frontend/playwright-report/** linguist-generated=true
