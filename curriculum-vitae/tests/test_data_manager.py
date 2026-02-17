@@ -1,11 +1,13 @@
-import unittest
 import tempfile
-import yaml
+import unittest
 from pathlib import Path
+
+import yaml
+
 from core import DataManager
 
-class DataManagerTest(unittest.TestCase):
 
+class DataManagerTest(unittest.TestCase):
     def setUp(self):
         """Sets up a temporary directory for tests."""
         self.test_dir = tempfile.TemporaryDirectory()
@@ -53,5 +55,6 @@ class DataManagerTest(unittest.TestCase):
             data_manager.load()
         self.assertIn("must contain a root object (dict)", str(context.exception))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

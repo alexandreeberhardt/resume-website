@@ -23,19 +23,87 @@ PDF_TRANSLATIONS = {
         "leadership": "Leadership & Community",
         "languages": "Languages",
         "custom": "Other",
-    }
+    },
+    "es": {
+        "summary": "Resumen",
+        "education": "Educación",
+        "experiences": "Experiencia Profesional",
+        "projects": "Proyectos",
+        "skills": "Habilidades Técnicas",
+        "leadership": "Liderazgo y Compromiso",
+        "languages": "Idiomas",
+        "custom": "Otro",
+    },
+    "de": {
+        "summary": "Zusammenfassung",
+        "education": "Ausbildung",
+        "experiences": "Berufserfahrung",
+        "projects": "Projekte",
+        "skills": "Technische Fähigkeiten",
+        "leadership": "Führung & Engagement",
+        "languages": "Sprachen",
+        "custom": "Sonstiges",
+    },
+    "pt": {
+        "summary": "Resumo",
+        "education": "Formação",
+        "experiences": "Experiência Profissional",
+        "projects": "Projetos",
+        "skills": "Competências Técnicas",
+        "leadership": "Liderança e Envolvimento",
+        "languages": "Idiomas",
+        "custom": "Outro",
+    },
+    "it": {
+        "summary": "Riepilogo",
+        "education": "Formazione",
+        "experiences": "Esperienza Professionale",
+        "projects": "Progetti",
+        "skills": "Competenze Tecniche",
+        "leadership": "Leadership e Impegno",
+        "languages": "Lingue",
+        "custom": "Altro",
+    },
 }
 
 # Titres par défaut du frontend (pour détecter si le titre a été personnalisé)
 DEFAULT_TITLES = {
-    "summary": ["Summary", "Résumé"],
-    "education": ["Education", "Formation"],
-    "experiences": ["Experiences", "Experience", "Expérience", "Expérience Professionnelle", "Professional Experience"],
-    "projects": ["Projects", "Projets"],
-    "skills": ["Technical Skills", "Skills", "Compétences", "Compétences Techniques"],
-    "leadership": ["Leadership", "Leadership & Community Involvement", "Leadership & Community", "Leadership & Engagement"],
-    "languages": ["Languages", "Langues"],
-    "custom": ["Custom Section", "Custom", "Autre"],
+    "summary": ["Summary", "Résumé", "Resumen", "Zusammenfassung", "Resumo", "Riepilogo"],
+    "education": ["Education", "Formation", "Educación", "Ausbildung", "Formação", "Formazione"],
+    "experiences": [
+        "Experiences",
+        "Experience",
+        "Expérience",
+        "Expérience Professionnelle",
+        "Professional Experience",
+        "Experiencia Profesional",
+        "Berufserfahrung",
+        "Experiência Profissional",
+        "Esperienza Professionale",
+    ],
+    "projects": ["Projects", "Projets", "Proyectos", "Projekte", "Projetos", "Progetti"],
+    "skills": [
+        "Technical Skills",
+        "Skills",
+        "Compétences",
+        "Compétences Techniques",
+        "Habilidades Técnicas",
+        "Technische Fähigkeiten",
+        "Competências Técnicas",
+        "Competenze Tecniche",
+    ],
+    "leadership": [
+        "Leadership",
+        "Leadership & Community Involvement",
+        "Leadership & Community",
+        "Leadership & Engagement",
+        "Liderazgo y Compromiso",
+        "Führung & Engagement",
+        "Liderança e Envolvimento",
+        "Leadership e Impegno",
+    ],
+    "languages": ["Languages", "Langues", "Idiomas", "Sprachen", "Lingue"],
+    "custom": ["Custom Section", "Custom", "Autre", "Otro", "Sonstiges", "Outro", "Altro"],
 }
 
 
@@ -57,7 +125,9 @@ def get_section_title(section_type: str, lang: str = "fr", custom_title: str = "
     """
     # Pour les sections custom, toujours utiliser le titre fourni
     if section_type == "custom":
-        return custom_title or PDF_TRANSLATIONS.get(lang, PDF_TRANSLATIONS["fr"]).get("custom", "Other")
+        return custom_title or PDF_TRANSLATIONS.get(lang, PDF_TRANSLATIONS["fr"]).get(
+            "custom", "Other"
+        )
 
     # Vérifier si le titre est un titre par défaut
     default_titles = DEFAULT_TITLES.get(section_type, [])
