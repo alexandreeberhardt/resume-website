@@ -200,6 +200,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
                 <object
                   data={pdfUrl}
                   type="application/pdf"
+                  data-testid="cv-preview-frame"
                   className="w-full h-full pointer-events-none"
                 >
                   <iframe

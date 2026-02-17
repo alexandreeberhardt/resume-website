@@ -263,6 +263,7 @@ function App() {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={importLoading}
+                data-testid="import-pdf-landing"
                 className="btn-secondary px-6 py-3 text-base w-full sm:w-auto"
               >
                 {importLoading ? (
@@ -545,7 +546,7 @@ function App() {
             />
 
             {/* Primary Export button */}
-            <button onClick={handleGenerate} disabled={loading} className="btn-brand">
+            <button onClick={handleGenerate} disabled={loading} data-testid="export-pdf" className="btn-brand">
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -794,6 +795,7 @@ function App() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={importLoading}
+                  data-testid="import-pdf-editor"
                   className="btn-brand w-full sm:w-auto mt-2 sm:mt-0"
                 >
                   {importLoading ? (
@@ -908,7 +910,7 @@ function App() {
         </main>
 
         {/* Right: Preview and Template Selector */}
-        <aside className="w-80 flex-shrink-0 hidden lg:block">
+        <aside data-testid="cv-preview" className="w-80 flex-shrink-0 hidden lg:block">
           <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto space-y-6 pr-2">
             {/* CV Preview */}
             <CVPreview data={data} />

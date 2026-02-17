@@ -182,6 +182,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
           {t('auth.noAccount')}{' '}
           <button
             onClick={onSwitchToRegister}
+            data-testid="switch-to-register"
             className="font-medium text-brand hover:text-brand-hover transition-colors"
           >
             {t('auth.register.link')}

@@ -185,6 +185,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
             <input
               type="email"
               id="register-email"
+              data-testid="register-email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('auth.emailPlaceholder')}
@@ -205,6 +206,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
             <input
               type={showPassword ? 'text' : 'password'}
               id="register-password"
+              data-testid="register-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t('auth.passwordPlaceholder')}
@@ -260,6 +262,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               id="register-confirm-password"
+              data-testid="register-confirm-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder={t('auth.confirmPasswordPlaceholder')}
@@ -304,6 +307,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
                 type="checkbox"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
+                data-testid="register-terms-checkbox"
                 className="sr-only peer"
               />
               <div
@@ -352,6 +356,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         <button
           type="submit"
           disabled={loading || !allChecksValid}
+          data-testid="register-submit"
           className="btn-brand w-full py-3 mt-2"
         >
           {loading ? (

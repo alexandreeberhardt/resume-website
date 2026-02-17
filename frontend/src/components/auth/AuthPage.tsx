@@ -168,6 +168,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
                 </div>
                 <button
                   onClick={onContinueWithoutAuth}
+                  data-testid="continue-without-account"
                   className="mt-3 text-sm text-primary-500 dark:text-white hover:text-brand transition-colors font-medium"
                 >
                   {t('auth.continueWithoutAccount') || 'Continuer sans compte'}
