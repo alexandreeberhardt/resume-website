@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/frontend-React_18-61DAFB)](https://react.dev/)
 [![LaTeX](https://img.shields.io/badge/PDF-LaTeX-008080)]()
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 A web application to generate professional PDF resumes from a dynamic form interface. LaTeX-based PDF generation ensures high-quality typographic output.
 
@@ -84,4 +84,5 @@ PostgreSQL    LaTeX → PDF
 
 ## License
 
-MIT License
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/).
+You may use, share, and adapt this work for **non-commercial purposes only**.
