@@ -19,7 +19,6 @@ import {
   AlertCircle,
   Plus,
   Upload,
-  FileText,
   Sparkles,
   Layout,
   FileUp,
@@ -191,7 +190,7 @@ function App() {
         <nav className="fixed top-0 inset-x-0 z-50 bg-surface-0/80 backdrop-blur-md border-b border-primary-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-7 h-7 text-primary-900" />
+              <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
               <span className="text-lg font-semibold text-primary-900 hidden xs:inline">
                 {t('landing.appName')}
               </span>
@@ -407,7 +406,7 @@ function App() {
               }}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <FileText className="w-7 h-7 text-primary-900" />
+              <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
               <span className="text-lg font-semibold text-primary-900">{t('landing.appName')}</span>
             </button>
             <div className="flex items-center gap-2">
@@ -499,7 +498,7 @@ function App() {
             onClick={() => setShowLanding(true)}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <FileText className="w-7 h-7 text-primary-900" />
+            <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
             <span className="hidden sm:inline text-lg font-semibold text-primary-900">
               {t('landing.appName')}
             </span>

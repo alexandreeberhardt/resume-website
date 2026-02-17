@@ -2,7 +2,6 @@
  * Authentication page - Modern split-screen design
  */
 import { useState } from 'react'
-import { FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Login from './Login'
 import Register from './Register'
@@ -37,7 +36,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         <div className="relative z-10 flex flex-col h-full p-8 xl:p-10 w-full">
           {/* Logo */}
           <div className="flex items-center gap-2.5 mb-4">
-            <FileText className="w-7 h-7 text-slate-900" />
+            <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
             <span className="text-2xl font-bold text-slate-900 tracking-tight">sivee.pro</span>
           </div>
 
@@ -116,7 +115,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         <header className="lg:hidden relative z-10 bg-surface-0/80 dark:bg-surface-100/80 backdrop-blur-md border-b border-primary-100/50 dark:border-primary-800/50">
           <div className="px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="w-7 h-7 text-brand" />
+              <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
               <span className="text-lg font-semibold text-primary-900 dark:text-white">
                 {t('landing.appName')}
               </span>
