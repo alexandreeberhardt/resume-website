@@ -204,7 +204,7 @@ describe('defaultSectionTitles', () => {
   it('has all section types', () => {
     expect(defaultSectionTitles.summary).toBe('Summary')
     expect(defaultSectionTitles.education).toBe('Education')
-    expect(defaultSectionTitles.experiences).toBe('Experiences')
+    expect(defaultSectionTitles.experiences).toBe('Professional Experience')
     expect(defaultSectionTitles.skills).toBe('Technical Skills')
     expect(defaultSectionTitles.languages).toBe('Languages')
   })

@@ -7,31 +7,33 @@ import { renderWithProviders } from '../test/render'
 describe('LanguageSwitcher', () => {
   const user = userEvent.setup()
 
-  it('renders FR and EN buttons', () => {
+  it('renders a select with language options', () => {
     renderWithProviders(<LanguageSwitcher />)
-    expect(screen.getByTitle('FR')).toBeInTheDocument()
-    expect(screen.getByTitle('EN')).toBeInTheDocument()
+    const select = screen.getByRole('combobox')
+    expect(select).toBeInTheDocument()
+    expect(screen.getByText(/FR/)).toBeInTheDocument()
+    expect(screen.getByText(/EN/)).toBeInTheDocument()
   })
 
-  it('renders flag emojis', () => {
+  it('renders flag emojis in options', () => {
     renderWithProviders(<LanguageSwitcher />)
-    expect(screen.getByText('🇫🇷')).toBeInTheDocument()
-    expect(screen.getByText('🇬🇧')).toBeInTheDocument()
+    const options = screen.getAllByRole('option')
+    expect(options.length).toBeGreaterThanOrEqual(2)
+    expect(options[0].textContent).toContain('🇫🇷')
+    expect(options[1].textContent).toContain('🇬🇧')
   })
 
-  it('clicking EN button switches language', async () => {
+  it('changing selection switches language', async () => {
     renderWithProviders(<LanguageSwitcher />)
-    const enButton = screen.getByTitle('EN')
-    await user.click(enButton)
-    // After clicking, the EN button should have the "active" styling
-    // We can't easily test i18n state, but ensure no errors
-    expect(enButton).toBeInTheDocument()
+    const select = screen.getByRole('combobox')
+    await user.selectOptions(select, 'en')
+    expect(select).toHaveValue('en')
   })
 
-  it('clicking FR button switches language', async () => {
+  it('can switch to FR', async () => {
     renderWithProviders(<LanguageSwitcher />)
-    const frButton = screen.getByTitle('FR')
-    await user.click(frButton)
-    expect(frButton).toBeInTheDocument()
+    const select = screen.getByRole('combobox')
+    await user.selectOptions(select, 'fr')
+    expect(select).toHaveValue('fr')
   })
 })
