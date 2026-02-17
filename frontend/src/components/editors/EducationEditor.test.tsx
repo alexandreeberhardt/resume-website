@@ -10,6 +10,7 @@ describe('EducationEditor', () => {
 
   const sampleItems: EducationItem[] = [
     {
+      id: 'edu-1',
       school: 'MIT',
       degree: 'BS Computer Science',
       dates: '2018 - 2022',
@@ -89,8 +90,8 @@ describe('EducationEditor', () => {
 
   it('renders multiple items', () => {
     const multiItems: EducationItem[] = [
-      { school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: '' },
-      { school: 'Stanford', degree: 'MS', dates: '2022', subtitle: '', description: '' },
+      { id: 'edu-2', school: 'MIT', degree: 'BS', dates: '2020', subtitle: '', description: '' },
+      { id: 'edu-3', school: 'Stanford', degree: 'MS', dates: '2022', subtitle: '', description: '' },
     ]
     renderWithProviders(<EducationEditor items={multiItems} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('MIT')).toBeInTheDocument()

@@ -10,6 +10,7 @@ describe('CustomEditor', () => {
 
   const sampleItems: CustomItem[] = [
     {
+      id: 'cust-1',
       title: 'Volunteering',
       subtitle: 'Red Cross',
       dates: '2020 - Present',
@@ -84,7 +85,7 @@ describe('CustomEditor', () => {
 
   it('shows empty highlights message when no highlights', () => {
     const itemsNoHighlights: CustomItem[] = [
-      { title: 'Item', subtitle: '', dates: '', highlights: [] },
+      { id: 'cust-2', title: 'Item', subtitle: '', dates: '', highlights: [] },
     ]
     renderWithProviders(<CustomEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 

@@ -10,6 +10,7 @@ describe('ExperienceEditor', () => {
 
   const sampleItems: ExperienceItem[] = [
     {
+      id: 'exp-1',
       title: 'Senior Dev',
       company: 'Acme Corp',
       dates: '2020 - Present',
@@ -94,7 +95,7 @@ describe('ExperienceEditor', () => {
 
   it('shows empty highlights message when no highlights', () => {
     const itemsNoHighlights: ExperienceItem[] = [
-      { title: 'Dev', company: 'Co', dates: '2020', highlights: [] },
+      { id: 'exp-2', title: 'Dev', company: 'Co', dates: '2020', highlights: [] },
     ]
     renderWithProviders(<ExperienceEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 

@@ -10,6 +10,7 @@ describe('ProjectEditor', () => {
 
   const sampleItems: ProjectItem[] = [
     {
+      id: 'proj-1',
       name: 'CV Generator',
       year: '2024',
       highlights: ['Built with React', 'LaTeX rendering'],
@@ -85,7 +86,7 @@ describe('ProjectEditor', () => {
   })
 
   it('shows empty highlights message when no highlights', () => {
-    const itemsNoHighlights: ProjectItem[] = [{ name: 'Project', year: '2024', highlights: [] }]
+    const itemsNoHighlights: ProjectItem[] = [{ id: 'proj-2', name: 'Project', year: '2024', highlights: [] }]
     renderWithProviders(<ProjectEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 
     const emptyMessage = screen.getByText(

@@ -10,6 +10,7 @@ describe('LeadershipEditor', () => {
 
   const sampleItems: LeadershipItem[] = [
     {
+      id: 'lead-1',
       role: 'Team Lead',
       place: 'Tech Corp',
       dates: '2021 - 2023',
@@ -84,7 +85,7 @@ describe('LeadershipEditor', () => {
 
   it('shows empty highlights message when no highlights', () => {
     const itemsNoHighlights: LeadershipItem[] = [
-      { role: 'Lead', place: 'Co', dates: '2020', highlights: [] },
+      { id: 'lead-2', role: 'Lead', place: 'Co', dates: '2020', highlights: [] },
     ]
     renderWithProviders(<LeadershipEditor items={itemsNoHighlights} onChange={vi.fn()} />)
 

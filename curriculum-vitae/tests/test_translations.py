@@ -91,7 +91,7 @@ class TestGetSectionTitle:
     # --- Unknown language fallback ---
 
     def test_unknown_lang_falls_back_to_french(self):
-        result = get_section_title("education", "de")
+        result = get_section_title("education", "xx")
         assert result == "Formation"
 
     # --- Unknown section type ---

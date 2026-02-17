@@ -20,8 +20,8 @@ describe('EducationEditor edge cases', () => {
 
   it('renders multiple items', () => {
     const items = [
-      { school: 'MIT', degree: 'BSc', dates: '2020-2024', subtitle: '', description: '' },
-      { school: 'Stanford', degree: 'MSc', dates: '2024-2026', subtitle: '', description: '' },
+      { id: 'edu-1', school: 'MIT', degree: 'BSc', dates: '2020-2024', subtitle: '', description: '' },
+      { id: 'edu-2', school: 'Stanford', degree: 'MSc', dates: '2024-2026', subtitle: '', description: '' },
     ]
     renderWithProviders(<EducationEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('MIT')).toBeInTheDocument()
@@ -38,7 +38,7 @@ describe('ExperienceEditor edge cases', () => {
 
   it('renders highlights', () => {
     const items = [
-      { title: 'SWE', company: 'Google', dates: '2023', highlights: ['Built X', 'Led Y'] },
+      { id: 'exp-1', title: 'SWE', company: 'Google', dates: '2023', highlights: ['Built X', 'Led Y'] },
     ]
     renderWithProviders(<ExperienceEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('Built X')).toBeInTheDocument()
@@ -54,7 +54,7 @@ describe('ProjectEditor edge cases', () => {
   })
 
   it('renders project with highlights', () => {
-    const items = [{ name: 'My Project', year: '2023', highlights: ['Feature 1'] }]
+    const items = [{ id: 'proj-1', name: 'My Project', year: '2023', highlights: ['Feature 1'] }]
     renderWithProviders(<ProjectEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('My Project')).toBeInTheDocument()
   })
@@ -68,7 +68,7 @@ describe('LeadershipEditor edge cases', () => {
   })
 
   it('renders leadership item', () => {
-    const items = [{ role: 'President', place: 'Club', dates: '2023', highlights: [] }]
+    const items = [{ id: 'lead-1', role: 'President', place: 'Club', dates: '2023', highlights: [] }]
     renderWithProviders(<LeadershipEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('President')).toBeInTheDocument()
   })
@@ -82,7 +82,7 @@ describe('CustomEditor edge cases', () => {
   })
 
   it('renders custom item with all fields', () => {
-    const items = [{ title: 'Hobby', subtitle: 'Sport', dates: '2020', highlights: ['Football'] }]
+    const items = [{ id: 'cust-1', title: 'Hobby', subtitle: 'Sport', dates: '2020', highlights: ['Football'] }]
     renderWithProviders(<CustomEditor items={items} onChange={vi.fn()} />)
     expect(screen.getByDisplayValue('Hobby')).toBeInTheDocument()
   })
