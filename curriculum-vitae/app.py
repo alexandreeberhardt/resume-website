@@ -710,6 +710,8 @@ async def import_cv(
     Returns:
         ResumeData: Données structurées du CV.
     """
+    _validate_pdf_file_metadata(file)
+
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
@@ -873,6 +875,8 @@ async def import_cv_stream(
     Importe un CV depuis un fichier PDF avec streaming SSE.
     Envoie les sections au fur et à mesure qu'elles sont extraites.
     """
+    _validate_pdf_file_metadata(file)
+
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
