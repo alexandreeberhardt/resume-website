@@ -40,6 +40,10 @@ from translations import get_section_title  # noqa: E402
 # Limite de taille pour l'import de CV (protection contre les abus)
 # 10 000 caractères ≈ 2 500 tokens, suffisant pour un CV de 3-4 pages
 MAX_CV_TEXT_LENGTH = 10_000
+MAX_CV_PDF_SIZE_BYTES = 8 * 1024 * 1024  # 8 MB max per uploaded PDF
+MAX_CV_PDF_PAGES = 10
+PDF_READ_CHUNK_SIZE = 1024 * 1024  # 1 MB
+ALLOWED_PDF_CONTENT_TYPES = {"application/pdf", "application/x-pdf"}
 
 # Authentication imports
 from api.resumes import (  # noqa: E402
@@ -230,6 +234,106 @@ VALID_TEMPLATES = {
     "double_compact",
     "double_large",
 }
+
+
+def _validate_pdf_file_metadata(file: UploadFile) -> None:
+    """Validate filename and declared content type before reading upload body."""
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
+
+    content_type = (file.content_type or "").split(";")[0].strip().lower()
+    if content_type and content_type not in ALLOWED_PDF_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Type MIME invalide pour un PDF")
+
+
+async def _store_pdf_upload_with_limits(file: UploadFile) -> Path:
+    """
+    Stream uploaded file to disk with strict byte limits and PDF signature check.
+
+    This avoids loading the whole upload in memory and rejects malformed files early.
+    """
+    _validate_pdf_file_metadata(file)
+
+    temp_pdf_path: Path | None = None
+    total_bytes = 0
+    first_chunk = b""
+
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
+            temp_pdf_path = Path(temp_pdf.name)
+
+            while True:
+                chunk = await file.read(PDF_READ_CHUNK_SIZE)
+                if not chunk:
+                    break
+
+                if not first_chunk:
+                    first_chunk = chunk
+
+                total_bytes += len(chunk)
+                if total_bytes > MAX_CV_PDF_SIZE_BYTES:
+                    raise HTTPException(
+                        status_code=413,
+                        detail=(
+                            f"Le fichier PDF est trop volumineux ({total_bytes:,} octets). "
+                            f"Maximum autorisé : {MAX_CV_PDF_SIZE_BYTES:,} octets."
+                        ),
+                    )
+
+                temp_pdf.write(chunk)
+
+        if total_bytes == 0:
+            raise HTTPException(status_code=400, detail="Le fichier PDF est vide")
+
+        if not first_chunk.startswith(b"%PDF-"):
+            raise HTTPException(status_code=400, detail="Le fichier envoyé n'est pas un PDF valide")
+
+        return temp_pdf_path
+    except Exception:
+        if temp_pdf_path and temp_pdf_path.exists():
+            with contextlib.suppress(Exception):
+                temp_pdf_path.unlink()
+        raise
+    finally:
+        with contextlib.suppress(Exception):
+            await file.close()
+
+
+def _extract_text_from_pdf_with_limits(pdf_path: Path) -> str:
+    """Extract text while enforcing page and extracted-text limits."""
+    text_parts: list[str] = []
+    current_text_length = 0
+
+    with pdfplumber.open(pdf_path) as pdf:
+        if len(pdf.pages) > MAX_CV_PDF_PAGES:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Le PDF contient trop de pages ({len(pdf.pages)}). "
+                    f"Maximum autorisé : {MAX_CV_PDF_PAGES} pages."
+                ),
+            )
+
+        for page in pdf.pages:
+            page_text = (page.extract_text() or "") + "\n"
+            text_parts.append(page_text)
+            current_text_length += len(page_text)
+
+            if current_text_length > MAX_CV_TEXT_LENGTH:
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        f"Le document est trop volumineux ({current_text_length:,} caractères). "
+                        f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
+                        "Veuillez fournir un CV plus concis."
+                    ),
+                )
+
+    text_content = "".join(text_parts)
+    if not text_content.strip():
+        raise HTTPException(status_code=400, detail="Impossible d'extraire le texte du PDF")
+
+    return text_content
 
 # Variantes de taille pour l'auto-sizing
 SIZE_VARIANTS = ["large", "normal", "compact"]
@@ -606,10 +710,6 @@ async def import_cv(
     Returns:
         ResumeData: Données structurées du CV.
     """
-    # Vérifier que c'est un PDF
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
-
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
@@ -618,33 +718,12 @@ async def import_cv(
         )
 
     try:
-        # Extraire le texte du PDF
-        pdf_content = await file.read()
-
-        # Créer un fichier temporaire pour pypdf
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
-            temp_pdf.write(pdf_content)
-            temp_pdf_path = temp_pdf.name
-
+        temp_pdf_path = await _store_pdf_upload_with_limits(file)
         try:
-            with pdfplumber.open(temp_pdf_path) as pdf:
-                text_content = ""
-                for page in pdf.pages:
-                    text_content += (page.extract_text() or "") + "\n"
+            text_content = _extract_text_from_pdf_with_limits(temp_pdf_path)
         finally:
-            Path(temp_pdf_path).unlink()
-
-        if not text_content.strip():
-            raise HTTPException(status_code=400, detail="Impossible d'extraire le texte du PDF")
-
-        # Vérifier la taille du texte extrait (protection contre les abus)
-        if len(text_content) > MAX_CV_TEXT_LENGTH:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Le document est trop volumineux ({len(text_content):,} caractères). "
-                f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
-                "Veuillez fournir un CV plus concis.",
-            )
+            with contextlib.suppress(Exception):
+                temp_pdf_path.unlink()
 
         # Appeler Mistral pour structurer les données
         client = Mistral(api_key=api_key)
@@ -794,10 +873,6 @@ async def import_cv_stream(
     Importe un CV depuis un fichier PDF avec streaming SSE.
     Envoie les sections au fur et à mesure qu'elles sont extraites.
     """
-    # Vérifier que c'est un PDF
-    if not file.filename or not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Le fichier doit être un PDF")
-
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
     if not api_key:
@@ -805,42 +880,18 @@ async def import_cv_stream(
             status_code=500, detail="Clé API Mistral non configurée (MISTRAL_API_KEY)"
         )
 
-    # Lire le PDF avant de commencer le streaming
-    pdf_content = await file.read()
-
     async def generate_stream():
         try:
             # Envoyer l'événement de début d'extraction
             yield f"data: {json.dumps({'type': 'status', 'message': 'extracting'})}\n\n"
             await asyncio.sleep(0)
 
-            # Créer un fichier temporaire pour pypdf
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_pdf:
-                temp_pdf.write(pdf_content)
-                temp_pdf_path = temp_pdf.name
-
+            temp_pdf_path = await _store_pdf_upload_with_limits(file)
             try:
-                with pdfplumber.open(temp_pdf_path) as pdf:
-                    text_content = ""
-                    for page in pdf.pages:
-                        text_content += (page.extract_text() or "") + "\n"
+                text_content = _extract_text_from_pdf_with_limits(temp_pdf_path)
             finally:
-                Path(temp_pdf_path).unlink()
-
-            if not text_content.strip():
-                error_msg = "Impossible d'extraire le texte du PDF"
-                yield f"data: {json.dumps({'type': 'error', 'message': error_msg})}\n\n"
-                return
-
-            # Vérifier la taille du texte extrait (protection contre les abus)
-            if len(text_content) > MAX_CV_TEXT_LENGTH:
-                error_msg = (
-                    f"Le document est trop volumineux ({len(text_content):,} caractères). "
-                    f"Maximum autorisé : {MAX_CV_TEXT_LENGTH:,} caractères. "
-                    "Veuillez fournir un CV plus concis."
-                )
-                yield f"data: {json.dumps({'type': 'error', 'message': error_msg})}\n\n"
-                return
+                with contextlib.suppress(Exception):
+                    temp_pdf_path.unlink()
 
             # Envoyer l'événement de traitement IA
             yield f"data: {json.dumps({'type': 'status', 'message': 'processing'})}\n\n"
@@ -1135,6 +1186,8 @@ IMPORTANT:
                 )
                 yield f"data: {error_msg}\n\n"
 
+        except HTTPException as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': e.detail})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
