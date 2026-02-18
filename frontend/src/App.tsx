@@ -911,7 +911,7 @@ function App() {
 
         {/* Right: Preview and Template Selector */}
         <aside data-testid="cv-preview" className="w-80 flex-shrink-0 hidden lg:block">
-          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto space-y-6 pr-2">
+          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto space-y-6 pr-2 pl-1">
             {/* CV Preview */}
             <CVPreview data={data} />
 
