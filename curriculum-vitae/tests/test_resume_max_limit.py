@@ -205,3 +205,36 @@ class TestDownloadLimits:
         # Will fail at LaTeX compilation, but NOT with 429
         resp = client.post(f"/api/resumes/{resume_id}/generate", headers=headers)
         assert resp.status_code != 429
+
+    def test_preview_generation_does_not_consume_download_limit(self, client, db, monkeypatch):
+        """Preview mode bypasses quota checks and does not increment download_count."""
+        token = create_authenticated_user(client)
+        headers = auth_header(token)
+
+        from auth.security import decode_access_token
+
+        payload = decode_access_token(token)
+        user = db.query(User).filter(User.id == int(payload["sub"])).first()
+        user.download_count = 3
+        user.download_count_reset_at = datetime.now(UTC)
+        db.commit()
+
+        from core.PdfCompiler import PdfCompiler
+
+        def _fake_compile(self, clean=True):
+            self.tex_file.parent.joinpath("main.pdf").write_bytes(b"%PDF-1.4\n%%EOF")
+
+        monkeypatch.setattr(PdfCompiler, "compile", _fake_compile)
+
+        data = {
+            "personal": {"name": "Preview User"},
+            "sections": [],
+            "template_id": "harvard",
+            "lang": "fr",
+        }
+
+        resp = client.post("/generate?preview=true", json=data, headers=headers)
+        assert resp.status_code == 200, resp.text
+
+        db.refresh(user)
+        assert user.download_count == 3

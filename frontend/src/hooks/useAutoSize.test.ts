@@ -76,7 +76,7 @@ describe('useAutoSize', () => {
     })
 
     expect(globalThis.fetch).toHaveBeenCalledTimes(1)
-    expect(globalThis.fetch).toHaveBeenCalledWith('/api/optimal-size', {
+    expect(globalThis.fetch).toHaveBeenCalledWith('/api/optimal-size?preview=true', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',

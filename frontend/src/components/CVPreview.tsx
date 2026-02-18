@@ -55,7 +55,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
       if (csrfToken) {
         headers['X-CSRF-Token'] = csrfToken
       }
-      const response = await fetch(`${API_URL}/generate`, {
+      const response = await fetch(`${API_URL}/generate?preview=true`, {
         method: 'POST',
         headers,
         credentials: 'same-origin',

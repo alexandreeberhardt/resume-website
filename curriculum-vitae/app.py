@@ -394,6 +394,7 @@ async def generate_cv(
     data: ResumeData,
     current_user: CurrentUser,
     db: Any = Depends(get_db),  # noqa: B008
+    preview: bool = False,
 ):
     """
     Génère un CV PDF à partir des données fournies.
@@ -406,8 +407,9 @@ async def generate_cv(
     Returns:
         FileResponse: Le fichier PDF généré.
     """
-    # Enforce generation/download quota for authenticated users.
-    _enforce_generation_quota(current_user, db)
+    # Preview generation is refreshed frequently in the editor and must not consume download quota.
+    if not preview:
+        _enforce_generation_quota(current_user, db)
 
     # Créer un dossier temporaire pour la compilation
     temp_dir = tempfile.mkdtemp(prefix="cv_")
@@ -464,9 +466,10 @@ async def generate_cv(
         with contextlib.suppress(Exception):
             shutil.rmtree(temp_path)
 
-    # Increment download counter after successful generation
-    current_user.download_count += 1
-    db.commit()
+    if not preview:
+        # Increment download counter only for explicit exports/downloads.
+        current_user.download_count += 1
+        db.commit()
 
     # Return PDF from memory (temp files already cleaned up)
     from io import BytesIO
@@ -494,6 +497,7 @@ async def find_optimal_size(
     data: ResumeData,
     current_user: CurrentUser,
     db: Any = Depends(get_db),  # noqa: B008
+    preview: bool = False,
 ):
     """
     Trouve la taille optimale de template pour que le CV tienne sur une page.
@@ -506,7 +510,8 @@ async def find_optimal_size(
     Returns:
         OptimalSizeResponse avec la taille optimale et le template_id correspondant.
     """
-    _enforce_generation_quota(current_user, db)
+    if not preview:
+        _enforce_generation_quota(current_user, db)
 
     base_template = get_base_template(data.template_id)
     tested_sizes = []

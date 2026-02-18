@@ -40,7 +40,7 @@ export function useAutoSize({ data, setData }: UseAutoSizeOptions) {
           headers['X-CSRF-Token'] = csrfToken
         }
 
-        const response = await fetch(`${API_URL}/optimal-size`, {
+        const response = await fetch(`${API_URL}/optimal-size?preview=true`, {
           method: 'POST',
           headers,
           credentials: 'same-origin',
