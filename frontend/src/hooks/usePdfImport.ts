@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { ResumeData, ensureItemIds } from '../types'
 import { normalizeSection } from '../utils/sectionNormalizer'
 import { useTranslation } from 'react-i18next'
+import { getCsrfToken } from '../api/client'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
 
@@ -50,9 +51,16 @@ export function usePdfImport({
     try {
       const formData = new FormData()
       formData.append('file', file)
+      const csrfToken = getCsrfToken()
+      const headers: Record<string, string> = {}
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken
+      }
 
       const response = await fetch(`${API_URL}/import-stream`, {
         method: 'POST',
+        headers,
+        credentials: 'same-origin',
         body: formData,
       })
 

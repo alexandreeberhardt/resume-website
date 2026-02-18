@@ -8,7 +8,6 @@ Authentification OAuth2 avec JWT.
 import asyncio
 import contextlib
 import os
-import secrets
 import shutil
 import sys
 import tempfile
@@ -27,7 +26,7 @@ import json  # noqa: E402
 import re  # noqa: E402
 
 import pdfplumber  # noqa: E402
-from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile  # noqa: E402
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from fastapi.responses import FileResponse, StreamingResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
@@ -50,8 +49,8 @@ from api.resumes import (  # noqa: E402
     _get_monthly_download_count,
 )
 from api.resumes import router as resumes_router  # noqa: E402
+from auth.dependencies import CurrentUser  # noqa: E402
 from auth.routes import router as auth_router  # noqa: E402
-from auth.security import decode_access_token  # noqa: E402
 from database.db_config import get_db  # noqa: E402
 from database.models import User  # noqa: E402
 
@@ -360,10 +359,40 @@ def convert_section_items(section: CVSection, lang: str = "fr") -> dict[str, Any
     return section_dict
 
 
+def _enforce_generation_quota(user: User, db: Any) -> None:
+    """Apply monthly generation/download quota checks for expensive PDF operations."""
+    if user.is_guest:
+        max_downloads = MAX_DOWNLOADS_PER_GUEST
+    elif user.is_premium:
+        max_downloads = MAX_DOWNLOADS_PER_PREMIUM
+    else:
+        max_downloads = MAX_DOWNLOADS_PER_USER
+    max_downloads += user.bonus_downloads
+
+    current_downloads = _get_monthly_download_count(user, db)
+    if current_downloads >= max_downloads:
+        if user.is_guest:
+            msg = (
+                f"Guest accounts are limited to {MAX_DOWNLOADS_PER_GUEST} "
+                "download per month. Create a free account to get more downloads."
+            )
+            raise HTTPException(status_code=429, detail=msg)
+        if user.is_premium:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_PREMIUM}).",
+            )
+        raise HTTPException(
+            status_code=429,
+            detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_USER}). "
+            "Upgrade to Premium to get more downloads.",
+        )
+
+
 @app.post("/generate")
 async def generate_cv(
     data: ResumeData,
-    request: Request,
+    current_user: CurrentUser,
     db: Any = Depends(get_db),  # noqa: B008
 ):
     """
@@ -371,67 +400,14 @@ async def generate_cv(
 
     Args:
         data: Données du CV avec sections dynamiques.
-        request: HTTP request (for optional auth header).
+        current_user: Authenticated user (guest or registered).
         db: Database session.
 
     Returns:
         FileResponse: Le fichier PDF généré.
     """
-    # Extract user from JWT if present (optional auth)
-    user = None
-    auth_header = request.headers.get("authorization", "")
-    token = None
-    token_from_cookie = False
-    if auth_header.startswith("Bearer "):
-        token = auth_header[7:]
-    elif request.cookies.get("access_token"):
-        token = request.cookies.get("access_token")
-        token_from_cookie = True
-
-    if token:
-        if token_from_cookie:
-            csrf_cookie = request.cookies.get("csrf_token")
-            csrf_header = request.headers.get("X-CSRF-Token")
-            if not csrf_cookie or not csrf_header or not secrets.compare_digest(
-                csrf_cookie, csrf_header
-            ):
-                raise HTTPException(status_code=403, detail="CSRF validation failed")
-        payload = decode_access_token(token)
-        if payload and payload.get("sub"):
-            try:
-                user_id = int(payload["sub"])
-                user = db.query(User).filter(User.id == user_id).first()
-            except (ValueError, TypeError):
-                pass
-
-    # Enforce download limits
-    if user:
-        if user.is_guest:
-            max_downloads = MAX_DOWNLOADS_PER_GUEST
-        elif user.is_premium:
-            max_downloads = MAX_DOWNLOADS_PER_PREMIUM
-        else:
-            max_downloads = MAX_DOWNLOADS_PER_USER
-        max_downloads += user.bonus_downloads
-
-        current_downloads = _get_monthly_download_count(user, db)
-        if current_downloads >= max_downloads:
-            if user.is_guest:
-                msg = (
-                    f"Guest accounts are limited to {MAX_DOWNLOADS_PER_GUEST} "
-                    "download per month. Create a free account to get more downloads."
-                )
-                raise HTTPException(status_code=429, detail=msg)
-            if user.is_premium:
-                raise HTTPException(
-                    status_code=429,
-                    detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_PREMIUM}).",
-                )
-            raise HTTPException(
-                status_code=429,
-                detail=f"Monthly download limit reached ({MAX_DOWNLOADS_PER_USER}). "
-                "Upgrade to Premium to get more downloads.",
-            )
+    # Enforce generation/download quota for authenticated users.
+    _enforce_generation_quota(current_user, db)
 
     # Créer un dossier temporaire pour la compilation
     temp_dir = tempfile.mkdtemp(prefix="cv_")
@@ -489,9 +465,8 @@ async def generate_cv(
             shutil.rmtree(temp_path)
 
     # Increment download counter after successful generation
-    if user:
-        user.download_count += 1
-        db.commit()
+    current_user.download_count += 1
+    db.commit()
 
     # Return PDF from memory (temp files already cleaned up)
     from io import BytesIO
@@ -515,7 +490,11 @@ class OptimalSizeResponse(BaseModel):
 
 
 @app.post("/optimal-size", response_model=OptimalSizeResponse)
-async def find_optimal_size(data: ResumeData):
+async def find_optimal_size(
+    data: ResumeData,
+    current_user: CurrentUser,
+    db: Any = Depends(get_db),  # noqa: B008
+):
     """
     Trouve la taille optimale de template pour que le CV tienne sur une page.
 
@@ -527,6 +506,8 @@ async def find_optimal_size(data: ResumeData):
     Returns:
         OptimalSizeResponse avec la taille optimale et le template_id correspondant.
     """
+    _enforce_generation_quota(current_user, db)
+
     base_template = get_base_template(data.template_id)
     tested_sizes = []
     temp_dirs = []
@@ -589,7 +570,10 @@ async def get_default_data():
 
 
 @app.post("/import")
-async def import_cv(file: UploadFile = File(...)):  # noqa: B008
+async def import_cv(
+    _current_user: CurrentUser,
+    file: UploadFile = File(...),  # noqa: B008
+):
     """
     Importe un CV depuis un fichier PDF.
 
@@ -782,7 +766,10 @@ IMPORTANT:
 
 
 @app.post("/import-stream")
-async def import_cv_stream(file: UploadFile = File(...)):  # noqa: B008
+async def import_cv_stream(
+    _current_user: CurrentUser,
+    file: UploadFile = File(...),  # noqa: B008
+):
     """
     Importe un CV depuis un fichier PDF avec streaming SSE.
     Envoie les sections au fur et à mesure qu'elles sont extraites.

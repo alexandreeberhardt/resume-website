@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ResumeData, SizeVariant, TemplateId, getBaseTemplateId } from '../types'
 import { useTranslation } from 'react-i18next'
+import { getCsrfToken } from '../api/client'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
 
@@ -33,10 +34,16 @@ export function useAutoSize({ data, setData }: UseAutoSizeOptions) {
           template_id: currentBase,
           lang: i18n.language.substring(0, 2),
         }
+        const csrfToken = getCsrfToken()
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+        if (csrfToken) {
+          headers['X-CSRF-Token'] = csrfToken
+        }
 
         const response = await fetch(`${API_URL}/optimal-size`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
+          credentials: 'same-origin',
           body: JSON.stringify(dataToSend),
         })
 

@@ -1,6 +1,7 @@
 """Tests for /import and /import-stream endpoints."""
 
 import os
+from types import SimpleNamespace
 
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key-for-unit-tests-only")
 os.environ.setdefault("DATABASE_URL", "sqlite://")
@@ -9,12 +10,21 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import app
+from auth.dependencies import get_current_user
 
 
 @pytest.fixture()
 def api_client():
+    app.dependency_overrides[get_current_user] = lambda: SimpleNamespace(
+        is_guest=False,
+        is_premium=False,
+        bonus_downloads=0,
+        download_count=0,
+        download_count_reset_at=None,
+    )
     with TestClient(app) as c:
         yield c
+    app.dependency_overrides.clear()
 
 
 class TestImportEndpoint:

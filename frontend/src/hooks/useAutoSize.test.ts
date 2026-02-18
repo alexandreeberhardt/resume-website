@@ -79,6 +79,7 @@ describe('useAutoSize', () => {
     expect(globalThis.fetch).toHaveBeenCalledWith('/api/optimal-size', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify({ ...data, template_id: 'harvard', lang: 'en' }),
     })
   })
