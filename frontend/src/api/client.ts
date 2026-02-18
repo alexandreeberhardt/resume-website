@@ -1,5 +1,5 @@
 /**
- * API Client with JWT token interceptor
+ * API client with cookie-based auth + CSRF header handling
  */
 
 // API base URL - always use /api prefix
@@ -7,6 +7,7 @@ const API_BASE_URL = '/api'
 
 // Token storage keys
 const TOKEN_KEY = 'access_token'
+const CSRF_COOKIE_KEY = 'csrf_token'
 
 /**
  * Get stored token from localStorage
@@ -27,6 +28,12 @@ export const setStoredToken = (token: string): void => {
  */
 export const removeStoredToken = (): void => {
   localStorage.removeItem(TOKEN_KEY)
+}
+
+export const getCsrfToken = (): string | null => {
+  const escaped = CSRF_COOKIE_KEY.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&')
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`))
+  return match ? decodeURIComponent(match[1]) : null
 }
 
 /**
@@ -56,8 +63,6 @@ export const setOnUnauthorized = (callback: () => void): void => {
  * API client with automatic token injection and error handling
  */
 export async function apiClient<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = getStoredToken()
-
   const headers: HeadersInit = {
     ...options.headers,
   }
@@ -67,9 +72,13 @@ export async function apiClient<T>(endpoint: string, options: RequestInit = {}):
     ;(headers as Record<string, string>)['Content-Type'] = 'application/json'
   }
 
-  // Add Authorization header if token exists
-  if (token) {
-    ;(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+  // Add CSRF token for unsafe methods when cookie-based auth is used
+  const method = (options.method || 'GET').toUpperCase()
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCsrfToken()
+    if (csrfToken) {
+      ;(headers as Record<string, string>)['X-CSRF-Token'] = csrfToken
+    }
   }
 
   const controller = new AbortController()
@@ -80,6 +89,7 @@ export async function apiClient<T>(endpoint: string, options: RequestInit = {}):
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
+      credentials: 'same-origin',
       signal: controller.signal,
     })
   } catch (error) {

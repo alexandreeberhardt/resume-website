@@ -137,12 +137,12 @@ describe('generateResumePdf', () => {
   const originalFetch = globalThis.fetch
 
   beforeEach(() => {
-    localStorage.clear()
+    document.cookie = 'csrf_token=; Max-Age=0; path=/'
   })
 
   afterEach(() => {
     globalThis.fetch = originalFetch
-    localStorage.clear()
+    document.cookie = 'csrf_token=; Max-Age=0; path=/'
   })
 
   it('sends POST and returns blob on success', async () => {
@@ -153,12 +153,11 @@ describe('generateResumePdf', () => {
       blob: () => Promise.resolve(mockBlob),
     })
 
-    localStorage.setItem('access_token', 'test-token')
     const result = await generateResumePdf(1, 'harvard', 'fr')
     expect(result).toBeInstanceOf(Blob)
   })
 
-  it('includes auth header', async () => {
+  it('includes csrf header when cookie exists', async () => {
     const mockBlob = new Blob(['pdf'])
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -166,10 +165,10 @@ describe('generateResumePdf', () => {
       blob: () => Promise.resolve(mockBlob),
     })
 
-    localStorage.setItem('access_token', 'my-jwt')
+    document.cookie = 'csrf_token=my-csrf; path=/'
     await generateResumePdf(1)
     const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
-    expect(callArgs[1].headers.Authorization).toBe('Bearer my-jwt')
+    expect(callArgs[1].headers['X-CSRF-Token']).toBe('my-csrf')
   })
 
   it('includes template and lang params', async () => {

@@ -206,12 +206,18 @@ export default function PrivacyPolicy() {
                   Sivee.pro n'utilise <strong>aucun cookie de tracking</strong> ni d'analyse.
                 </p>
                 <p className="text-primary-700">
-                  Nous utilisons uniquement le stockage local (localStorage) pour :
+                  Nous utilisons uniquement des cookies strictement nécessaires au fonctionnement
+                  et à la sécurité :
                 </p>
                 <ul className="list-disc list-inside text-primary-700 space-y-2">
-                  <li>Votre session de connexion (token JWT)</li>
-                  <li>Vos préférences (langue, thème)</li>
+                  <li>Cookie de session d'authentification (HttpOnly, Secure, SameSite)</li>
+                  <li>Cookie anti-CSRF pour protéger les actions sensibles</li>
                 </ul>
+                <p className="text-primary-700 mt-3">
+                  Ces cookies étant strictement nécessaires, ils ne sont pas soumis au recueil du
+                  consentement préalable. Vos préférences (langue, thème) restent stockées en
+                  localStorage.
+                </p>
               </section>
 
               <section>
@@ -222,7 +228,8 @@ export default function PrivacyPolicy() {
                 <ul className="list-disc list-inside text-primary-700 space-y-2">
                   <li>Chiffrement des mots de passe (bcrypt)</li>
                   <li>Connexion HTTPS obligatoire</li>
-                  <li>Tokens JWT avec expiration</li>
+                  <li>Session sécurisée via cookie HttpOnly/Secure/SameSite</li>
+                  <li>Protection CSRF (double-submit token)</li>
                   <li>Protection contre les attaques (CORS, rate limiting)</li>
                 </ul>
               </section>
@@ -397,11 +404,17 @@ export default function PrivacyPolicy() {
                 <p className="text-primary-700">
                   Sivee.pro uses <strong>no tracking or analytics cookies</strong>.
                 </p>
-                <p className="text-primary-700">We only use local storage (localStorage) for:</p>
+                <p className="text-primary-700">
+                  We only use strictly necessary cookies for operation and security:
+                </p>
                 <ul className="list-disc list-inside text-primary-700 space-y-2">
-                  <li>Your login session (JWT token)</li>
-                  <li>Your preferences (language, theme)</li>
+                  <li>Authentication session cookie (HttpOnly, Secure, SameSite)</li>
+                  <li>Anti-CSRF cookie protecting sensitive actions</li>
                 </ul>
+                <p className="text-primary-700 mt-3">
+                  Because these cookies are strictly necessary, they do not require prior consent.
+                  Preferences (language, theme) remain stored in localStorage.
+                </p>
               </section>
 
               <section>
@@ -410,7 +423,8 @@ export default function PrivacyPolicy() {
                 <ul className="list-disc list-inside text-primary-700 space-y-2">
                   <li>Password encryption (bcrypt)</li>
                   <li>Mandatory HTTPS connection</li>
-                  <li>JWT tokens with expiration</li>
+                  <li>Secure session via HttpOnly/Secure/SameSite cookie</li>
+                  <li>CSRF protection (double-submit token)</li>
                   <li>Protection against attacks (CORS, rate limiting)</li>
                 </ul>
               </section>

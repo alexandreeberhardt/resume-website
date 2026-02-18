@@ -10,7 +10,7 @@ from typing import Annotated
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -30,6 +30,7 @@ from auth.schemas import (
     VerifyEmailRequest,
 )
 from auth.security import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
     create_access_token,
     decode_access_token,
     get_password_hash,
@@ -40,6 +41,13 @@ from database.db_config import get_db
 from database.models import Feedback, Resume, User
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+ACCESS_COOKIE_NAME = "access_token"
+CSRF_COOKIE_NAME = "csrf_token"
+COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "lax").lower()
+_cookie_secure_default = "true" if os.environ.get("ENVIRONMENT", "").lower() == "production" else "false"
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", _cookie_secure_default).lower() == "true"
+COOKIE_MAX_AGE_SECONDS = max(60, ACCESS_TOKEN_EXPIRE_MINUTES * 60)
 
 # Google OAuth2 Configuration
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
@@ -56,6 +64,36 @@ OAUTH_STATE_EXPIRE_MINUTES = 5
 # In production, consider using Redis for multi-instance deployments
 _oauth_code_store: dict[str, tuple[str, float]] = {}
 OAUTH_CODE_EXPIRE_SECONDS = 60  # Code expires in 1 minute
+
+
+def _set_auth_cookies(response: Response, jwt_token: str) -> None:
+    """Set strictly necessary auth + CSRF cookies."""
+    csrf_token = secrets.token_urlsafe(32)
+
+    response.set_cookie(
+        key=ACCESS_COOKIE_NAME,
+        value=jwt_token,
+        max_age=COOKIE_MAX_AGE_SECONDS,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
+        path="/",
+    )
+    response.set_cookie(
+        key=CSRF_COOKIE_NAME,
+        value=csrf_token,
+        max_age=COOKIE_MAX_AGE_SECONDS,
+        httponly=False,  # Read by frontend and echoed in X-CSRF-Token header
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
+        path="/",
+    )
+
+
+def _clear_auth_cookies(response: Response) -> None:
+    """Clear auth and CSRF cookies."""
+    response.delete_cookie(ACCESS_COOKIE_NAME, path="/")
+    response.delete_cookie(CSRF_COOKIE_NAME, path="/")
 
 
 def _cleanup_expired_codes() -> None:
@@ -143,6 +181,7 @@ async def register(
 @router.post("/login", response_model=Token)
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    response: Response,
     db: Annotated[Session, Depends(get_db)],
 ) -> Token:
     """Authenticate user and return JWT token (OAuth2 Password Flow).
@@ -186,12 +225,14 @@ async def login(
             "feedback_completed": bool(user.feedback_completed_at),
         }
     )
+    _set_auth_cookies(response, access_token)
 
     return Token(access_token=access_token)
 
 
 @router.post("/guest", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def create_guest_account(
+    response: Response,
     db: Annotated[Session, Depends(get_db)],
 ) -> Token:
     """Create an anonymous guest account.
@@ -227,6 +268,7 @@ async def create_guest_account(
             "is_guest": True,
         }
     )
+    _set_auth_cookies(response, access_token)
 
     return Token(access_token=access_token)
 
@@ -443,7 +485,7 @@ async def google_callback(
 
 
 @router.post("/google/exchange", response_model=Token)
-async def exchange_oauth_code(code: str) -> Token:
+async def exchange_oauth_code(code: str, response: Response) -> Token:
     """Exchange temporary OAuth code for JWT token.
 
     SECURITY: This endpoint allows the frontend to securely retrieve the JWT token
@@ -465,8 +507,15 @@ async def exchange_oauth_code(code: str) -> Token:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired code",
         )
+    _set_auth_cookies(response, jwt_token)
 
     return Token(access_token=jwt_token)
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def logout(response: Response) -> None:
+    """Clear authentication cookies."""
+    _clear_auth_cookies(response)
 
 
 # ============================================================================
@@ -769,6 +818,7 @@ def _extract_s3_key_from_url(s3_url: str) -> str | None:
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user_account(
     current_user: CurrentUser,
+    response: Response,
     db: Annotated[Session, Depends(get_db)],
 ) -> None:
     """Delete user account and all associated data (GDPR right to erasure).
@@ -809,3 +859,4 @@ async def delete_user_account(
     # Delete user (resumes are cascade deleted via FK relationship)
     db.delete(current_user)
     db.commit()
+    _clear_auth_cookies(response)

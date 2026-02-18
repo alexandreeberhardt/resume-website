@@ -45,6 +45,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
       - AWS_S3_BUCKET=${AWS_S3_BUCKET:-}
       - AWS_REGION=${AWS_REGION:-eu-west-3}
+      - COOKIE_SECURE=false
+      - COOKIE_SAMESITE=lax
     volumes:
       # Monter le code source pour hot reload
       - ./curriculum-vitae/app.py:/app/app.py:ro

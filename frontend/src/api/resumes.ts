@@ -1,7 +1,7 @@
 /**
- * Resumes API functions (protected by JWT)
+ * Resumes API functions (cookie-authenticated)
  */
-import { api } from './client'
+import { api, getCsrfToken } from './client'
 import type { SavedResume, SavedResumeListResponse, ResumeData } from '../types'
 
 /**
@@ -54,16 +54,19 @@ export async function generateResumePdf(
   templateId: string = 'harvard',
   lang: string = 'fr',
 ): Promise<Blob> {
-  const token = localStorage.getItem('access_token')
   const API_BASE_URL = import.meta.env.DEV ? '/api' : ''
+  const csrfToken = getCsrfToken()
+  const headers: Record<string, string> = {}
+  if (csrfToken) {
+    headers['X-CSRF-Token'] = csrfToken
+  }
 
   const response = await fetch(
     `${API_BASE_URL}/resumes/${id}/generate?template_id=${templateId}&lang=${lang}`,
     {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
+      credentials: 'same-origin',
     },
   )
 

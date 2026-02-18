@@ -8,6 +8,7 @@ Authentification OAuth2 avec JWT.
 import asyncio
 import contextlib
 import os
+import secrets
 import shutil
 import sys
 import tempfile
@@ -196,7 +197,7 @@ app.add_middleware(
     allow_origins=[origin.strip() for origin in ALLOWED_ORIGINS],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "Accept"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "X-CSRF-Token"],
 )
 
 # Include authentication and API routers
@@ -379,8 +380,22 @@ async def generate_cv(
     # Extract user from JWT if present (optional auth)
     user = None
     auth_header = request.headers.get("authorization", "")
+    token = None
+    token_from_cookie = False
     if auth_header.startswith("Bearer "):
         token = auth_header[7:]
+    elif request.cookies.get("access_token"):
+        token = request.cookies.get("access_token")
+        token_from_cookie = True
+
+    if token:
+        if token_from_cookie:
+            csrf_cookie = request.cookies.get("csrf_token")
+            csrf_header = request.headers.get("X-CSRF-Token")
+            if not csrf_cookie or not csrf_header or not secrets.compare_digest(
+                csrf_cookie, csrf_header
+            ):
+                raise HTTPException(status_code=403, detail="CSRF validation failed")
         payload = decode_access_token(token)
         if payload and payload.get("sub"):
             try:

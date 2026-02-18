@@ -92,3 +92,36 @@ class TestGetCurrentUserViaAPI:
         token = create_access_token(data={"sub": "not-a-number"})
         resp = client.get("/api/auth/me", headers=auth_header(token))
         assert resp.status_code == 401
+
+    def test_cookie_auth_allows_get_without_authorization_header(self, client):
+        register_user(client)
+        login = client.post(
+            "/api/auth/login",
+            data={"username": "test@example.com", "password": "TestPass123!@#"},
+        )
+        assert login.status_code == 200
+
+        resp = client.get("/api/auth/me")
+        assert resp.status_code == 200
+        assert resp.json()["email"] == "test@example.com"
+
+    def test_cookie_auth_requires_csrf_for_post(self, client):
+        register_user(client)
+        login = client.post(
+            "/api/auth/login",
+            data={"username": "test@example.com", "password": "TestPass123!@#"},
+        )
+        assert login.status_code == 200
+
+        # Missing X-CSRF-Token header should be rejected
+        resp = client.post("/api/auth/feedback", json={"ease_rating": 8})
+        assert resp.status_code == 403
+
+        csrf_token = client.cookies.get("csrf_token")
+        assert csrf_token
+        ok = client.post(
+            "/api/auth/feedback",
+            json={"ease_rating": 8},
+            headers={"X-CSRF-Token": csrf_token},
+        )
+        assert ok.status_code == 200

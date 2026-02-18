@@ -2,26 +2,23 @@
  * Authentication Context for managing user state
  */
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
-import {
-  getStoredToken,
-  setStoredToken,
-  removeStoredToken,
-  setOnUnauthorized,
-  api,
-} from '../api/client'
+import { setOnUnauthorized, api } from '../api/client'
 import {
   loginUser,
   registerUser,
-  decodeToken,
-  isTokenExpired,
   createGuestAccount,
   upgradeGuestAccount,
+  getCurrentUser,
+  logoutUser,
 } from '../api/auth'
 import type { User, AuthState, LoginCredentials, RegisterCredentials } from '../types'
 
-interface TokenResponse {
-  access_token: string
-  token_type: string
+interface ApiUser {
+  id: number
+  email: string
+  is_guest?: boolean
+  is_verified?: boolean
+  feedback_completed_at?: string | null
 }
 
 interface AuthContextType extends AuthState {
@@ -39,99 +36,73 @@ interface AuthProviderProps {
   children: ReactNode
 }
 
+function mapApiUser(user: ApiUser): User {
+  return {
+    id: user.id,
+    email: user.email,
+    isGuest: !!user.is_guest,
+    isVerified: user.is_verified,
+    feedbackCompleted: !!user.feedback_completed_at,
+  }
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isGuest, setIsGuest] = useState(false)
 
-  const isAuthenticated = !!token && !!user
+  const isAuthenticated = !!user
+  const isGuest = !!user?.isGuest
 
-  /**
-   * Logout: clear token and user state
-   */
-  const logout = useCallback(() => {
-    removeStoredToken()
-    setToken(null)
-    setUser(null)
-    setIsGuest(false)
+  const applyUser = useCallback((apiUser: ApiUser | null) => {
+    if (!apiUser) {
+      setUser(null)
+      setToken(null)
+      return
+    }
+    setUser(mapApiUser(apiUser))
+    // Token is now in HttpOnly cookie; keep a non-sensitive marker for existing UI state shape.
+    setToken('cookie-session')
   }, [])
 
   /**
-   * Initialize auth state from localStorage or URL (OAuth callback)
+   * Logout: clear server cookies and local auth state
+   */
+  const logout = useCallback(() => {
+    void logoutUser().catch(() => undefined)
+    applyUser(null)
+  }, [applyUser])
+
+  /**
+   * Initialize auth state from server session cookie and OAuth callback code.
    */
   useEffect(() => {
     const initAuth = async () => {
-      // Check for OAuth code in URL (from OAuth callback)
-      // SECURITY: We now receive a temporary code instead of the JWT directly
-      // This prevents the JWT from being exposed in browser history or logs
       const urlParams = new URLSearchParams(window.location.search)
       const oauthCode = urlParams.get('code')
 
       if (oauthCode) {
         // Remove code from URL immediately
         window.history.replaceState({}, document.title, window.location.pathname)
-
         try {
-          // Exchange the temporary code for a JWT token
-          const response = await api.post<TokenResponse>(
-            `/auth/google/exchange?code=${encodeURIComponent(oauthCode)}`,
-          )
-          const urlToken = response.access_token
-
-          // Validate and store the token
-          if (!isTokenExpired(urlToken)) {
-            const decoded = decodeToken(urlToken)
-            if (decoded) {
-              setStoredToken(urlToken)
-              setToken(urlToken)
-              setUser({
-                id: parseInt(decoded.sub, 10),
-                email: decoded.email,
-                isGuest: decoded.is_guest,
-                feedbackCompleted: decoded.feedback_completed,
-              })
-              setIsGuest(decoded.is_guest || false)
-              setIsLoading(false)
-              return
-            }
-          }
-        } catch (error) {
-          console.error('OAuth code exchange failed:', error)
-          // Continue to check stored token
+          await api.post(`/auth/google/exchange?code=${encodeURIComponent(oauthCode)}`)
+        } catch {
+          // Continue; we'll end up unauthenticated if exchange failed.
         }
       }
 
-      // Check for stored token
-      const storedToken = getStoredToken()
-
-      if (storedToken) {
-        // Check if token is expired
-        if (isTokenExpired(storedToken)) {
-          logout()
-        } else {
-          // Decode token to get user info
-          const decoded = decodeToken(storedToken)
-          if (decoded) {
-            setToken(storedToken)
-            setUser({
-              id: parseInt(decoded.sub, 10),
-              email: decoded.email,
-              isGuest: decoded.is_guest,
-              feedbackCompleted: decoded.feedback_completed,
-            })
-            setIsGuest(decoded.is_guest || false)
-          } else {
-            logout()
-          }
-        }
+      try {
+        const me = await getCurrentUser()
+        applyUser(me as ApiUser)
+      } catch {
+        applyUser(null)
+      } finally {
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
     }
 
     initAuth()
-  }, [logout])
+  }, [applyUser])
 
   /**
    * Set up unauthorized callback
@@ -144,24 +115,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Login with email and password
    */
   const login = async (credentials: LoginCredentials): Promise<void> => {
-    const response = await loginUser(credentials)
-    const newToken = response.access_token
-
-    // Store token
-    setStoredToken(newToken)
-    setToken(newToken)
-
-    // Decode token to get user info
-    const decoded = decodeToken(newToken)
-    if (decoded) {
-      setUser({
-        id: parseInt(decoded.sub, 10),
-        email: decoded.email,
-        isGuest: decoded.is_guest,
-        feedbackCompleted: decoded.feedback_completed,
-      })
-      setIsGuest(decoded.is_guest || false)
-    }
+    await loginUser(credentials)
+    const me = await getCurrentUser()
+    applyUser(me as ApiUser)
   }
 
   /**
@@ -169,30 +125,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const register = async (credentials: RegisterCredentials): Promise<void> => {
     await registerUser(credentials)
-    // After registration, user needs to login
   }
 
   /**
    * Login as a guest (anonymous account)
    */
   const loginAsGuest = async (): Promise<void> => {
-    const response = await createGuestAccount()
-    const newToken = response.access_token
-
-    // Store token
-    setStoredToken(newToken)
-    setToken(newToken)
-
-    // Decode token to get user info
-    const decoded = decodeToken(newToken)
-    if (decoded) {
-      setUser({
-        id: parseInt(decoded.sub, 10),
-        email: decoded.email,
-        isGuest: true,
-      })
-      setIsGuest(true)
-    }
+    await createGuestAccount()
+    const me = await getCurrentUser()
+    applyUser(me as ApiUser)
   }
 
   /**
@@ -200,17 +141,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const upgradeAccount = async (email: string, password: string): Promise<void> => {
     const updatedUser = await upgradeGuestAccount(email, password)
-
-    // Update user state with new email and non-guest status
-    setUser({
-      id: updatedUser.id,
-      email: updatedUser.email,
-      isGuest: false,
-    })
-    setIsGuest(false)
-
-    // Re-login to get a new token without the is_guest claim
-    await login({ email, password })
+    applyUser(updatedUser as ApiUser)
   }
 
   const value: AuthContextType = {

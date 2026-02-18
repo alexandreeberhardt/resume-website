@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ResumeData } from '../types'
 import { useTranslation } from 'react-i18next'
+import { getCsrfToken } from '../api/client'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
 
@@ -19,15 +20,16 @@ export function usePdfGeneration({ data, setError, onLimitError }: UsePdfGenerat
     setError(null)
 
     try {
-      const token = localStorage.getItem('access_token')
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
+      const csrfToken = getCsrfToken()
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken
       }
 
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
         headers,
+        credentials: 'same-origin',
         body: JSON.stringify({ ...data, lang: i18n.language.substring(0, 2) }),
       })
 

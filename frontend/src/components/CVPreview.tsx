@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2 } from 'lucide-react'
 import { ResumeData } from '../types'
+import { getCsrfToken } from '../api/client'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
 
@@ -49,9 +50,15 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
     setError(null)
 
     try {
+      const csrfToken = getCsrfToken()
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken
+      }
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
+        credentials: 'same-origin',
         body: JSON.stringify({ ...data, lang: i18n.language.substring(0, 2) }),
         signal: abortControllerRef.current.signal,
       })

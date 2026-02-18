@@ -85,6 +85,13 @@ export async function deleteUserAccount(): Promise<void> {
 }
 
 /**
+ * Logout current session (clears auth cookies server-side)
+ */
+export async function logoutUser(): Promise<void> {
+  return api.post<void>('/auth/logout')
+}
+
+/**
  * Request a password reset email
  */
 export async function forgotPassword(email: string): Promise<{ message: string }> {

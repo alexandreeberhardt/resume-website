@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { FileText, Pencil, Trash2, Check } from 'lucide-react'
 import { SavedResume } from '../types'
 import { isMobileDevice } from '../utils/deviceDetection'
+import { getCsrfToken } from '../api/client'
 
 const API_URL = import.meta.env.DEV ? '/api' : ''
 
@@ -33,9 +34,15 @@ export default function ResumeCard({
 
     setLoading(true)
     try {
+      const csrfToken = getCsrfToken()
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken
+      }
       const response = await fetch(`${API_URL}/generate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
+        credentials: 'same-origin',
         body: JSON.stringify({ ...resume.json_content, lang: 'fr' }),
       })
 

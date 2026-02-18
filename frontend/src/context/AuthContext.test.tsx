@@ -4,42 +4,31 @@ import userEvent from '@testing-library/user-event'
 import { renderHook } from '@testing-library/react'
 import { renderWithProviders } from '../test/render'
 
-// Shared state for the mock token store
-let storedToken: string | null = null
 const mockSetOnUnauthorized = vi.fn()
 
 // Mock the API client
 vi.mock('../api/client', () => ({
-  getStoredToken: () => storedToken,
-  setStoredToken: (t: string) => {
-    storedToken = t
-  },
-  removeStoredToken: () => {
-    storedToken = null
-  },
   setOnUnauthorized: (...args: unknown[]) => mockSetOnUnauthorized(...args),
   api: {
     post: vi.fn(),
-    get: vi.fn(),
-    postForm: vi.fn(),
   },
 }))
 
 // Mock the auth API
 const mockLoginUser = vi.fn()
 const mockRegisterUser = vi.fn()
-const mockDecodeToken = vi.fn()
-const mockIsTokenExpired = vi.fn()
 const mockCreateGuestAccount = vi.fn()
 const mockUpgradeGuestAccount = vi.fn()
+const mockGetCurrentUser = vi.fn()
+const mockLogoutUser = vi.fn()
 
 vi.mock('../api/auth', () => ({
   loginUser: (...args: unknown[]) => mockLoginUser(...args),
   registerUser: (...args: unknown[]) => mockRegisterUser(...args),
-  decodeToken: (t: string) => mockDecodeToken(t),
-  isTokenExpired: (t: string) => mockIsTokenExpired(t),
   createGuestAccount: () => mockCreateGuestAccount(),
   upgradeGuestAccount: (...args: unknown[]) => mockUpgradeGuestAccount(...args),
+  getCurrentUser: () => mockGetCurrentUser(),
+  logoutUser: () => mockLogoutUser(),
 }))
 
 // Import after mocks
@@ -80,10 +69,9 @@ describe('AuthContext', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    storedToken = null
-    mockIsTokenExpired.mockReturnValue(true)
-    mockDecodeToken.mockReturnValue(null)
     window.history.replaceState({}, '', '/')
+    mockLogoutUser.mockResolvedValue(undefined)
+    mockGetCurrentUser.mockRejectedValue(new Error('unauthenticated'))
   })
 
   it('throws when useAuth is used outside provider', () => {
@@ -103,7 +91,7 @@ describe('AuthContext', () => {
     })
   })
 
-  it('initializes as unauthenticated with no stored token', async () => {
+  it('initializes as unauthenticated when /me fails', async () => {
     renderWithProviders(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
@@ -112,14 +100,13 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('email').textContent).toBe('none')
   })
 
-  it('initializes from stored valid token', async () => {
-    storedToken = 'stored-jwt'
-    mockIsTokenExpired.mockReturnValue(false)
-    mockDecodeToken.mockReturnValue({
-      sub: '5',
+  it('initializes from server cookie session', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      id: 5,
       email: 'stored@test.com',
-      exp: 9999999999,
       is_guest: false,
+      is_verified: true,
+      feedback_completed_at: null,
     })
 
     renderWithProviders(<TestConsumer />)
@@ -130,37 +117,17 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('email').textContent).toBe('stored@test.com')
   })
 
-  it('logs out when stored token is expired', async () => {
-    storedToken = 'expired-jwt'
-    mockIsTokenExpired.mockReturnValue(true)
-
-    renderWithProviders(<TestConsumer />)
-    await waitFor(() => {
-      expect(screen.getByTestId('loading').textContent).toBe('no')
-    })
-    expect(screen.getByTestId('authenticated').textContent).toBe('no')
-  })
-
-  it('logs out when stored token cannot be decoded', async () => {
-    storedToken = 'bad-jwt'
-    mockIsTokenExpired.mockReturnValue(false)
-    mockDecodeToken.mockReturnValue(null)
-
-    renderWithProviders(<TestConsumer />)
-    await waitFor(() => {
-      expect(screen.getByTestId('loading').textContent).toBe('no')
-    })
-    expect(screen.getByTestId('authenticated').textContent).toBe('no')
-  })
-
-  it('login sets user and token', async () => {
+  it('login sets user from /me', async () => {
     mockLoginUser.mockResolvedValue({ access_token: 'new-jwt', token_type: 'bearer' })
-    mockDecodeToken.mockReturnValue({
-      sub: '10',
-      email: 'login@test.com',
-      exp: 9999999999,
-      is_guest: false,
-    })
+    mockGetCurrentUser
+      .mockRejectedValueOnce(new Error('initial unauth'))
+      .mockResolvedValueOnce({
+        id: 10,
+        email: 'login@test.com',
+        is_guest: false,
+        is_verified: true,
+        feedback_completed_at: null,
+      })
 
     renderWithProviders(<TestConsumer />)
     await waitFor(() => {
@@ -177,7 +144,7 @@ describe('AuthContext', () => {
   })
 
   it('register calls registerUser but does not auto-login', async () => {
-    mockRegisterUser.mockResolvedValue({ id: 1, email: 'new@test.com' })
+    mockRegisterUser.mockResolvedValue({ message: 'ok' })
 
     renderWithProviders(<TestConsumer />)
     await waitFor(() => {
@@ -192,14 +159,13 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('authenticated').textContent).toBe('no')
   })
 
-  it('logout clears user and token', async () => {
-    storedToken = 'valid-jwt'
-    mockIsTokenExpired.mockReturnValue(false)
-    mockDecodeToken.mockReturnValue({
-      sub: '1',
+  it('logout clears user state', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      id: 1,
       email: 'user@test.com',
-      exp: 9999999999,
       is_guest: false,
+      is_verified: true,
+      feedback_completed_at: null,
     })
 
     renderWithProviders(<TestConsumer />)
@@ -211,16 +177,20 @@ describe('AuthContext', () => {
 
     expect(screen.getByTestId('authenticated').textContent).toBe('no')
     expect(screen.getByTestId('email').textContent).toBe('none')
+    expect(mockLogoutUser).toHaveBeenCalled()
   })
 
   it('loginAsGuest sets isGuest to true', async () => {
     mockCreateGuestAccount.mockResolvedValue({ access_token: 'guest-jwt', token_type: 'bearer' })
-    mockDecodeToken.mockReturnValue({
-      sub: '99',
-      email: 'guest@guest.local',
-      exp: 9999999999,
-      is_guest: true,
-    })
+    mockGetCurrentUser
+      .mockRejectedValueOnce(new Error('initial unauth'))
+      .mockResolvedValueOnce({
+        id: 99,
+        email: 'guest@guest.local',
+        is_guest: true,
+        is_verified: true,
+        feedback_completed_at: null,
+      })
 
     renderWithProviders(<TestConsumer />)
     await waitFor(() => {

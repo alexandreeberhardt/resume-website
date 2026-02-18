@@ -44,6 +44,7 @@ Critical variables:
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_S3_BUCKET` | S3 storage |
 | `ALLOWED_ORIGINS` | CORS origins (comma-separated, never use `*`) |
 | `FRONTEND_URL` | Frontend URL for OAuth redirects |
+| `COOKIE_SECURE` / `COOKIE_SAMESITE` | Auth cookie hardening (`true` + `lax` recommended in prod) |
 
 Generate a secure JWT key:
 ```bash

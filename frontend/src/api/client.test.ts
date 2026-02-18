@@ -3,6 +3,7 @@ import {
   getStoredToken,
   setStoredToken,
   removeStoredToken,
+  getCsrfToken,
   ApiError,
   apiClient,
   setOnUnauthorized,
@@ -30,6 +31,21 @@ describe('Token storage', () => {
   })
 })
 
+describe('CSRF cookie', () => {
+  beforeEach(() => {
+    document.cookie = 'csrf_token=; Max-Age=0; path=/'
+  })
+
+  it('returns null when csrf cookie is missing', () => {
+    expect(getCsrfToken()).toBeNull()
+  })
+
+  it('reads csrf token from cookie', () => {
+    document.cookie = 'csrf_token=test-csrf-token; path=/'
+    expect(getCsrfToken()).toBe('test-csrf-token')
+  })
+})
+
 describe('ApiError', () => {
   it('has correct properties', () => {
     const err = new ApiError('Not found', 404, 'Resource not found')
@@ -51,6 +67,7 @@ describe('apiClient', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch
     localStorage.clear()
+    document.cookie = 'csrf_token=; Max-Age=0; path=/'
     setOnUnauthorized(null!)
   })
 
@@ -69,17 +86,17 @@ describe('apiClient', () => {
     )
   })
 
-  it('injects Authorization header when token exists', async () => {
-    setStoredToken('my-token')
+  it('injects X-CSRF-Token header for unsafe methods when cookie exists', async () => {
+    document.cookie = 'csrf_token=my-csrf-token; path=/'
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
       json: () => Promise.resolve({}),
     })
 
-    await apiClient('/test')
+    await apiClient('/test', { method: 'POST', body: JSON.stringify({ ok: true }) })
     const callArgs = vi.mocked(globalThis.fetch).mock.calls[0]
-    expect(callArgs[1].headers['Authorization']).toBe('Bearer my-token')
+    expect(callArgs[1].headers['X-CSRF-Token']).toBe('my-csrf-token')
   })
 
   it('sets Content-Type to JSON by default', async () => {
@@ -157,6 +174,7 @@ describe('api convenience methods', () => {
   afterEach(() => {
     globalThis.fetch = vi.fn()
     localStorage.clear()
+    document.cookie = 'csrf_token=; Max-Age=0; path=/'
   })
 
   it('api.get calls with GET method', async () => {

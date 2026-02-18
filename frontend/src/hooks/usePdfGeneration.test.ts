@@ -79,6 +79,7 @@ describe('usePdfGeneration', () => {
     expect(globalThis.fetch).toHaveBeenCalledWith('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify({ ...data, lang: 'en' }),
     })
 
