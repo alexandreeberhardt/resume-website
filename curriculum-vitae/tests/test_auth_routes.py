@@ -101,6 +101,20 @@ class TestLogin:
         )
         assert resp.status_code == 401
 
+    def test_login_oauth_only_user_returns_401(self, client, db):
+        oauth_user = User(email="oauth-only@example.com", google_id="google-abc", is_verified=True)
+        db.add(oauth_user)
+        db.commit()
+
+        resp = client.post(
+            "/api/auth/login",
+            data={
+                "username": "oauth-only@example.com",
+                "password": "SomePassword123!",
+            },
+        )
+        assert resp.status_code == 401
+
 
 class TestGuestAccount:
     def test_create_guest(self, client):

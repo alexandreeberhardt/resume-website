@@ -280,7 +280,14 @@ async def login(
     # Find user by email (OAuth2 uses 'username' field)
     user = db.query(User).filter(User.email == form_data.username).first()
 
-    if not user or not verify_password(form_data.password, user.password_hash):
+    # Some accounts (OAuth-only or legacy/corrupted rows) may not have a usable password hash.
+    # Never crash on hash verification errors: invalid credentials must always return 401.
+    password_valid = False
+    if user and user.password_hash:
+        with contextlib.suppress(Exception):
+            password_valid = verify_password(form_data.password, user.password_hash)
+
+    if not user or not password_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
