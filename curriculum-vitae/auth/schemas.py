@@ -1,5 +1,6 @@
 """Pydantic schemas for authentication."""
 
+from datetime import datetime
 import re
 
 from pydantic import BaseModel, EmailStr, field_validator
@@ -62,7 +63,7 @@ class UserResponse(BaseModel):
     is_guest: bool = False
     is_verified: bool = True
     is_premium: bool = False
-    feedback_completed_at: str | None = None
+    feedback_completed_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
