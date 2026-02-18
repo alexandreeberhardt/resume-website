@@ -49,7 +49,7 @@ describe('ResetPassword page', () => {
   it('submits a valid password reset', async () => {
     const user = userEvent.setup()
     mockResetPassword.mockResolvedValue(undefined)
-    renderPage('/reset-password?token=test-token')
+    renderPage('/reset-password#token=test-token')
 
     await user.type(screen.getByLabelText('New password'), 'MyStrongPass!123')
     await user.type(screen.getByLabelText('Confirm password'), 'MyStrongPass!123')
@@ -66,7 +66,7 @@ describe('ResetPassword page', () => {
   it('shows API error details when reset fails', async () => {
     const user = userEvent.setup()
     mockResetPassword.mockRejectedValue(new ApiError('bad', 400, 'Token expired'))
-    renderPage('/reset-password?token=expired-token')
+    renderPage('/reset-password#token=expired-token')
 
     await user.type(screen.getByLabelText('New password'), 'MyStrongPass!123')
     await user.type(screen.getByLabelText('Confirm password'), 'MyStrongPass!123')

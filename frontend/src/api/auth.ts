@@ -123,7 +123,7 @@ export async function upgradeGuestAccount(email: string, password: string): Prom
  * Verify email address using token from the verification link
  */
 export async function verifyEmail(token: string): Promise<{ message: string }> {
-  return api.get<{ message: string }>(`/auth/verify-email?token=${encodeURIComponent(token)}`)
+  return api.post<{ message: string }>('/auth/verify-email', { token })
 }
 
 /**

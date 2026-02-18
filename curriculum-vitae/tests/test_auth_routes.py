@@ -1,11 +1,13 @@
 """Integration tests for authentication API routes."""
 
+from auth.security import create_access_token
 from conftest import (
     VALID_PASSWORD,
     auth_header,
     create_authenticated_user,
     register_user,
 )
+from database.models import User
 
 
 class TestRegister:
@@ -183,3 +185,22 @@ class TestGDPR:
         # User should no longer exist
         resp = client.get("/api/auth/me", headers=auth_header(token))
         assert resp.status_code == 401
+
+
+class TestEmailVerification:
+    def test_verify_email_success_with_post_body(self, client, db):
+        user = User(email="verify@example.com", password_hash="hash", is_verified=False)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+        token = create_access_token(
+            data={"sub": str(user.id), "email": user.email, "type": "email_verification"}
+        )
+        resp = client.post("/api/auth/verify-email", json={"token": token})
+        assert resp.status_code == 200
+        assert "verified" in resp.json()["message"].lower()
+
+    def test_verify_email_rejects_invalid_token(self, client):
+        resp = client.post("/api/auth/verify-email", json={"token": "invalid"})
+        assert resp.status_code == 400

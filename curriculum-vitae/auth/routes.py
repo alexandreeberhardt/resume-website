@@ -27,6 +27,7 @@ from auth.schemas import (
     UserCreate,
     UserDataExport,
     UserResponse,
+    VerifyEmailRequest,
 )
 from auth.security import (
     create_access_token,
@@ -544,15 +545,15 @@ async def reset_password(
 # ============================================================================
 
 
-@router.get("/verify-email")
+@router.post("/verify-email")
 async def verify_email(
-    token: str,
+    data: VerifyEmailRequest,
     db: Annotated[Session, Depends(get_db)],
 ) -> dict[str, str]:
     """Verify a user's email address using a verification token.
 
     Args:
-        token: JWT email verification token from the link.
+        data: Request body containing the verification token.
         db: Database session.
 
     Returns:
@@ -561,7 +562,7 @@ async def verify_email(
     Raises:
         HTTPException: 400 if token is invalid or expired.
     """
-    payload = decode_access_token(token)
+    payload = decode_access_token(data.token)
     if not payload or payload.get("type") != "email_verification":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

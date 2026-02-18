@@ -39,7 +39,7 @@ describe('VerifyEmailPage', () => {
 
   it('verifies token successfully', async () => {
     mockVerifyEmail.mockResolvedValue(undefined)
-    renderPage('/verify-email?token=ok-token')
+    renderPage('/verify-email#token=ok-token')
 
     expect(await screen.findByText('Email verified!')).toBeInTheDocument()
     expect(mockVerifyEmail).toHaveBeenCalledWith('ok-token')
@@ -47,7 +47,7 @@ describe('VerifyEmailPage', () => {
 
   it('shows API error detail when verification fails', async () => {
     mockVerifyEmail.mockRejectedValue(new ApiError('bad', 400, 'Verification token expired'))
-    renderPage('/verify-email?token=expired')
+    renderPage('/verify-email#token=expired')
 
     expect(await screen.findByText('Verification failed')).toBeInTheDocument()
     expect(await screen.findByText('Verification token expired')).toBeInTheDocument()
@@ -55,7 +55,7 @@ describe('VerifyEmailPage', () => {
 
   it('falls back to generic invalid-link message on unknown error', async () => {
     mockVerifyEmail.mockRejectedValue(new Error('network down'))
-    renderPage('/verify-email?token=any')
+    renderPage('/verify-email#token=any')
 
     expect(await screen.findByText('Verification failed')).toBeInTheDocument()
     expect(await screen.findByText('This verification link is invalid or has expired.')).toBeInTheDocument()

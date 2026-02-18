@@ -105,7 +105,8 @@ def send_welcome_email(email: str) -> None:
 def send_verification_email(email: str, token: str) -> None:
     """Send an email verification link to a newly registered user."""
     subject = "Vérifiez votre adresse email - Sivee.pro"
-    verify_url = f"{FRONTEND_URL}/verify-email?token={token}"
+    # SECURITY: Use URL fragment so token is not sent in HTTP request logs/referrers
+    verify_url = f"{FRONTEND_URL}/verify-email#token={token}"
 
     # fmt: off
     html_body = f"""\
@@ -166,7 +167,8 @@ def send_verification_email(email: str, token: str) -> None:
 def send_password_reset_email(email: str, token: str) -> None:
     """Send a password reset email with a link containing the reset token."""
     subject = "Réinitialisation de votre mot de passe - Sivee.pro"
-    reset_url = f"https://sivee.pro/reset-password?token={token}"
+    # SECURITY: Use URL fragment so token is not sent in HTTP request logs/referrers
+    reset_url = f"{FRONTEND_URL}/reset-password#token={token}"
 
     # fmt: off
     html_body = f"""\

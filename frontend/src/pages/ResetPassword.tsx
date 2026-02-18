@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams, useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import {
   Loader2,
   Lock,
@@ -31,9 +31,10 @@ const PASSWORD_RULES = [
 
 export default function ResetPassword() {
   const { t } = useTranslation()
-  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const token = searchParams.get('token') || ''
+  const location = useLocation()
+  // SECURITY: Read token from URL fragment so it isn't sent in HTTP requests
+  const token = new URLSearchParams(location.hash.replace(/^#/, '')).get('token') || ''
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

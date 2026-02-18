@@ -73,6 +73,12 @@ class ResendVerificationRequest(BaseModel):
     email: EmailStr
 
 
+class VerifyEmailRequest(BaseModel):
+    """Schema for email verification with token."""
+
+    token: str
+
+
 class GuestUpgrade(BaseModel):
     """Schema for upgrading a guest account to a permanent account."""
 

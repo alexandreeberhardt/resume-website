@@ -1,9 +1,9 @@
 /**
- * Verify Email page - Handles /verify-email?token=... links
+ * Verify Email page - Handles /verify-email#token=... links
  */
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams, Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Loader2, CheckCircle, AlertCircle, Mail } from 'lucide-react'
 import { verifyEmail } from '../api/auth'
 import { ApiError } from '../api/client'
@@ -14,8 +14,9 @@ type VerifyState = 'loading' | 'success' | 'error'
 
 export default function VerifyEmailPage() {
   const { t } = useTranslation()
-  const [searchParams] = useSearchParams()
-  const token = searchParams.get('token') || ''
+  const location = useLocation()
+  // SECURITY: Read token from URL fragment so it isn't sent in HTTP requests
+  const token = new URLSearchParams(location.hash.replace(/^#/, '')).get('token') || ''
 
   const [state, setState] = useState<VerifyState>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)

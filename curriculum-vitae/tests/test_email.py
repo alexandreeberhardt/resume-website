@@ -84,7 +84,7 @@ class TestSendPasswordResetEmail:
         send_password_reset_email("u@e.com", "my-jwt-token")
 
         html_body = mock_send.call_args[0][2]
-        assert "sivee.pro/reset-password?token=my-jwt-token" in html_body
+        assert "sivee.pro/reset-password#token=my-jwt-token" in html_body
 
     @patch("core.email.send_email")
     def test_mentions_30_minute_expiry(self, mock_send):
