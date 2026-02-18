@@ -21,9 +21,13 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Add google_id column and make password_hash nullable."""
-    # Add google_id column
-    op.add_column("users", sa.Column("google_id", sa.String(length=255), nullable=True))
-    op.create_index(op.f("ix_users_google_id"), "users", ["google_id"], unique=True)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("users")]
+
+    if "google_id" not in existing_columns:
+        op.add_column("users", sa.Column("google_id", sa.String(length=255), nullable=True))
+        op.create_index(op.f("ix_users_google_id"), "users", ["google_id"], unique=True)
 
     # Make password_hash nullable for OAuth users
     op.alter_column("users", "password_hash", existing_type=sa.String(length=255), nullable=True)

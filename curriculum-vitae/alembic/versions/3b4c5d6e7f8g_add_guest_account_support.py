@@ -21,15 +21,19 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Add is_guest and created_at columns to users table."""
-    # Add is_guest column with default False
-    op.add_column(
-        "users",
-        sa.Column("is_guest", sa.Boolean(), nullable=False, server_default=sa.text("false")),
-    )
-    op.create_index(op.f("ix_users_is_guest"), "users", ["is_guest"], unique=False)
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("users")]
 
-    # Add created_at column
-    op.add_column("users", sa.Column("created_at", sa.DateTime(timezone=True), nullable=True))
+    if "is_guest" not in existing_columns:
+        op.add_column(
+            "users",
+            sa.Column("is_guest", sa.Boolean(), nullable=False, server_default=sa.text("false")),
+        )
+        op.create_index(op.f("ix_users_is_guest"), "users", ["is_guest"], unique=False)
+
+    if "created_at" not in existing_columns:
+        op.add_column("users", sa.Column("created_at", sa.DateTime(timezone=True), nullable=True))
 
 
 def downgrade() -> None:

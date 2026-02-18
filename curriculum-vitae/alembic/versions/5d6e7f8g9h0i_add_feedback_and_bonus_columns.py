@@ -21,47 +21,54 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Add feedback_completed_at, bonus_resumes, bonus_downloads and feedbacks table."""
-    # Add bonus columns to users
-    op.add_column(
-        "users",
-        sa.Column("feedback_completed_at", sa.DateTime(timezone=True), nullable=True),
-    )
-    op.add_column(
-        "users",
-        sa.Column("bonus_resumes", sa.Integer(), nullable=False, server_default=sa.text("0")),
-    )
-    op.add_column(
-        "users",
-        sa.Column("bonus_downloads", sa.Integer(), nullable=False, server_default=sa.text("0")),
-    )
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_user_columns = [col["name"] for col in inspector.get_columns("users")]
 
-    # Create feedbacks table
-    op.create_table(
-        "feedbacks",
-        sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column(
-            "user_id",
-            sa.Integer(),
-            sa.ForeignKey("users.id", ondelete="CASCADE"),
-            nullable=False,
-        ),
-        sa.Column("profile", sa.String(100), nullable=True),
-        sa.Column("target_sector", sa.String(255), nullable=True),
-        sa.Column("source", sa.String(100), nullable=True),
-        sa.Column("ease_rating", sa.Integer(), nullable=False),
-        sa.Column("time_spent", sa.String(50), nullable=True),
-        sa.Column("obstacles", sa.Text(), nullable=True),
-        sa.Column("alternative", sa.String(255), nullable=True),
-        sa.Column("suggestions", sa.Text(), nullable=True),
-        sa.Column("nps", sa.Integer(), nullable=True),
-        sa.Column("future_help", sa.Text(), nullable=True),
-        sa.Column(
-            "created_at",
-            sa.DateTime(timezone=True),
-            server_default=sa.func.now(),
-        ),
-    )
-    op.create_index("ix_feedbacks_id", "feedbacks", ["id"])
+    if "feedback_completed_at" not in existing_user_columns:
+        op.add_column(
+            "users",
+            sa.Column("feedback_completed_at", sa.DateTime(timezone=True), nullable=True),
+        )
+    if "bonus_resumes" not in existing_user_columns:
+        op.add_column(
+            "users",
+            sa.Column("bonus_resumes", sa.Integer(), nullable=False, server_default=sa.text("0")),
+        )
+    if "bonus_downloads" not in existing_user_columns:
+        op.add_column(
+            "users",
+            sa.Column("bonus_downloads", sa.Integer(), nullable=False, server_default=sa.text("0")),
+        )
+
+    # Create feedbacks table if it doesn't exist
+    if "feedbacks" not in inspector.get_table_names():
+        op.create_table(
+            "feedbacks",
+            sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
+            sa.Column(
+                "user_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id", ondelete="CASCADE"),
+                nullable=False,
+            ),
+            sa.Column("profile", sa.String(100), nullable=True),
+            sa.Column("target_sector", sa.String(255), nullable=True),
+            sa.Column("source", sa.String(100), nullable=True),
+            sa.Column("ease_rating", sa.Integer(), nullable=False),
+            sa.Column("time_spent", sa.String(50), nullable=True),
+            sa.Column("obstacles", sa.Text(), nullable=True),
+            sa.Column("alternative", sa.String(255), nullable=True),
+            sa.Column("suggestions", sa.Text(), nullable=True),
+            sa.Column("nps", sa.Integer(), nullable=True),
+            sa.Column("future_help", sa.Text(), nullable=True),
+            sa.Column(
+                "created_at",
+                sa.DateTime(timezone=True),
+                server_default=sa.func.now(),
+            ),
+        )
+        op.create_index("ix_feedbacks_id", "feedbacks", ["id"])
 
 
 def downgrade() -> None:

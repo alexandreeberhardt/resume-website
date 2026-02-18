@@ -64,7 +64,6 @@ COPY curriculum-vitae/api ./api
 COPY curriculum-vitae/app.py ./
 COPY curriculum-vitae/translations.py ./
 COPY curriculum-vitae/templates ./templates
-COPY curriculum-vitae/data.yml ./
 
 # Copier Alembic pour les migrations
 COPY curriculum-vitae/alembic ./alembic

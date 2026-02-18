@@ -21,18 +21,25 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Add is_premium, download_count, download_count_reset_at columns to users table."""
-    op.add_column(
-        "users",
-        sa.Column("is_premium", sa.Boolean(), nullable=False, server_default=sa.text("false")),
-    )
-    op.add_column(
-        "users",
-        sa.Column("download_count", sa.Integer(), nullable=False, server_default=sa.text("0")),
-    )
-    op.add_column(
-        "users",
-        sa.Column("download_count_reset_at", sa.DateTime(timezone=True), nullable=True),
-    )
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+    existing_columns = [col["name"] for col in inspector.get_columns("users")]
+
+    if "is_premium" not in existing_columns:
+        op.add_column(
+            "users",
+            sa.Column("is_premium", sa.Boolean(), nullable=False, server_default=sa.text("false")),
+        )
+    if "download_count" not in existing_columns:
+        op.add_column(
+            "users",
+            sa.Column("download_count", sa.Integer(), nullable=False, server_default=sa.text("0")),
+        )
+    if "download_count_reset_at" not in existing_columns:
+        op.add_column(
+            "users",
+            sa.Column("download_count_reset_at", sa.DateTime(timezone=True), nullable=True),
+        )
 
 
 def downgrade() -> None:
