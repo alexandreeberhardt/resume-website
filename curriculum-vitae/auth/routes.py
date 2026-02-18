@@ -46,6 +46,7 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 ACCESS_COOKIE_NAME = "access_token"
 CSRF_COOKIE_NAME = "csrf_token"
+OAUTH_STATE_COOKIE_NAME = "oauth_state"
 COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "lax").lower()
 _cookie_secure_default = "true" if os.environ.get("ENVIRONMENT", "").lower() == "production" else "false"
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", _cookie_secure_default).lower() == "true"
@@ -441,13 +442,25 @@ async def google_login() -> RedirectResponse:
     }
 
     auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
-    return RedirectResponse(url=auth_url)
+    response = RedirectResponse(url=auth_url)
+    # Bind OAuth state to the browser session to prevent login CSRF
+    response.set_cookie(
+        OAUTH_STATE_COOKIE_NAME,
+        state_nonce,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite=COOKIE_SAMESITE,
+        max_age=OAUTH_STATE_EXPIRE_MINUTES * 60,
+        path="/api/auth/google",
+    )
+    return response
 
 
 @router.get("/google/callback")
 async def google_callback(
     code: str,
     state: str,
+    request: Request,
     background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
 ) -> RedirectResponse:
@@ -470,6 +483,13 @@ async def google_callback(
     # Verify state token to prevent CSRF attacks
     state_payload = decode_access_token(state)
     if not state_payload or state_payload.get("type") != "oauth_state":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired state token",
+        )
+    state_cookie = request.cookies.get(OAUTH_STATE_COOKIE_NAME)
+    state_nonce = state_payload.get("nonce")
+    if not state_cookie or not state_nonce or not secrets.compare_digest(state_cookie, state_nonce):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired state token",
@@ -566,7 +586,9 @@ async def google_callback(
     frontend_url = os.environ.get("FRONTEND_URL", "https://sivee.pro")
     redirect_url = f"{frontend_url}?code={temp_code}"
 
-    return RedirectResponse(url=redirect_url)
+    response = RedirectResponse(url=redirect_url)
+    response.delete_cookie(OAUTH_STATE_COOKIE_NAME, path="/api/auth/google")
+    return response
 
 
 @router.post("/google/exchange", response_model=Token)
