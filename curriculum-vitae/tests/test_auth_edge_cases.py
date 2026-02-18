@@ -43,7 +43,7 @@ class TestRegisterEdgeCases:
         # Depending on implementation, could be 201 (case-sensitive) or 400 (case-insensitive)
         assert resp.status_code in (201, 400)
 
-    def test_register_returns_user_without_password(self, client):
+    def test_register_returns_message(self, client):
         resp = client.post(
             "/api/auth/register",
             json={
@@ -51,11 +51,11 @@ class TestRegisterEdgeCases:
                 "password": VALID_PASSWORD,
             },
         )
+        assert resp.status_code == 201
         data = resp.json()
+        assert "message" in data
         assert "password" not in data
         assert "password_hash" not in data
-        assert "email" in data
-        assert "id" in data
 
     def test_register_empty_email(self, client):
         resp = client.post(

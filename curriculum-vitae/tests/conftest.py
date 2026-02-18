@@ -1,10 +1,12 @@
 """Shared fixtures for API integration tests."""
 
 import os
+import unittest.mock
 
 # Set test environment variables BEFORE importing app modules
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-unit-tests-only"
 os.environ["DATABASE_URL"] = "sqlite://"  # won't be used, but prevents ValueError
+os.environ["ZEPTOMAIL_API_KEY"] = ""  # disable real email sending in tests
 
 import pytest
 from fastapi.testclient import TestClient
@@ -13,7 +15,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app import app
 from database.db_config import get_db
-from database.models import Base, Resume
+from database.models import Base, Resume, User
 
 # SQLite doesn't support PostgreSQL's JSONB type natively.
 # Re-map the JSONB column to JSON for test compatibility.
@@ -38,6 +40,26 @@ def _set_sqlite_pragma(dbapi_conn, connection_record):
 
 
 _TestSession = sessionmaker(bind=_engine)
+
+
+@pytest.fixture(autouse=True)
+def _mock_email():
+    """Prevent any real email sending during tests."""
+    with unittest.mock.patch("core.email.send_email"):
+        yield
+
+
+@pytest.fixture(autouse=True)
+def _auto_verify():
+    """Auto-verify non-guest users on insert so tests can log in immediately."""
+
+    def _set_verified(mapper, connection, target):
+        if not target.is_guest:
+            target.is_verified = True
+
+    event.listen(User, "before_insert", _set_verified)
+    yield
+    event.remove(User, "before_insert", _set_verified)
 
 
 @pytest.fixture()
@@ -75,11 +97,10 @@ VALID_PASSWORD = "TestPass123!@#"
 
 def register_user(
     client: TestClient, email: str = "test@example.com", password: str = VALID_PASSWORD
-) -> dict:
-    """Register a user and return the response JSON."""
+) -> None:
+    """Register a user (sends verification email; auto-verified in tests)."""
     resp = client.post("/api/auth/register", json={"email": email, "password": password})
     assert resp.status_code == 201, resp.text
-    return resp.json()
 
 
 def login_user(

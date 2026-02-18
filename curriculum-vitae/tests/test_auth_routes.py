@@ -19,9 +19,7 @@ class TestRegister:
         )
         assert resp.status_code == 201
         data = resp.json()
-        assert data["email"] == "new@example.com"
-        assert data["is_guest"] is False
-        assert "id" in data
+        assert "message" in data
 
     def test_register_duplicate_email(self, client):
         register_user(client, email="dup@example.com")
