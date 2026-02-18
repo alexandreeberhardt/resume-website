@@ -199,7 +199,7 @@ def _exchange_oauth_code(code: str) -> str | None:
 VERIFICATION_TOKEN_EXPIRE_HOURS = 24
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_200_OK)
 async def register(
     request: Request,
     user_data: UserCreate,
@@ -220,13 +220,13 @@ async def register(
     """
     _enforce_rate_limit(request, "register")
 
+    # Use a uniform response to avoid email enumeration
+    generic_message = "If this email is not registered, a verification email has been sent."
+
     # Check if email already exists
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered",
-        )
+        return {"message": generic_message}
 
     # Create new user with hashed password (unverified by default)
     hashed_password = get_password_hash(user_data.password)
@@ -251,7 +251,7 @@ async def register(
     )
     background_tasks.add_task(send_verification_email, new_user.email, verification_token)
 
-    return {"message": "Verification email sent. Please check your inbox."}
+    return {"message": generic_message}
 
 
 @router.post("/login", response_model=Token)
@@ -359,7 +359,7 @@ async def create_guest_account(
     return Token(access_token=access_token)
 
 
-@router.post("/upgrade", response_model=UserResponse)
+@router.post("/upgrade")
 async def upgrade_guest_account(
     upgrade_data: GuestUpgrade,
     background_tasks: BackgroundTasks,
@@ -389,13 +389,13 @@ async def upgrade_guest_account(
             detail="Only guest accounts can be upgraded",
         )
 
+    # Use a uniform response to avoid email enumeration
+    generic_message = "If this email is available, your account will be upgraded."
+
     # Check if email already exists
     existing_user = db.query(User).filter(User.email == upgrade_data.email).first()
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered",
-        )
+        return {"message": generic_message}
 
     # Upgrade the account (auto-verify since user is already authenticated)
     current_user.email = upgrade_data.email
@@ -408,7 +408,7 @@ async def upgrade_guest_account(
 
     background_tasks.add_task(send_welcome_email, current_user.email)
 
-    return current_user
+    return {"message": generic_message}
 
 
 @router.get("/google/login")
