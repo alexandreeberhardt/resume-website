@@ -9,6 +9,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import Account from './pages/Account'
 import ResetPassword from './pages/ResetPassword'
+import VerifyEmailPage from './pages/VerifyEmailPage'
 import './index.css'
 import './i18n'
 
@@ -33,6 +34,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
           {/* Password reset */}
           <Route path="/reset-password" element={<ResetPassword />} />
+
+          {/* Email verification */}
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
           {/* Main app */}
           <Route path="/*" element={<App />} />

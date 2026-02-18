@@ -7,10 +7,10 @@ import type { AuthResponse, User, LoginCredentials, RegisterCredentials } from '
 const API_URL = import.meta.env.DEV ? '' : ''
 
 /**
- * Register a new user
+ * Register a new user — returns a message, not a User (verification required)
  */
-export async function registerUser(credentials: RegisterCredentials): Promise<User> {
-  return api.post<User>('/auth/register', credentials)
+export async function registerUser(credentials: RegisterCredentials): Promise<{ message: string }> {
+  return api.post<{ message: string }>('/auth/register', credentials)
 }
 
 /**
@@ -117,6 +117,20 @@ export async function createGuestAccount(): Promise<AuthResponse> {
  */
 export async function upgradeGuestAccount(email: string, password: string): Promise<User> {
   return api.post<User>('/auth/upgrade', { email, password })
+}
+
+/**
+ * Verify email address using token from the verification link
+ */
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+  return api.get<{ message: string }>(`/auth/verify-email?token=${encodeURIComponent(token)}`)
+}
+
+/**
+ * Resend email verification link
+ */
+export async function resendVerification(email: string): Promise<{ message: string }> {
+  return api.post<{ message: string }>('/auth/resend-verification', { email })
 }
 
 /**

@@ -23,6 +23,7 @@ class User(Base):
     password_hash = Column(String(255), nullable=True)  # Nullable for OAuth users
     google_id = Column(String(255), unique=True, nullable=True, index=True)
     is_guest = Column(Boolean, default=False, nullable=False, index=True)
+    is_verified = Column(Boolean, default=False, nullable=False)
     is_premium = Column(Boolean, default=False, nullable=False)
     download_count = Column(Integer, default=0, nullable=False)
     download_count_reset_at = Column(DateTime(timezone=True), nullable=True)

@@ -3,13 +3,15 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Mail } from 'lucide-react'
 import Login from './Login'
 import Register from './Register'
 import ForgotPassword from './ForgotPassword'
 import ThemeToggle from '../ThemeToggle'
 import LanguageSwitcher from '../LanguageSwitcher'
+import { resendVerification } from '../../api/auth'
 
-type AuthMode = 'login' | 'register' | 'forgot-password'
+type AuthMode = 'login' | 'register' | 'forgot-password' | 'check-email'
 
 interface AuthPageProps {
   onContinueWithoutAuth?: () => void
@@ -18,6 +20,25 @@ interface AuthPageProps {
 export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
   const { t } = useTranslation()
   const [mode, setMode] = useState<AuthMode>('login')
+  const [pendingEmail, setPendingEmail] = useState('')
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSent, setResendSent] = useState(false)
+
+  const handleRegistered = (email: string) => {
+    setPendingEmail(email)
+    setResendSent(false)
+    setMode('check-email')
+  }
+
+  const handleResend = async () => {
+    setResendLoading(true)
+    try {
+      await resendVerification(pendingEmail)
+      setResendSent(true)
+    } finally {
+      setResendLoading(false)
+    }
+  }
 
   return (
     <div className="h-screen flex overflow-hidden">
@@ -146,7 +167,44 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
                     onSwitchToForgotPassword={() => setMode('forgot-password')}
                   />
                 ) : mode === 'register' ? (
-                  <Register onSwitchToLogin={() => setMode('login')} />
+                  <Register
+                    onSwitchToLogin={() => setMode('login')}
+                    onRegistered={handleRegistered}
+                  />
+                ) : mode === 'check-email' ? (
+                  <div className="w-full text-center py-2 animate-fade-in">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl mb-4">
+                      <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
+                      {t('auth.verifyEmail.checkEmail')}
+                    </h2>
+                    <p className="text-sm text-primary-600 dark:text-primary-300 mb-1">
+                      {t('auth.verifyEmail.checkEmailMessage')}
+                    </p>
+                    <p className="text-sm font-medium text-primary-900 dark:text-white mb-6">
+                      {pendingEmail}
+                    </p>
+                    {resendSent ? (
+                      <p className="text-sm text-success-600 dark:text-success-400 mb-4">
+                        {t('auth.verifyEmail.resendSuccess')}
+                      </p>
+                    ) : (
+                      <button
+                        onClick={handleResend}
+                        disabled={resendLoading}
+                        className="btn-secondary w-full mb-4"
+                      >
+                        {resendLoading ? t('common.loading') : t('auth.verifyEmail.resend')}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setMode('login')}
+                      className="text-sm text-brand hover:text-brand-hover transition-colors font-medium"
+                    >
+                      {t('auth.forgotPassword.backToLogin')}
+                    </button>
+                  </div>
                 ) : (
                   <ForgotPassword onSwitchToLogin={() => setMode('login')} />
                 )}

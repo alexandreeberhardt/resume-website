@@ -3,10 +3,10 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Mail, Lock, LogIn, AlertCircle, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Mail, Lock, LogIn, AlertCircle, Eye, EyeOff, RefreshCw } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { ApiError } from '../../api/client'
-import { loginWithGoogle } from '../../api/auth'
+import { loginWithGoogle, resendVerification } from '../../api/auth'
 
 interface LoginProps {
   onSwitchToRegister: () => void
@@ -21,23 +21,43 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isUnverified, setIsUnverified] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSent, setResendSent] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setIsUnverified(false)
+    setResendSent(false)
     setLoading(true)
 
     try {
       await login({ email, password })
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.detail || t('auth.errors.invalidCredentials'))
+        if (err.status === 403 && err.detail === 'email_not_verified') {
+          setIsUnverified(true)
+          setError(t('auth.errors.emailNotVerified'))
+        } else {
+          setError(err.detail || t('auth.errors.invalidCredentials'))
+        }
       } else {
         setError(t('auth.errors.generic'))
       }
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setResendLoading(true)
+    try {
+      await resendVerification(email)
+      setResendSent(true)
+    } finally {
+      setResendLoading(false)
     }
   }
 
@@ -56,11 +76,32 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
 
       {/* Error message */}
       {error && (
-        <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
-          <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-            <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+        <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl animate-shake">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+              <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+            </div>
+            <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
           </div>
-          <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
+          {isUnverified && (
+            <div className="mt-3 pt-3 border-t border-error-200 dark:border-error-500/30">
+              {resendSent ? (
+                <p className="text-xs text-success-600 dark:text-success-400">
+                  {t('auth.verifyEmail.resendSuccess')}
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendLoading}
+                  className="flex items-center gap-1.5 text-xs font-medium text-error-600 dark:text-error-400 hover:text-error-800 dark:hover:text-error-200 transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${resendLoading ? 'animate-spin' : ''}`} />
+                  {t('auth.verifyEmail.resend')}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 

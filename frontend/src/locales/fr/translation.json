@@ -77,7 +77,20 @@
       "emailExists": "Cet email est déjà utilisé",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
       "passwordRequirements": "Le mot de passe ne respecte pas les exigences",
-      "generic": "Une erreur est survenue"
+      "generic": "Une erreur est survenue",
+      "emailNotVerified": "Veuillez vérifier votre email avant de vous connecter."
+    },
+    "verifyEmail": {
+      "checkEmail": "Vérifiez votre boîte mail",
+      "checkEmailMessage": "Nous avons envoyé un lien de vérification à",
+      "resend": "Renvoyer l'email de vérification",
+      "resendSuccess": "Email de vérification renvoyé ! Vérifiez votre boîte mail.",
+      "verifying": "Vérification de votre email...",
+      "success": "Email vérifié !",
+      "successMessage": "Votre email a été vérifié. Vous pouvez maintenant vous connecter.",
+      "errorTitle": "Échec de la vérification",
+      "invalidLink": "Ce lien de vérification est invalide ou a expiré.",
+      "expiredHint": "Demandez un nouveau lien en vous connectant et en cliquant sur \"Renvoyer\"."
     },
     "loginWithGoogle": "Continuer avec Google",
     "orContinueWith": "ou continuer avec votre email",

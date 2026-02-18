@@ -21,11 +21,12 @@ import { loginWithGoogle } from '../../api/auth'
 
 interface RegisterProps {
   onSwitchToLogin: () => void
+  onRegistered: (email: string) => void
 }
 
-export default function Register({ onSwitchToLogin }: RegisterProps) {
+export default function Register({ onSwitchToLogin, onRegistered }: RegisterProps) {
   const { t, i18n } = useTranslation()
-  const { register, login } = useAuth()
+  const { register } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,7 +35,6 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const isFrench = i18n.language.startsWith('fr')
 
@@ -68,16 +68,7 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
 
     try {
       await register({ email, password })
-      setSuccess(true)
-      setLoading(false)
-
-      // Auto-login after successful registration
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      try {
-        await login({ email, password })
-      } catch {
-        onSwitchToLogin()
-      }
+      onRegistered(email)
     } catch (err) {
       setLoading(false)
       if (err instanceof ApiError) {
@@ -90,26 +81,6 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         setError(t('auth.errors.generic'))
       }
     }
-  }
-
-  if (success) {
-    return (
-      <div className="w-full text-center py-4 animate-fade-in">
-        <div className="inline-flex items-center justify-center w-10 h-10 bg-success-100 dark:bg-success-500/20 rounded-xl mb-4 animate-bounce-in">
-          <CheckCircle className="w-5 h-5 text-success-600 dark:text-success-400" />
-        </div>
-        <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
-          {t('auth.register.success')}
-        </h2>
-        <p className="text-sm text-black dark:text-white mb-5">
-          {t('auth.register.successMessage')}
-        </p>
-        <div className="flex items-center justify-center gap-2 text-brand">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span className="text-sm font-medium">{t('auth.loggingIn')}</span>
-        </div>
-      </div>
-    )
   }
 
   return (

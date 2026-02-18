@@ -77,7 +77,20 @@
       "emailExists": "This email is already in use",
       "passwordMismatch": "Passwords do not match",
       "passwordRequirements": "Password does not meet requirements",
-      "generic": "An error occurred"
+      "generic": "An error occurred",
+      "emailNotVerified": "Please verify your email before signing in."
+    },
+    "verifyEmail": {
+      "checkEmail": "Check your inbox",
+      "checkEmailMessage": "We sent a verification link to",
+      "resend": "Resend verification email",
+      "resendSuccess": "Verification email resent! Check your inbox.",
+      "verifying": "Verifying your email...",
+      "success": "Email verified!",
+      "successMessage": "Your email has been verified. You can now sign in.",
+      "errorTitle": "Verification failed",
+      "invalidLink": "This verification link is invalid or has expired.",
+      "expiredHint": "Request a new link by signing in and clicking \"Resend\"."
     },
     "loginWithGoogle": "Continue with Google",
     "orContinueWith": "or continue with your email",

@@ -21,6 +21,7 @@ from auth.schemas import (
     FeedbackResponse,
     ForgotPasswordRequest,
     GuestUpgrade,
+    ResendVerificationRequest,
     ResetPasswordRequest,
     Token,
     UserCreate,
@@ -33,7 +34,7 @@ from auth.security import (
     get_password_hash,
     verify_password,
 )
-from core.email import send_password_reset_email, send_welcome_email
+from core.email import send_password_reset_email, send_verification_email, send_welcome_email
 from database.db_config import get_db
 from database.models import Feedback, Resume, User
 
@@ -83,20 +84,23 @@ def _exchange_oauth_code(code: str) -> str | None:
     return jwt_token
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+VERIFICATION_TOKEN_EXPIRE_HOURS = 24
+
+
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
     user_data: UserCreate,
     background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
-) -> User:
-    """Register a new user.
+) -> dict[str, str]:
+    """Register a new user and send a verification email.
 
     Args:
         user_data: User registration data (email, password).
         db: Database session.
 
     Returns:
-        The created user (without password).
+        A message indicating that a verification email was sent.
 
     Raises:
         HTTPException: 400 if email already exists.
@@ -109,20 +113,30 @@ async def register(
             detail="Email already registered",
         )
 
-    # Create new user with hashed password
+    # Create new user with hashed password (unverified by default)
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
         email=user_data.email,
         password_hash=hashed_password,
+        is_verified=False,
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    background_tasks.add_task(send_welcome_email, new_user.email)
+    # Generate email verification token (valid 24h)
+    verification_token = create_access_token(
+        data={
+            "sub": str(new_user.id),
+            "email": new_user.email,
+            "type": "email_verification",
+        },
+        expires_delta=timedelta(hours=VERIFICATION_TOKEN_EXPIRE_HOURS),
+    )
+    background_tasks.add_task(send_verification_email, new_user.email, verification_token)
 
-    return new_user
+    return {"message": "Verification email sent. Please check your inbox."}
 
 
 @router.post("/login", response_model=Token)
@@ -153,6 +167,13 @@ async def login(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Block login for unverified users
+    if not user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="email_not_verified",
         )
 
     # Create access token with user ID as subject (must be string per JWT spec)
@@ -247,10 +268,11 @@ async def upgrade_guest_account(
             detail="Email already registered",
         )
 
-    # Upgrade the account
+    # Upgrade the account (auto-verify since user is already authenticated)
     current_user.email = upgrade_data.email
     current_user.password_hash = get_password_hash(upgrade_data.password)
     current_user.is_guest = False
+    current_user.is_verified = True
 
     db.commit()
     db.refresh(current_user)
@@ -378,17 +400,19 @@ async def google_callback(
         # Check if email already exists (user registered with password)
         existing_user = db.query(User).filter(User.email == email).first()
         if existing_user:
-            # Link Google account to existing user
+            # Link Google account to existing user (Google validates email)
             existing_user.google_id = google_id
+            existing_user.is_verified = True
             db.commit()
             user = existing_user
         else:
-            # Create new user
+            # Create new user (Google already validated the email)
             is_new_user = True
             user = User(
                 email=email,
                 google_id=google_id,
                 password_hash=None,
+                is_verified=True,
             )
             db.add(user)
             db.commit()
@@ -513,6 +537,82 @@ async def reset_password(
     db.commit()
 
     return {"message": "Password has been reset successfully."}
+
+
+# ============================================================================
+# Email Verification Endpoints
+# ============================================================================
+
+
+@router.get("/verify-email")
+async def verify_email(
+    token: str,
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, str]:
+    """Verify a user's email address using a verification token.
+
+    Args:
+        token: JWT email verification token from the link.
+        db: Database session.
+
+    Returns:
+        Success message on valid token.
+
+    Raises:
+        HTTPException: 400 if token is invalid or expired.
+    """
+    payload = decode_access_token(token)
+    if not payload or payload.get("type") != "email_verification":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired verification token",
+        )
+
+    user_id = payload.get("sub")
+    user = db.query(User).filter(User.id == int(user_id)).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired verification token",
+        )
+
+    user.is_verified = True
+    db.commit()
+
+    return {"message": "Email verified successfully."}
+
+
+@router.post("/resend-verification")
+async def resend_verification(
+    data: ResendVerificationRequest,
+    background_tasks: BackgroundTasks,
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, str]:
+    """Resend the email verification link.
+
+    Always returns 200 to avoid leaking whether an email is registered.
+
+    Args:
+        data: Request body containing the email address.
+        db: Database session.
+
+    Returns:
+        Generic success message.
+    """
+    user = db.query(User).filter(User.email == data.email).first()
+
+    if user and not user.is_verified and not user.is_guest:
+        verification_token = create_access_token(
+            data={
+                "sub": str(user.id),
+                "email": user.email,
+                "type": "email_verification",
+            },
+            expires_delta=timedelta(hours=VERIFICATION_TOKEN_EXPIRE_HOURS),
+        )
+        background_tasks.add_task(send_verification_email, user.email, verification_token)
+
+    return {"message": "If this email is pending verification, a new link has been sent."}
 
 
 # ============================================================================

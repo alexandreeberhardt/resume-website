@@ -60,10 +60,17 @@ class UserResponse(BaseModel):
     id: int
     email: str
     is_guest: bool = False
+    is_verified: bool = True
     is_premium: bool = False
     feedback_completed_at: str | None = None
 
     model_config = {"from_attributes": True}
+
+
+class ResendVerificationRequest(BaseModel):
+    """Schema for resend-verification request."""
+
+    email: EmailStr
 
 
 class GuestUpgrade(BaseModel):
