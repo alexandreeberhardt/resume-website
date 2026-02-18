@@ -24,7 +24,7 @@ def test_register_rate_limited(client, monkeypatch):
         "/api/auth/register",
         json={"email": "rl1@example.com", "password": "StrongPass123!"},
     )
-    assert resp1.status_code == 201
+    assert resp1.status_code == 200
 
     resp2 = client.post(
         "/api/auth/register",

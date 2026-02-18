@@ -19,7 +19,7 @@ class TestRegister:
                 "password": VALID_PASSWORD,
             },
         )
-        assert resp.status_code == 201
+        assert resp.status_code == 200
         data = resp.json()
         assert "message" in data
 
@@ -32,7 +32,8 @@ class TestRegister:
                 "password": VALID_PASSWORD,
             },
         )
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        assert "message" in resp.json()
 
     def test_register_weak_password_too_short(self, client):
         resp = client.post(
@@ -131,18 +132,22 @@ class TestGuestAccount:
 
     def test_upgrade_guest(self, client):
         token = client.post("/api/auth/guest").json()["access_token"]
+        headers = auth_header(token)
         resp = client.post(
             "/api/auth/upgrade",
             json={
                 "email": "upgraded@example.com",
                 "password": VALID_PASSWORD,
             },
-            headers=auth_header(token),
+            headers=headers,
         )
         assert resp.status_code == 200
-        data = resp.json()
-        assert data["email"] == "upgraded@example.com"
-        assert data["is_guest"] is False
+        assert "message" in resp.json()
+
+        me = client.get("/api/auth/me", headers=headers)
+        assert me.status_code == 200
+        assert me.json()["email"] == "upgraded@example.com"
+        assert me.json()["is_guest"] is False
 
     def test_upgrade_non_guest_fails(self, client):
         token = create_authenticated_user(client)
@@ -167,7 +172,8 @@ class TestGuestAccount:
             },
             headers=auth_header(token),
         )
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        assert "message" in resp.json()
 
 
 class TestMe:

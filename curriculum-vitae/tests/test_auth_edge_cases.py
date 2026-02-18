@@ -27,7 +27,7 @@ class TestRegisterEdgeCases:
                 "password": VALID_PASSWORD,
             },
         )
-        assert resp.status_code == 201
+        assert resp.status_code == 200
 
     def test_register_case_sensitivity(self, client):
         """Email should be case-insensitive for uniqueness check."""
@@ -40,8 +40,8 @@ class TestRegisterEdgeCases:
                 "password": VALID_PASSWORD,
             },
         )
-        # Depending on implementation, could be 201 (case-sensitive) or 400 (case-insensitive)
-        assert resp.status_code in (201, 400)
+        # Uniform anti-enumeration response
+        assert resp.status_code == 200
 
     def test_register_returns_message(self, client):
         resp = client.post(
@@ -51,7 +51,7 @@ class TestRegisterEdgeCases:
                 "password": VALID_PASSWORD,
             },
         )
-        assert resp.status_code == 201
+        assert resp.status_code == 200
         data = resp.json()
         assert "message" in data
         assert "password" not in data
@@ -141,7 +141,10 @@ class TestGuestAccountEdgeCases:
             headers=headers,
         )
         assert resp.status_code == 200
-        assert resp.json()["is_guest"] is False
+        assert "message" in resp.json()
+        me = client.get("/api/auth/me", headers=headers)
+        assert me.status_code == 200
+        assert me.json()["is_guest"] is False
 
     def test_upgrade_can_login_with_new_credentials(self, client):
         resp = client.post("/api/auth/guest")

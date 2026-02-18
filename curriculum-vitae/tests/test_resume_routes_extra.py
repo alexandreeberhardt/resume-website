@@ -153,8 +153,8 @@ class TestAuthEdgeCases:
             "/api/auth/register",
             json={"email": "dup@test.com", "password": VALID_PASSWORD},
         )
-        assert resp.status_code == 400
-        assert "already registered" in resp.json()["detail"]
+        assert resp.status_code == 200
+        assert "message" in resp.json()
 
     def test_login_case_sensitive_email(self, client):
         register_user(client, email="user@test.com")
@@ -186,8 +186,8 @@ class TestAuthEdgeCases:
             json={"email": "taken@test.com", "password": VALID_PASSWORD},
             headers=auth_header(guest_token),
         )
-        assert resp.status_code == 400
-        assert "already registered" in resp.json()["detail"]
+        assert resp.status_code == 200
+        assert "message" in resp.json()
 
     def test_upgrade_regular_user_fails(self, client):
         token = create_authenticated_user(client)
@@ -202,15 +202,19 @@ class TestAuthEdgeCases:
     def test_upgrade_guest_success(self, client):
         resp = client.post("/api/auth/guest")
         guest_token = resp.json()["access_token"]
+        headers = auth_header(guest_token)
 
         resp = client.post(
             "/api/auth/upgrade",
             json={"email": "upgraded@test.com", "password": VALID_PASSWORD},
-            headers=auth_header(guest_token),
+            headers=headers,
         )
         assert resp.status_code == 200
-        assert resp.json()["email"] == "upgraded@test.com"
-        assert resp.json()["is_guest"] is False
+        assert "message" in resp.json()
+        me = client.get("/api/auth/me", headers=headers)
+        assert me.status_code == 200
+        assert me.json()["email"] == "upgraded@test.com"
+        assert me.json()["is_guest"] is False
 
     def test_upgraded_guest_can_login(self, client):
         resp = client.post("/api/auth/guest")

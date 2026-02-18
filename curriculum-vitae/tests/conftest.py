@@ -109,7 +109,8 @@ def register_user(
 ) -> None:
     """Register a user (sends verification email; auto-verified in tests)."""
     resp = client.post("/api/auth/register", json={"email": email, "password": password})
-    assert resp.status_code == 201, resp.text
+    assert resp.status_code == 200, resp.text
+    assert "message" in resp.json()
 
 
 def login_user(

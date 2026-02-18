@@ -238,6 +238,21 @@ SIZE_VARIANTS = ["large", "normal", "compact"]
 STATIC_DIR = TEMPLATE_DIR / "static"
 
 
+def _resolve_static_path(static_root: Path, requested_path: str) -> Path | None:
+    """Resolve a requested static path and ensure it stays under static_root.
+
+    Returns:
+        Resolved path if it is contained in static_root, otherwise None.
+    """
+    root_resolved = static_root.resolve()
+    candidate = (root_resolved / requested_path).resolve(strict=False)
+    try:
+        candidate.relative_to(root_resolved)
+    except ValueError:
+        return None
+    return candidate
+
+
 def get_template_with_size(base_template: str, size: str) -> str:
     """Retourne le nom du template avec le suffixe de taille approprié."""
     if size == "normal":
@@ -1159,7 +1174,11 @@ if STATIC_DIR.exists():
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         """Route catch-all pour servir le SPA React."""
-        file_path = STATIC_DIR / full_path
+        file_path = _resolve_static_path(STATIC_DIR, full_path)
+
+        # SECURITY: Block path traversal attempts outside STATIC_DIR
+        if file_path is None:
+            raise HTTPException(status_code=404, detail="Not found")
 
         if file_path.is_file():
             return FileResponse(file_path)

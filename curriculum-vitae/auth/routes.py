@@ -365,7 +365,7 @@ async def upgrade_guest_account(
     background_tasks: BackgroundTasks,
     current_user: CurrentUser,
     db: Annotated[Session, Depends(get_db)],
-) -> User:
+) -> dict[str, str]:
     """Upgrade a guest account to a permanent account.
 
     Converts a guest account to a full account by adding email and password.
@@ -377,7 +377,7 @@ async def upgrade_guest_account(
         db: Database session.
 
     Returns:
-        The upgraded user.
+        A generic success message.
 
     Raises:
         HTTPException: 400 if user is not a guest or email already exists.
