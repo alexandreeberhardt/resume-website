@@ -14,6 +14,7 @@ from sqlalchemy import JSON, StaticPool, create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
 from app import app
+from auth.routes import _reset_rate_limit_state
 from database.db_config import get_db
 from database.models import Base, Resume, User
 
@@ -47,6 +48,14 @@ def _mock_email():
     """Prevent any real email sending during tests."""
     with unittest.mock.patch("core.email.send_email"):
         yield
+
+
+@pytest.fixture(autouse=True)
+def _reset_auth_rate_limiter():
+    """Ensure auth rate limiter state is isolated between tests."""
+    _reset_rate_limit_state()
+    yield
+    _reset_rate_limit_state()
 
 
 @pytest.fixture(autouse=True)

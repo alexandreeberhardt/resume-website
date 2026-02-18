@@ -5,12 +5,14 @@ import os
 import secrets
 import time
 import uuid
+from collections import deque
 from datetime import UTC, datetime, timedelta
+from threading import Lock
 from typing import Annotated
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -64,6 +66,76 @@ OAUTH_STATE_EXPIRE_MINUTES = 5
 # In production, consider using Redis for multi-instance deployments
 _oauth_code_store: dict[str, tuple[str, float]] = {}
 OAUTH_CODE_EXPIRE_SECONDS = 60  # Code expires in 1 minute
+
+# Auth endpoint rate limiting (in-memory, per process).
+# For multi-instance deployments, use a shared store (e.g., Redis).
+RATE_LIMIT_CONFIG = {
+    "register": (
+        int(os.environ.get("AUTH_REGISTER_MAX_REQUESTS", "15")),
+        int(os.environ.get("AUTH_REGISTER_WINDOW_SECONDS", "3600")),
+    ),
+    "login": (
+        int(os.environ.get("AUTH_LOGIN_MAX_REQUESTS", "30")),
+        int(os.environ.get("AUTH_LOGIN_WINDOW_SECONDS", "60")),
+    ),
+    "forgot_password": (
+        int(os.environ.get("AUTH_FORGOT_MAX_REQUESTS", "10")),
+        int(os.environ.get("AUTH_FORGOT_WINDOW_SECONDS", "900")),
+    ),
+    "resend_verification": (
+        int(os.environ.get("AUTH_RESEND_MAX_REQUESTS", "10")),
+        int(os.environ.get("AUTH_RESEND_WINDOW_SECONDS", "900")),
+    ),
+}
+_rate_limit_store: dict[str, deque[float]] = {}
+_rate_limit_lock = Lock()
+
+
+def _get_client_ip(request: Request) -> str:
+    """Extract client IP, preferring X-Forwarded-For when behind a reverse proxy."""
+    forwarded_for = request.headers.get("x-forwarded-for", "")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+def _enforce_rate_limit(request: Request, action: str) -> None:
+    """Enforce per-IP request limits for sensitive auth endpoints."""
+    if action not in RATE_LIMIT_CONFIG:
+        return
+
+    max_requests, window_seconds = RATE_LIMIT_CONFIG[action]
+    client_ip = _get_client_ip(request)
+    key = f"{action}:{client_ip}"
+    now = time.time()
+    cutoff = now - window_seconds
+
+    with _rate_limit_lock:
+        timestamps = _rate_limit_store.get(key)
+        if timestamps is None:
+            timestamps = deque()
+            _rate_limit_store[key] = timestamps
+
+        while timestamps and timestamps[0] <= cutoff:
+            timestamps.popleft()
+
+        if len(timestamps) >= max_requests:
+            retry_after = max(1, int(window_seconds - (now - timestamps[0])) + 1)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many authentication attempts. Please try again later.",
+                headers={"Retry-After": str(retry_after)},
+            )
+
+        timestamps.append(now)
+
+
+def _reset_rate_limit_state() -> None:
+    """Reset in-memory limiter state (used by tests)."""
+    with _rate_limit_lock:
+        _rate_limit_store.clear()
 
 
 def _set_auth_cookies(response: Response, jwt_token: str) -> None:
@@ -128,6 +200,7 @@ VERIFICATION_TOKEN_EXPIRE_HOURS = 24
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
+    request: Request,
     user_data: UserCreate,
     background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
@@ -144,6 +217,8 @@ async def register(
     Raises:
         HTTPException: 400 if email already exists.
     """
+    _enforce_rate_limit(request, "register")
+
     # Check if email already exists
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
@@ -180,6 +255,7 @@ async def register(
 
 @router.post("/login", response_model=Token)
 async def login(
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     response: Response,
     db: Annotated[Session, Depends(get_db)],
@@ -199,6 +275,8 @@ async def login(
     Raises:
         HTTPException: 401 if credentials are invalid.
     """
+    _enforce_rate_limit(request, "login")
+
     # Find user by email (OAuth2 uses 'username' field)
     user = db.query(User).filter(User.email == form_data.username).first()
 
@@ -527,6 +605,7 @@ RESET_TOKEN_EXPIRE_MINUTES = 30
 
 @router.post("/forgot-password")
 async def forgot_password(
+    request: Request,
     data: ForgotPasswordRequest,
     background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
@@ -536,6 +615,8 @@ async def forgot_password(
     Always returns 200 with a generic message to avoid leaking
     whether an email is registered.
     """
+    _enforce_rate_limit(request, "forgot_password")
+
     user = db.query(User).filter(User.email == data.email).first()
 
     if user and user.password_hash:
@@ -634,6 +715,7 @@ async def verify_email(
 
 @router.post("/resend-verification")
 async def resend_verification(
+    request: Request,
     data: ResendVerificationRequest,
     background_tasks: BackgroundTasks,
     db: Annotated[Session, Depends(get_db)],
@@ -649,6 +731,8 @@ async def resend_verification(
     Returns:
         Generic success message.
     """
+    _enforce_rate_limit(request, "resend_verification")
+
     user = db.query(User).filter(User.email == data.email).first()
 
     if user and not user.is_verified and not user.is_guest:
