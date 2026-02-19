@@ -533,8 +533,10 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     source_text = source_text_by_lang.get(lang, "from sivee.pro")
     watermark_text = (
         r"\shortstack{"
+        r"{\fontsize{180}{196}\selectfont "
         + main_text
-        + r"\\{\large "
+        + r"}\\"
+        r"{\fontsize{80}{88}\selectfont "
         + source_text
         + r"}}"
     )
@@ -595,6 +597,7 @@ async def generate_cv(
 
         # Préparer les données pour le rendu (avec titres traduits)
         lang = data.lang if data.lang in ("fr", "en") else "fr"
+        watermark_lang = data.lang if data.lang in ("en", "fr", "es", "pt", "it", "de") else "en"
         render_data: dict[str, Any] = {
             "personal": data.personal.model_dump(),
             "sections": [convert_section_items(s, lang) for s in data.sections],
@@ -604,7 +607,7 @@ async def generate_cv(
         renderer = LatexRenderer(temp_path, template_filename)
         tex_content = renderer.render(render_data)
         if preview:
-            tex_content = _apply_preview_watermark(tex_content, lang)
+            tex_content = _apply_preview_watermark(tex_content, watermark_lang)
 
         # Écrire le fichier .tex
         tex_file = temp_path / "main.tex"
