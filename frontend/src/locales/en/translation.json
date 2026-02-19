@@ -44,8 +44,17 @@
       "subtitle": "Register to save your resumes",
       "button": "Register",
       "link": "Create an account",
+      "terms": "I accept the Terms of Service and Privacy Policy.",
       "success": "Account created!",
       "successMessage": "Signing you in..."
+    },
+    "passwordRequirements": "Password requirements",
+    "passwordChecks": {
+      "length": "At least 12 characters",
+      "uppercase": "At least one uppercase letter",
+      "lowercase": "At least one lowercase letter",
+      "digit": "At least one digit",
+      "special": "At least one special character (!@#$...)"
     },
     "passwordRules": {
       "length": "At least 12 characters",

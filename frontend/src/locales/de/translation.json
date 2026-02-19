@@ -44,8 +44,17 @@
       "subtitle": "Registrieren Sie sich, um Ihre Lebensläufe zu speichern",
       "button": "Registrieren",
       "link": "Konto erstellen",
+      "terms": "Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.",
       "success": "Konto erstellt!",
       "successMessage": "Anmeldung läuft..."
+    },
+    "passwordRequirements": "Passwortanforderungen",
+    "passwordChecks": {
+      "length": "Mindestens 12 Zeichen",
+      "uppercase": "Mindestens ein Großbuchstabe",
+      "lowercase": "Mindestens ein Kleinbuchstabe",
+      "digit": "Mindestens eine Ziffer",
+      "special": "Mindestens ein Sonderzeichen (!@#$...)"
     },
     "passwordRules": {
       "length": "Mindestens 12 Zeichen",

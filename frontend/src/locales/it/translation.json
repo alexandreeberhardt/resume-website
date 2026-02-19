@@ -44,8 +44,17 @@
       "subtitle": "Registrati per salvare i tuoi curriculum",
       "button": "Registrati",
       "link": "Crea un account",
+      "terms": "Accetto i Termini di Servizio e la Politica sulla Privacy.",
       "success": "Account creato!",
       "successMessage": "Accesso in corso..."
+    },
+    "passwordRequirements": "Requisiti della password",
+    "passwordChecks": {
+      "length": "Almeno 12 caratteri",
+      "uppercase": "Almeno una maiuscola",
+      "lowercase": "Almeno una minuscola",
+      "digit": "Almeno una cifra",
+      "special": "Almeno un carattere speciale (!@#$...)"
     },
     "passwordRules": {
       "length": "Almeno 12 caratteri",

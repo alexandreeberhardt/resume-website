@@ -44,8 +44,17 @@
       "subtitle": "Inscrivez-vous pour sauvegarder vos CV",
       "button": "S'inscrire",
       "link": "Créer un compte",
+      "terms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
       "success": "Compte créé !",
       "successMessage": "Connexion en cours..."
+    },
+    "passwordRequirements": "Exigences du mot de passe",
+    "passwordChecks": {
+      "length": "Au moins 12 caractères",
+      "uppercase": "Au moins une majuscule",
+      "lowercase": "Au moins une minuscule",
+      "digit": "Au moins un chiffre",
+      "special": "Au moins un caractère spécial (!@#$...)"
     },
     "passwordRules": {
       "length": "Au moins 12 caractères",

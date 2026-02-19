@@ -44,8 +44,17 @@
       "subtitle": "Registe-se para guardar os seus currículos",
       "button": "Registar",
       "link": "Criar uma conta",
+      "terms": "Aceito os Termos de Serviço e a Política de Privacidade.",
       "success": "Conta criada!",
       "successMessage": "A iniciar sessão..."
+    },
+    "passwordRequirements": "Requisitos da palavra-passe",
+    "passwordChecks": {
+      "length": "Pelo menos 12 caracteres",
+      "uppercase": "Pelo menos uma maiúscula",
+      "lowercase": "Pelo menos uma minúscula",
+      "digit": "Pelo menos um dígito",
+      "special": "Pelo menos um carácter especial (!@#$...)"
     },
     "passwordRules": {
       "length": "Pelo menos 12 caracteres",

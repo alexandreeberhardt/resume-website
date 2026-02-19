@@ -85,6 +85,19 @@ function App() {
 
   const handleLimitError = () => setIsLimitError(true)
 
+  useEffect(() => {
+    if (!isLimitError || !error || isGuest) return
+    const guestLimitMessages = new Set([
+      t('guest.limitReached'),
+      t('guest.saveLimitReached'),
+      t('guest.downloadLimitReached'),
+    ])
+    if (guestLimitMessages.has(error)) {
+      setError(null)
+      setIsLimitError(false)
+    }
+  }, [error, isGuest, isLimitError, t])
+
   const resumeManager = useResumeManager({
     isAuthenticated,
     setData,
