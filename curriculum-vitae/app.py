@@ -534,7 +534,7 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     watermark_text = (
         r"\shortstack{"
         + main_text
-        + r"\\{\normalsize "
+        + r"\\{\small "
         + source_text
         + r"}}"
     )
