@@ -508,6 +508,28 @@ def _enforce_generation_quota(user: User, db: Any) -> None:
         )
 
 
+def _apply_preview_watermark(tex_content: str, lang: str) -> str:
+    """Inject a subtle watermark in LaTeX preamble for preview PDFs."""
+    if "% PREVIEW_WATERMARK_BEGIN" in tex_content:
+        return tex_content
+
+    watermark_text = r"Aper\c{c}u" if lang == "fr" else "Preview"
+    snippet = (
+        "\n% PREVIEW_WATERMARK_BEGIN\n"
+        "\\usepackage{draftwatermark}\n"
+        f"\\SetWatermarkText{{{watermark_text}}}\n"
+        "\\SetWatermarkScale{1.6}\n"
+        "\\SetWatermarkAngle{45}\n"
+        "\\SetWatermarkLightness{0.93}\n"
+        "% PREVIEW_WATERMARK_END\n"
+    )
+
+    marker = "\\begin{document}"
+    if marker in tex_content:
+        return tex_content.replace(marker, snippet + marker, 1)
+    return tex_content + snippet
+
+
 @app.post("/generate")
 async def generate_cv(
     data: ResumeData,
@@ -557,6 +579,8 @@ async def generate_cv(
         # Rendre le template LaTeX
         renderer = LatexRenderer(temp_path, template_filename)
         tex_content = renderer.render(render_data)
+        if preview:
+            tex_content = _apply_preview_watermark(tex_content, lang)
 
         # Écrire le fichier .tex
         tex_file = temp_path / "main.tex"
