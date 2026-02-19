@@ -91,6 +91,41 @@ function App() {
 
   const handleLimitError = () => setIsLimitError(true)
 
+  const draftKey = user?.id ? `resume_draft_unverified_${user.id}` : null
+  const isResumeEmpty = (value: ResumeData) => {
+    if (value.personal.name || value.personal.title || value.personal.location) return false
+    if (value.personal.email || value.personal.phone) return false
+    if (value.personal.links?.length) return false
+    if (value.sections.length) return false
+    return true
+  }
+
+  useEffect(() => {
+    if (!user || user.isGuest || user.isVerified !== false || !draftKey) return
+    if (isResumeEmpty(data)) return
+    try {
+      localStorage.setItem(draftKey, JSON.stringify(data))
+    } catch {
+      // Ignore storage errors
+    }
+  }, [data, user])
+
+  useEffect(() => {
+    if (!user || user.isVerified !== true || !draftKey) return
+    if (!isResumeEmpty(data)) return
+    try {
+      const raw = localStorage.getItem(draftKey)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as ResumeData
+      setData(parsed)
+      setShowLanding(false)
+      setShowResumesPage(false)
+      localStorage.removeItem(draftKey)
+    } catch {
+      // Ignore storage errors
+    }
+  }, [data, setShowLanding, setShowResumesPage, user])
+
   useEffect(() => {
     if (!isLimitError || !error || isGuest) return
     const guestLimitMessages = new Set([
