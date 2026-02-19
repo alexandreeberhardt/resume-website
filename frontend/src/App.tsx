@@ -204,7 +204,7 @@ function App() {
     return <AuthPage onContinueWithoutAuth={loginAsGuest} />
   }
 
-  if (user && user.isVerified === false) {
+  if (user && user.isVerified === false && !user.isGuest) {
     const handleResendVerification = async () => {
       setResendLoading(true)
       try {
