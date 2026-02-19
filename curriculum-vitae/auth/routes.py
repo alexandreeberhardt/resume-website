@@ -411,16 +411,24 @@ async def upgrade_guest_account(
             detail="Email already in use",
         )
 
-    # Upgrade the account (auto-verify since user is already authenticated)
+    # Upgrade the account (requires email verification like normal registration)
     current_user.email = upgrade_data.email
     current_user.password_hash = get_password_hash(upgrade_data.password)
     current_user.is_guest = False
-    current_user.is_verified = True
+    current_user.is_verified = False
 
     db.commit()
     db.refresh(current_user)
 
-    background_tasks.add_task(send_welcome_email, current_user.email)
+    verification_token = create_access_token(
+        data={
+            "sub": str(current_user.id),
+            "email": current_user.email,
+            "type": "email_verification",
+        },
+        expires_delta=timedelta(hours=VERIFICATION_TOKEN_EXPIRE_HOURS),
+    )
+    background_tasks.add_task(send_verification_email, current_user.email, verification_token)
 
     # Refresh auth cookies with updated claims
     access_token = create_access_token(

@@ -144,6 +144,7 @@ class TestGuestAccount:
         assert resp.status_code == 200
         assert resp.json()["email"] == "upgraded@example.com"
         assert resp.json()["is_guest"] is False
+        assert resp.json()["is_verified"] is False
 
         me = client.get("/api/auth/me", headers=headers)
         assert me.status_code == 200

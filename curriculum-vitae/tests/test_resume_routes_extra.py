@@ -216,7 +216,7 @@ class TestAuthEdgeCases:
         assert me.json()["email"] == "upgraded@test.com"
         assert me.json()["is_guest"] is False
 
-    def test_upgraded_guest_can_login(self, client):
+    def test_upgraded_guest_requires_verification(self, client):
         resp = client.post("/api/auth/guest")
         guest_token = resp.json()["access_token"]
 
@@ -227,10 +227,12 @@ class TestAuthEdgeCases:
         )
 
         # Now login with the new credentials
-        token = login_user(client, email="logintest@test.com")
-        resp = client.get("/api/auth/me", headers=auth_header(token))
-        assert resp.status_code == 200
-        assert resp.json()["is_guest"] is False
+        resp = client.post(
+            "/api/auth/login",
+            data={"username": "logintest@test.com", "password": VALID_PASSWORD},
+        )
+        assert resp.status_code == 403
+        assert resp.json()["detail"] == "email_not_verified"
 
 
 class TestGDPREndpoints:

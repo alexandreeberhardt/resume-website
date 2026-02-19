@@ -143,11 +143,12 @@ class TestGuestAccountEdgeCases:
         assert resp.status_code == 200
         assert resp.json()["email"] == "upgraded@example.com"
         assert resp.json()["is_guest"] is False
+        assert resp.json()["is_verified"] is False
         me = client.get("/api/auth/me", headers=headers)
         assert me.status_code == 200
         assert me.json()["is_guest"] is False
 
-    def test_upgrade_can_login_with_new_credentials(self, client):
+    def test_upgrade_requires_email_verification_for_login(self, client):
         resp = client.post("/api/auth/guest")
         token = resp.json()["access_token"]
 
@@ -168,7 +169,8 @@ class TestGuestAccountEdgeCases:
                 "password": VALID_PASSWORD,
             },
         )
-        assert resp.status_code == 200
+        assert resp.status_code == 403
+        assert resp.json()["detail"] == "email_not_verified"
 
     def test_upgrade_with_weak_password(self, client):
         resp = client.post("/api/auth/guest")
