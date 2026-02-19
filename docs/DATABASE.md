@@ -3,16 +3,34 @@
 ## Schema
 
 ```
-┌────────────────────────────┐       ┌──────────────────────────────┐
-│         users              │       │          resumes             │
-├────────────────────────────┤       ├──────────────────────────────┤
-│ id          INTEGER  PK    │──┐    │ id           INTEGER  PK     │
-│ email       VARCHAR(255)   │  │    │ user_id      INTEGER  FK ────│──→ users.id
-│ password_hash VARCHAR(255) │  │    │ name         VARCHAR(255)    │
-│ google_id   VARCHAR(255)   │  └────│ json_content JSONB           │
-│ is_guest    BOOLEAN        │       │ s3_url       TEXT            │
-│ created_at  TIMESTAMPTZ    │       │ created_at   TIMESTAMPTZ     │
-└────────────────────────────┘       └──────────────────────────────┘
+┌──────────────────────────────────────────┐       ┌──────────────────────────────┐
+│                 users                    │       │          resumes             │
+├──────────────────────────────────────────┤       ├──────────────────────────────┤
+│ id                    INTEGER  PK        │──┐    │ id           INTEGER  PK     │
+│ email                 VARCHAR(255)       │  │    │ user_id      INTEGER  FK ────│──→ users.id
+│ password_hash         VARCHAR(255)       │  │    │ name         VARCHAR(255)    │
+│ google_id             VARCHAR(255)       │  └────│ json_content JSONB           │
+│ is_guest              BOOLEAN            │       │ s3_url       TEXT            │
+│ is_verified           BOOLEAN            │       │ created_at   TIMESTAMPTZ     │
+│ is_premium            BOOLEAN            │       └──────────────────────────────┘
+│ download_count        INTEGER            │
+│ download_count_reset_at TIMESTAMPTZ      │       ┌──────────────────────────────┐
+│ feedback_completed_at TIMESTAMPTZ        │       │          feedbacks           │
+│ bonus_resumes         INTEGER            │       ├──────────────────────────────┤
+│ bonus_downloads       INTEGER            │──┐    │ id           INTEGER  PK     │
+│ created_at            TIMESTAMPTZ        │  │    │ user_id      INTEGER  FK ────│──→ users.id
+└──────────────────────────────────────────┘  └────│ profile      VARCHAR(100)    │
+                                                   │ target_sector VARCHAR(255)   │
+                                                   │ source       VARCHAR(100)    │
+                                                   │ ease_rating  INTEGER         │
+                                                   │ time_spent   VARCHAR(50)     │
+                                                   │ obstacles    TEXT            │
+                                                   │ alternative  VARCHAR(255)    │
+                                                   │ suggestions  TEXT            │
+                                                   │ nps          INTEGER         │
+                                                   │ future_help  TEXT            │
+                                                   │ created_at   TIMESTAMPTZ     │
+                                                   └──────────────────────────────┘
 ```
 
 ### users
@@ -24,6 +42,13 @@
 | password_hash | VARCHAR(255) | nullable | NULL for OAuth-only users |
 | google_id | VARCHAR(255) | UNIQUE, nullable | Google OAuth identifier |
 | is_guest | BOOLEAN | NOT NULL, default: false | Guest account flag |
+| is_verified | BOOLEAN | NOT NULL, default: false | Email verified flag; required to log in |
+| is_premium | BOOLEAN | NOT NULL, default: false | Premium tier flag |
+| download_count | INTEGER | NOT NULL, default: 0 | Monthly PDF download counter |
+| download_count_reset_at | TIMESTAMPTZ | nullable | Timestamp of last monthly reset |
+| feedback_completed_at | TIMESTAMPTZ | nullable | Set when user submits feedback |
+| bonus_resumes | INTEGER | NOT NULL, default: 0 | Extra resume slots (awarded via feedback) |
+| bonus_downloads | INTEGER | NOT NULL, default: 0 | Extra monthly downloads (awarded via feedback) |
 | created_at | TIMESTAMPTZ | default: now() | |
 
 ### resumes
@@ -33,11 +58,31 @@
 | id | INTEGER | PK, auto-increment | |
 | user_id | INTEGER | FK → users.id, NOT NULL | ON DELETE CASCADE |
 | name | VARCHAR(255) | NOT NULL | Resume display name |
-| json_content | JSONB | nullable | Full CV data as JSON |
+| json_content | JSONB | nullable | Full CV data as JSON (max 100 KB) |
 | s3_url | TEXT | nullable | S3 storage URL for PDF |
 | created_at | TIMESTAMPTZ | NOT NULL, default: now() | |
 
-**Relationship**: User → Resumes (one-to-many, cascade delete).
+### feedbacks
+
+| Column | Type | Constraints | Notes |
+|--------|------|-------------|-------|
+| id | INTEGER | PK, auto-increment | |
+| user_id | INTEGER | FK → users.id, NOT NULL | ON DELETE CASCADE |
+| profile | VARCHAR(100) | nullable | User profile type |
+| target_sector | VARCHAR(255) | nullable | Target job sector |
+| source | VARCHAR(100) | nullable | How user found Sivee |
+| ease_rating | INTEGER | NOT NULL | Ease of use score (1–10) |
+| time_spent | VARCHAR(50) | nullable | Time spent on CV |
+| obstacles | TEXT | nullable | Difficulties encountered |
+| alternative | VARCHAR(255) | nullable | Alternative tools considered |
+| suggestions | TEXT | nullable | Improvement suggestions |
+| nps | INTEGER | nullable | Net Promoter Score (0–10) |
+| future_help | TEXT | nullable | Features desired in the future |
+| created_at | TIMESTAMPTZ | default: now() | |
+
+**Relationships:**
+- User → Resumes (one-to-many, cascade delete)
+- User → Feedbacks (one-to-many, cascade delete; max one feedback per user enforced at application level)
 
 ## Migration Workflow
 

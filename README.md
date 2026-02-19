@@ -23,8 +23,8 @@ Professional resumes generated with different templates:
 
 ### PDF Generation & Templates
 - **LaTeX Engine** — High-quality typographic PDF generation (superior to HTML-to-PDF)
-- **Professional Templates** — Harvard, McKinsey, Europass styles and more
-- **Smart Sizing** — Automatic content fitting to a single page
+- **Professional Templates** — Harvard, Double, Michel, Stephane, Aurianne, McKinsey, Europass and more (each available in Compact, Normal, Large sizes)
+- **Smart Auto-Sizing** — Automatically finds the optimal font size to fit content on one page
 - **PDF Import** — (Experimental) Import existing CVs via AI extraction (Mistral)
 
 ### Editor & Customization
@@ -32,14 +32,19 @@ Professional resumes generated with different templates:
 - **Drag and Drop** — Reorganize CV sections freely
 - **Dynamic Sections** — Add, rename, hide, or remove any section
 - **Dark/Light Mode** — Interface adapted to your preferences
-- **Multi-language** — French and English
+- **Multi-language** — French, English, German, Spanish, Italian, Portuguese
 
 ### Accounts & Security
-- **Guest Mode** — Try immediately without creating an account (limited to 3 CVs)
+- **Guest Mode** — Try immediately without creating an account (1 resume, 1 download/month)
+- **Free Account** — 3 resumes, 3 downloads/month
+- **Premium Account** — 100 resumes, 1000 downloads/month
+- **Bonus System** — Submit feedback to earn +3 resumes and +5 downloads
 - **Seamless Upgrade** — Convert guest account to permanent without data loss
+- **Email Verification** — Required before accessing the editor
 - **Google OAuth** — Fast sign-in with Google
+- **Password Reset** — Secure email-based password reset flow
 - **GDPR** — Export all data or delete account in one click
-- **Secure Architecture** — Hashed passwords, JWT sessions
+- **Secure Architecture** — Hashed passwords, JWT in HTTP-only cookies, CSRF protection, Redis rate limiting
 
 ## Quick Install (Docker)
 
@@ -65,12 +70,12 @@ The application will be accessible at:
 
 ```
 Frontend (React + TypeScript + Vite)
-    ↕  REST API
+    ↕  REST API (cookies + CSRF)
 Backend (FastAPI + SQLAlchemy)
-    ↕               ↕
-PostgreSQL    LaTeX → PDF
-                ↕
-              S3 Storage
+    ↕          ↕          ↕
+PostgreSQL   Redis     LaTeX → PDF
+                          ↕
+                       S3 Storage
 ```
 
 ## Documentation

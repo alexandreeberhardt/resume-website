@@ -8,6 +8,7 @@
 | Python | 3.13+ | [python.org](https://www.python.org/) |
 | uv | latest | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | Docker | 20+ | [docker.com](https://www.docker.com/) |
+| Redis | 7+ | Provided via Docker Compose |
 
 ## Tech Stack
 
@@ -18,12 +19,13 @@
 - Gunicorn + Uvicorn (production)
 - LaTeX (PDF compilation)
 - boto3 (S3 storage)
+- Redis (rate limiting, OAuth code exchange)
 
 **Frontend**
 - React 18 + TypeScript
 - Tailwind CSS
 - dnd-kit (drag and drop)
-- i18next (internationalization)
+- i18next (internationalization — fr, en, de, es, it, pt)
 - Vite
 
 **Infrastructure**
@@ -36,17 +38,21 @@
 ```text
 sivee/
 ├── curriculum-vitae/          # Backend (git submodule)
-│   ├── core/                  # Business logic (LaTeX, PDF)
-│   ├── database/              # SQLAlchemy models
+│   ├── api/                   # FastAPI routes (resumes)
+│   ├── auth/                  # Authentication routes and schemas
+│   ├── core/                  # Business logic (LaTeX, PDF, email, storage)
+│   ├── database/              # SQLAlchemy models and DB config
 │   ├── alembic/               # Database migrations
-│   ├── app.py                 # FastAPI application
+│   ├── app.py                 # FastAPI application entry point
 │   ├── tests/                 # Backend tests (pytest)
-│   └── templates/             # LaTeX templates
+│   └── templates/             # LaTeX templates (.tex)
 ├── frontend/                  # React application
 │   ├── src/
 │   │   ├── components/        # React components
-│   │   ├── contexts/          # Auth, theme contexts
-│   │   ├── locales/           # i18n translations (fr/en)
+│   │   ├── context/           # Auth context (AuthContext)
+│   │   ├── hooks/             # Custom hooks (useResumeManager, usePdfGeneration, …)
+│   │   ├── api/               # Axios client and API functions
+│   │   ├── locales/           # i18n translations (fr/en/de/es/it/pt)
 │   │   └── test/              # Test setup and helpers
 │   └── package.json
 ├── vps/                       # VPS deployment configs
@@ -64,6 +70,18 @@ sivee/
 ## Local Installation (Without Docker)
 
 ### Backend
+
+Redis must be running locally:
+
+```bash
+# macOS
+brew install redis && brew services start redis
+
+# Or Docker
+docker run -d -p 6379:6379 redis:7-alpine
+```
+
+Then start the backend:
 
 ```bash
 cd curriculum-vitae
@@ -129,3 +147,7 @@ If the `curriculum-vitae/` folder is empty after cloning:
 ```bash
 git submodule update --init --recursive
 ```
+
+### Redis connection errors
+
+Ensure Redis is running before starting the backend. The backend connects to `redis://localhost:6379` by default (configurable via `REDIS_URL` env var). Auth endpoints will fail without Redis.

@@ -39,12 +39,28 @@ Critical variables:
 |----------|-------------|
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | Database credentials |
 | `JWT_SECRET_KEY` | Secret for JWT tokens (min 32 chars) |
+| `REDIS_URL` | Redis connection URL (default: `redis://redis:6379`) |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth (optional) |
+| `GOOGLE_REDIRECT_URI` | Google OAuth redirect URI (e.g. `https://sivee.pro/api/auth/google/callback`) |
 | `MISTRAL_API_KEY` | PDF import AI feature (optional) |
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_S3_BUCKET` | S3 storage |
 | `ALLOWED_ORIGINS` | CORS origins (comma-separated, never use `*`) |
-| `FRONTEND_URL` | Frontend URL for OAuth redirects |
+| `FRONTEND_URL` | Frontend URL for OAuth redirects (e.g. `https://sivee.pro`) |
 | `COOKIE_SECURE` / `COOKIE_SAMESITE` | Auth cookie hardening (`true` + `lax` recommended in prod) |
+| `ENVIRONMENT` | Set to `production` to auto-enable secure cookies |
+
+Rate limiting variables (optional, defaults shown):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `AUTH_REGISTER_MAX_REQUESTS` | 15 | Max register attempts per IP |
+| `AUTH_REGISTER_WINDOW_SECONDS` | 3600 | Rate limit window (1 hour) |
+| `AUTH_LOGIN_MAX_REQUESTS` | 30 | Max login attempts per IP |
+| `AUTH_LOGIN_WINDOW_SECONDS` | 60 | Rate limit window (1 minute) |
+| `AUTH_FORGOT_MAX_REQUESTS` | 10 | Max forgot-password requests per IP |
+| `AUTH_FORGOT_WINDOW_SECONDS` | 900 | Rate limit window (15 minutes) |
+| `AUTH_RESEND_MAX_REQUESTS` | 10 | Max resend-verification requests per IP |
+| `AUTH_RESEND_WINDOW_SECONDS` | 900 | Rate limit window (15 minutes) |
 
 Generate a secure JWT key:
 ```bash
@@ -123,6 +139,9 @@ docker compose logs -f cv-generator
 
 # Database only
 docker compose logs -f db
+
+# Redis only
+docker compose logs -f redis
 
 # Last 100 lines
 docker compose logs --tail 100 cv-generator
