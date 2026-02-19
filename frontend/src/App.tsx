@@ -30,6 +30,7 @@ import {
   FolderOpen,
   User,
   Gift,
+  UserPlus,
 } from 'lucide-react'
 import {
   ResumeData,
@@ -57,6 +58,7 @@ import CVPreview from './components/CVPreview'
 import AuthPage from './components/auth/AuthPage'
 import Footer from './components/Footer'
 import GuestUpgradeBanner from './components/GuestUpgradeBanner'
+import GuestUpgradeModal from './components/GuestUpgradeModal'
 import { FeedbackModal } from './components/FeedbackBanner'
 import FeatureCard from './components/FeatureCard'
 import ResumeCard from './components/ResumeCard'
@@ -65,12 +67,13 @@ import { Link } from 'react-router-dom'
 
 function App() {
   const { t, i18n } = useTranslation()
-  const { isAuthenticated, isLoading: authLoading, user, logout, loginAsGuest } = useAuth()
+  const { isAuthenticated, isLoading: authLoading, user, logout, loginAsGuest, isGuest } = useAuth()
 
   const [data, setData] = useState<ResumeData>(emptyResumeData)
   const [error, setError] = useState<string | null>(null)
   const [isLimitError, setIsLimitError] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
   const [hasImported, setHasImported] = useState(false)
@@ -732,6 +735,15 @@ function App() {
               >
                 {error}
               </p>
+              {isLimitError && isGuest && (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:text-brand/80 transition-colors"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  {t('guest.createAccount')}
+                </button>
+              )}
               {isLimitError && !user?.isGuest && !user?.feedbackCompleted && (
                 <button
                   onClick={() => {
@@ -774,6 +786,9 @@ function App() {
           onSuccess={() => setShowFeedbackModal(false)}
         />
       )}
+
+      {/* Guest Upgrade Modal (triggered from limit error banner) */}
+      {showUpgradeModal && <GuestUpgradeModal onClose={() => setShowUpgradeModal(false)} />}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 flex gap-4 lg:gap-8">
