@@ -877,6 +877,7 @@ async def resend_verification(
 
 FEEDBACK_BONUS_RESUMES = 3
 FEEDBACK_BONUS_DOWNLOADS = 5
+FEEDBACK_BONUS_IMPORTS = 3
 
 
 @router.post("/feedback", response_model=FeedbackResponse)
@@ -932,12 +933,14 @@ async def submit_feedback(
     current_user.feedback_completed_at = datetime.now(UTC)
     current_user.bonus_resumes += FEEDBACK_BONUS_RESUMES
     current_user.bonus_downloads += FEEDBACK_BONUS_DOWNLOADS
+    current_user.bonus_imports += FEEDBACK_BONUS_IMPORTS
     db.commit()
 
     return FeedbackResponse(
         message="Thank you for your feedback!",
         bonus_resumes=FEEDBACK_BONUS_RESUMES,
         bonus_downloads=FEEDBACK_BONUS_DOWNLOADS,
+        bonus_imports=FEEDBACK_BONUS_IMPORTS,
     )
 
 

@@ -30,6 +30,8 @@ class User(Base):
     feedback_completed_at = Column(DateTime(timezone=True), nullable=True)
     bonus_resumes = Column(Integer, default=0, nullable=False)
     bonus_downloads = Column(Integer, default=0, nullable=False)
+    import_count = Column(Integer, default=0, nullable=False)
+    bonus_imports = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")

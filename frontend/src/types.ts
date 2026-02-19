@@ -7,7 +7,10 @@ export interface User {
   email: string
   isGuest?: boolean
   isVerified?: boolean
+  isPremium?: boolean
   feedbackCompleted?: boolean
+  importCount?: number
+  bonusImports?: number
 }
 
 export interface AuthState {

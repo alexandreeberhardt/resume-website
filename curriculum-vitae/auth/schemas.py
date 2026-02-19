@@ -64,6 +64,8 @@ class UserResponse(BaseModel):
     is_verified: bool = True
     is_premium: bool = False
     feedback_completed_at: datetime | None = None
+    import_count: int = 0
+    bonus_imports: int = 0
 
     model_config = {"from_attributes": True}
 
@@ -169,6 +171,7 @@ class FeedbackResponse(BaseModel):
     message: str
     bonus_resumes: int
     bonus_downloads: int
+    bonus_imports: int
 
 
 class UserDataExport(BaseModel):

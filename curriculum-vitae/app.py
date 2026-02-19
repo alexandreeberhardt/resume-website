@@ -12,7 +12,7 @@ import shutil
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 # Ajouter le répertoire courant au path pour les imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -45,6 +45,11 @@ MAX_CV_PDF_PAGES = 10
 PDF_READ_CHUNK_SIZE = 1024 * 1024  # 1 MB
 ALLOWED_PDF_CONTENT_TYPES = {"application/pdf", "application/x-pdf"}
 
+# Import quotas per tier
+MAX_IMPORTS_PER_GUEST = 1
+MAX_IMPORTS_PER_USER = 3
+MAX_IMPORTS_PER_PREMIUM = 50
+
 # Authentication imports
 from api.resumes import (  # noqa: E402
     MAX_DOWNLOADS_PER_GUEST,
@@ -57,6 +62,7 @@ from auth.dependencies import CurrentUser  # noqa: E402
 from auth.routes import router as auth_router  # noqa: E402
 from database.db_config import get_db  # noqa: E402
 from database.models import User  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
 # === Modèles Pydantic ===
 
@@ -508,6 +514,39 @@ def _enforce_generation_quota(user: User, db: Any) -> None:
         )
 
 
+def _enforce_import_quota(user: User, db: Any) -> None:
+    """Check whether the user has remaining CV import credits."""
+    if user.is_guest:
+        max_imports = MAX_IMPORTS_PER_GUEST
+    elif user.is_premium:
+        max_imports = MAX_IMPORTS_PER_PREMIUM
+    else:
+        max_imports = MAX_IMPORTS_PER_USER
+    max_imports += user.bonus_imports
+
+    if user.import_count >= max_imports:
+        if user.is_guest:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    f"Guest accounts are limited to {MAX_IMPORTS_PER_GUEST} import. "
+                    "Create a free account to get more imports."
+                ),
+            )
+        if user.is_premium:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Import limit reached ({max_imports}).",
+            )
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Import limit reached ({MAX_IMPORTS_PER_USER}). "
+                "Upgrade to Premium to get more imports."
+            ),
+        )
+
+
 def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     """Inject a subtle watermark in LaTeX preamble for preview PDFs."""
     if "% PREVIEW_WATERMARK_BEGIN" in tex_content:
@@ -753,7 +792,8 @@ async def get_default_data():
 
 @app.post("/import")
 async def import_cv(
-    _current_user: CurrentUser,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
     file: UploadFile = File(...),  # noqa: B008
 ):
     """
@@ -769,6 +809,7 @@ async def import_cv(
         ResumeData: Données structurées du CV.
     """
     _validate_pdf_file_metadata(file)
+    _enforce_import_quota(current_user, db)
 
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
@@ -916,6 +957,9 @@ IMPORTANT:
 
         result = json.loads(response.choices[0].message.content)
 
+        current_user.import_count += 1
+        db.commit()
+
         return result
 
     except HTTPException:
@@ -926,7 +970,8 @@ IMPORTANT:
 
 @app.post("/import-stream")
 async def import_cv_stream(
-    _current_user: CurrentUser,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
     file: UploadFile = File(...),  # noqa: B008
 ):
     """
@@ -934,6 +979,7 @@ async def import_cv_stream(
     Envoie les sections au fur et à mesure qu'elles sont extraites.
     """
     _validate_pdf_file_metadata(file)
+    _enforce_import_quota(current_user, db)
 
     # Vérifier la clé API Mistral
     api_key = os.environ.get("MISTRAL_API_KEY")
@@ -1242,6 +1288,8 @@ IMPORTANT:
                 result = json.loads(accumulated_json)
                 msg = json.dumps({"type": "complete", "data": result})
                 yield f"data: {msg}\n\n"
+                current_user.import_count += 1
+                db.commit()
             except json.JSONDecodeError as e:
                 error_msg = json.dumps(
                     {"type": "error", "message": f"Erreur parsing JSON: {str(e)}"}

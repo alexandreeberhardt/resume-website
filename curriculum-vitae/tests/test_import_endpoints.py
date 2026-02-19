@@ -21,6 +21,8 @@ def api_client():
         bonus_downloads=0,
         download_count=0,
         download_count_reset_at=None,
+        import_count=0,
+        bonus_imports=0,
     )
     with TestClient(app) as c:
         yield c

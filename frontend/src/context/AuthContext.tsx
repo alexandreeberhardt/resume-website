@@ -19,7 +19,10 @@ interface ApiUser {
   email: string
   is_guest?: boolean
   is_verified?: boolean
+  is_premium?: boolean
   feedback_completed_at?: string | null
+  import_count?: number
+  bonus_imports?: number
 }
 
 interface AuthContextType extends AuthState {
@@ -45,7 +48,10 @@ function mapApiUser(user: ApiUser): User {
     email: user.email,
     isGuest: !!user.is_guest,
     isVerified: user.is_verified,
+    isPremium: !!user.is_premium,
     feedbackCompleted: !!user.feedback_completed_at,
+    importCount: user.import_count ?? 0,
+    bonusImports: user.bonus_imports ?? 0,
   }
 }
 

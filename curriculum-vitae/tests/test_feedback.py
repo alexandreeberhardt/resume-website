@@ -55,6 +55,7 @@ class TestSubmitFeedback:
         data = resp.json()
         assert data["bonus_resumes"] == 3
         assert data["bonus_downloads"] == 5
+        assert data["bonus_imports"] == 3
         assert data["message"] == "Thank you for your feedback!"
 
         # Verify user was updated in DB
@@ -63,6 +64,7 @@ class TestSubmitFeedback:
         assert user.feedback_completed_at is not None
         assert user.bonus_resumes == 3
         assert user.bonus_downloads == 5
+        assert user.bonus_imports == 3
 
     def test_duplicate_submission_returns_409(self, client: TestClient) -> None:
         """Second feedback submission should return 409 Conflict."""
@@ -161,6 +163,21 @@ class TestBonusLimits:
             headers=auth_header(token),
         )
         assert resp.status_code == 429
+
+    def test_bonus_imports_applied_to_user(self, client: TestClient, db: Session) -> None:
+        """Feedback gives +3 bonus_imports, which is persisted on the user."""
+        token = create_authenticated_user(client)
+
+        resp = client.post(
+            "/api/auth/feedback",
+            json=VALID_FEEDBACK,
+            headers=auth_header(token),
+        )
+        assert resp.status_code == 200
+
+        user = db.query(User).filter(User.email == "test@example.com").first()
+        assert user is not None
+        assert user.bonus_imports == 3
 
     def test_feedback_completed_in_jwt(self, client: TestClient) -> None:
         """After submitting feedback, the login JWT should include feedback_completed=true."""
