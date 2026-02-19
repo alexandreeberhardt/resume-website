@@ -532,7 +532,7 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     }
     source_text = source_text_by_lang.get(lang, "from sivee.pro")
     watermark_text = (
-        r"\parbox{4cm}{\centering "
+        r"\shortstack{\centering "
         + main_text
         + r"\\{\fontsize{8}{10}\selectfont "
         + source_text
