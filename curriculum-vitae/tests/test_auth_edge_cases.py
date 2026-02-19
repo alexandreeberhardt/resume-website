@@ -222,7 +222,9 @@ class TestGDPRExport:
         assert resp.status_code == 200
         data = resp.json()
         assert data["user"]["email"] == "test@example.com"
+        assert data["user"]["is_guest"] is False
         assert data["resumes"] == []
+        assert data["feedbacks"] == []
         assert "exported_at" in data
 
     def test_export_with_resumes(self, client):
@@ -246,6 +248,24 @@ class TestGDPRExport:
         token = create_authenticated_user(client)
         resp = client.get("/api/auth/me/export", headers=auth_header(token))
         assert resp.json()["user"]["auth_method"] == "email"
+
+    def test_export_includes_feedbacks(self, client):
+        token = create_authenticated_user(client)
+        headers = auth_header(token)
+
+        feedback_resp = client.post(
+            "/api/auth/feedback",
+            json={"ease_rating": 8, "nps": 9, "suggestions": "Great tool"},
+            headers=headers,
+        )
+        assert feedback_resp.status_code == 200
+
+        resp = client.get("/api/auth/me/export", headers=headers)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["feedbacks"]) == 1
+        assert data["feedbacks"][0]["ease_rating"] == 8
+        assert data["feedbacks"][0]["nps"] == 9
 
     def test_export_requires_auth(self, client):
         resp = client.get("/api/auth/me/export")

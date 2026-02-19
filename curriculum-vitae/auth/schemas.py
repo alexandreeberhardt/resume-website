@@ -174,9 +174,57 @@ class FeedbackResponse(BaseModel):
     bonus_imports: int
 
 
+class UserExportData(BaseModel):
+    """Schema for exported user profile data."""
+
+    id: int
+    email: str
+    auth_method: str
+    google_id: str | None = None
+    is_guest: bool
+    is_verified: bool
+    is_premium: bool
+    download_count: int
+    download_count_reset_at: datetime | None = None
+    feedback_completed_at: datetime | None = None
+    bonus_resumes: int
+    bonus_downloads: int
+    import_count: int
+    bonus_imports: int
+    created_at: datetime | None = None
+
+
+class ResumeExportData(BaseModel):
+    """Schema for exported resume data."""
+
+    id: int
+    name: str
+    json_content: dict | None = None
+    s3_url: str | None = None
+    created_at: datetime | None = None
+
+
+class FeedbackExportData(BaseModel):
+    """Schema for exported feedback data."""
+
+    id: int
+    profile: str | None = None
+    target_sector: str | None = None
+    source: str | None = None
+    ease_rating: int
+    time_spent: str | None = None
+    obstacles: str | None = None
+    alternative: str | None = None
+    suggestions: str | None = None
+    nps: int | None = None
+    future_help: str | None = None
+    created_at: datetime | None = None
+
+
 class UserDataExport(BaseModel):
     """Schema for GDPR data export (right to portability)."""
 
-    user: dict
-    resumes: list[dict]
-    exported_at: str
+    user: UserExportData
+    resumes: list[ResumeExportData]
+    feedbacks: list[FeedbackExportData]
+    exported_at: datetime

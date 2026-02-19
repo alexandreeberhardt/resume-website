@@ -128,6 +128,14 @@ Response:
 {"message": "Thank you for your feedback!", "bonus_resumes": 3, "bonus_downloads": 5}
 ```
 
+#### GDPR data export
+
+`GET /api/auth/me/export` returns a portable JSON payload with:
+- `user`: account metadata (`id`, `email`, `auth_method`, guest/verification/premium flags, quota counters, bonus counters, timestamps)
+- `resumes`: all saved resumes (`id`, `name`, `json_content`, `s3_url`, `created_at`)
+- `feedbacks`: all submitted feedback entries
+- `exported_at`: export timestamp (UTC)
+
 ### Resume Management
 
 | Method | Endpoint | Auth | Description |

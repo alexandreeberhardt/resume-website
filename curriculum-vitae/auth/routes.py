@@ -18,15 +18,18 @@ from sqlalchemy.orm import Session
 
 from auth.dependencies import CurrentUser
 from auth.schemas import (
+    FeedbackExportData,
     FeedbackCreate,
     FeedbackResponse,
     ForgotPasswordRequest,
     GuestUpgrade,
     ResendVerificationRequest,
+    ResumeExportData,
     ResetPasswordRequest,
     Token,
     UserCreate,
     UserDataExport,
+    UserExportData,
     UserResponse,
     VerifyEmailRequest,
 )
@@ -978,25 +981,56 @@ async def export_user_data(
     Returns:
         All user data including resumes.
     """
-    # Get all user's resumes
+    # Get all data owned by the user
     resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+    feedbacks = db.query(Feedback).filter(Feedback.user_id == current_user.id).all()
 
     return UserDataExport(
-        user={
-            "id": current_user.id,
-            "email": current_user.email,
-            "auth_method": "google" if current_user.google_id else "email",
-        },
+        user=UserExportData(
+            id=current_user.id,
+            email=current_user.email,
+            auth_method="google" if current_user.google_id else "email",
+            google_id=current_user.google_id,
+            is_guest=current_user.is_guest,
+            is_verified=current_user.is_verified,
+            is_premium=current_user.is_premium,
+            download_count=current_user.download_count,
+            download_count_reset_at=current_user.download_count_reset_at,
+            feedback_completed_at=current_user.feedback_completed_at,
+            bonus_resumes=current_user.bonus_resumes,
+            bonus_downloads=current_user.bonus_downloads,
+            import_count=current_user.import_count,
+            bonus_imports=current_user.bonus_imports,
+            created_at=current_user.created_at,
+        ),
         resumes=[
-            {
-                "id": resume.id,
-                "name": resume.name,
-                "json_content": resume.json_content,
-                "created_at": resume.created_at.isoformat() if resume.created_at else None,
-            }
+            ResumeExportData(
+                id=resume.id,
+                name=resume.name,
+                json_content=resume.json_content,
+                s3_url=resume.s3_url,
+                created_at=resume.created_at,
+            )
             for resume in resumes
         ],
-        exported_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        feedbacks=[
+            FeedbackExportData(
+                id=feedback.id,
+                profile=feedback.profile,
+                target_sector=feedback.target_sector,
+                source=feedback.source,
+                ease_rating=feedback.ease_rating,
+                time_spent=feedback.time_spent,
+                obstacles=feedback.obstacles,
+                alternative=feedback.alternative,
+                suggestions=feedback.suggestions,
+                nps=feedback.nps,
+                future_help=feedback.future_help,
+                created_at=feedback.created_at,
+            )
+            for feedback in feedbacks
+        ],
+        exported_at=datetime.now(UTC),
     )
 
 

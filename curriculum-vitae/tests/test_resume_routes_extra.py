@@ -254,7 +254,9 @@ class TestGDPREndpoints:
         assert resp.status_code == 200
         data = resp.json()
         assert data["user"]["email"] == "test@example.com"
+        assert data["user"]["is_guest"] is False
         assert len(data["resumes"]) == 2
+        assert data["feedbacks"] == []
         assert data["exported_at"]  # ISO timestamp
 
     def test_export_auth_method_email(self, client):

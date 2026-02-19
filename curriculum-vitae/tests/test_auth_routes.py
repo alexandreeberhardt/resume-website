@@ -197,6 +197,7 @@ class TestGDPR:
         data = resp.json()
         assert "user" in data
         assert "resumes" in data
+        assert "feedbacks" in data
         assert "exported_at" in data
 
     def test_delete_account(self, client):
