@@ -30,7 +30,8 @@ interface AuthContextType extends AuthState {
   upgradeAccount: (email: string, password: string) => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+export const AuthContext = createContext<AuthContextType | null>(null)
+export type { AuthContextType }
 
 interface AuthProviderProps {
   children: ReactNode

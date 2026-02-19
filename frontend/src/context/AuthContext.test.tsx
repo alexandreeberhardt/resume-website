@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { renderHook } from '@testing-library/react'
-import { renderWithProviders } from '../test/render'
+import { BrowserRouter } from 'react-router-dom'
 
 const mockSetOnUnauthorized = vi.fn()
 
@@ -32,7 +32,17 @@ vi.mock('../api/auth', () => ({
 }))
 
 // Import after mocks
-import { useAuth } from './AuthContext'
+import { useAuth, AuthProvider } from './AuthContext'
+
+function renderWithAuthProvider(ui: React.ReactElement) {
+  return render(ui, {
+    wrapper: ({ children }) => (
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AuthProvider>{children}</AuthProvider>
+      </BrowserRouter>
+    ),
+  })
+}
 
 function TestConsumer() {
   const auth = useAuth()
@@ -85,14 +95,14 @@ describe('AuthContext', () => {
   })
 
   it('starts with loading then resolves to not loading', async () => {
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
   })
 
   it('initializes as unauthenticated when /me fails', async () => {
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
@@ -109,7 +119,7 @@ describe('AuthContext', () => {
       feedback_completed_at: null,
     })
 
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
@@ -129,7 +139,7 @@ describe('AuthContext', () => {
         feedback_completed_at: null,
       })
 
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
@@ -146,7 +156,7 @@ describe('AuthContext', () => {
   it('register calls registerUser but does not auto-login', async () => {
     mockRegisterUser.mockResolvedValue({ message: 'ok' })
 
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
@@ -168,7 +178,7 @@ describe('AuthContext', () => {
       feedback_completed_at: null,
     })
 
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('authenticated').textContent).toBe('yes')
     })
@@ -192,7 +202,7 @@ describe('AuthContext', () => {
         feedback_completed_at: null,
       })
 
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })
@@ -207,7 +217,7 @@ describe('AuthContext', () => {
   })
 
   it('sets onUnauthorized callback to logout', async () => {
-    renderWithProviders(<TestConsumer />)
+    renderWithAuthProvider(<TestConsumer />)
     await waitFor(() => {
       expect(screen.getByTestId('loading').textContent).toBe('no')
     })

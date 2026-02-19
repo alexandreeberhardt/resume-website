@@ -25,22 +25,7 @@ vi.mock('./Register', () => ({
   ),
 }))
 
-// Mock auth context
-vi.mock('../../context/AuthContext', () => ({
-  AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useAuth: () => ({
-    login: vi.fn(),
-    register: vi.fn(),
-    logout: vi.fn(),
-    user: null,
-    token: null,
-    isAuthenticated: false,
-    isLoading: false,
-    isGuest: false,
-    loginAsGuest: vi.fn(),
-    upgradeAccount: vi.fn(),
-  }),
-}))
+// No need to mock AuthContext — renderWithProviders provides a stable mock context by default
 
 describe('AuthPage', () => {
   const user = userEvent.setup()
