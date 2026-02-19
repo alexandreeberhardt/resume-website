@@ -647,10 +647,17 @@ async def generate_cv(
     name = data.personal.name.strip() if data.personal.name else ""
     pdf_filename = f"{name.replace(' ', '_')}_CV.pdf" if name else "CV.pdf"
 
+    from core.http_headers import build_content_disposition
+    content_disposition = build_content_disposition(
+        pdf_filename,
+        disposition="inline",
+        default="CV.pdf",
+    )
+
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"inline; filename={pdf_filename}"},
+        headers={"Content-Disposition": content_disposition},
     )
 
 

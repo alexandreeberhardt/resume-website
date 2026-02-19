@@ -535,8 +535,17 @@ async def generate_resume_pdf(
     db.commit()
 
     # Return PDF from memory (temp files already cleaned up)
+    from core.http_headers import build_content_disposition
+
+    pdf_filename = f"{resume_name}.pdf" if resume_name else "resume.pdf"
+    content_disposition = build_content_disposition(
+        pdf_filename,
+        disposition="inline",
+        default="resume.pdf",
+    )
+
     return StreamingResponse(
         BytesIO(pdf_content),
         media_type="application/pdf",
-        headers={"Content-Disposition": f"inline; filename={resume_name}.pdf"},
+        headers={"Content-Disposition": content_disposition},
     )
