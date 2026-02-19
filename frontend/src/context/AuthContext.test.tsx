@@ -70,6 +70,12 @@ function TestConsumer() {
       <button data-testid="guest-login" onClick={auth.loginAsGuest}>
         Guest
       </button>
+      <button
+        data-testid="upgrade"
+        onClick={() => auth.upgradeAccount('upgraded@test.com', 'StrongPass123!')}
+      >
+        Upgrade
+      </button>
     </div>
   )
 }
@@ -214,6 +220,39 @@ describe('AuthContext', () => {
     })
     expect(screen.getByTestId('authenticated').textContent).toBe('yes')
     expect(screen.getByTestId('email').textContent).toBe('guest@guest.local')
+  })
+
+  it('upgradeAccount refreshes user state from /me', async () => {
+    mockUpgradeGuestAccount.mockResolvedValue({
+      id: 99,
+      email: 'upgraded@test.com',
+      is_guest: false,
+      is_verified: true,
+      feedback_completed_at: null,
+    })
+    mockGetCurrentUser
+      .mockRejectedValueOnce(new Error('initial unauth'))
+      .mockResolvedValueOnce({
+        id: 99,
+        email: 'upgraded@test.com',
+        is_guest: false,
+        is_verified: true,
+        feedback_completed_at: null,
+      })
+
+    renderWithAuthProvider(<TestConsumer />)
+    await waitFor(() => {
+      expect(screen.getByTestId('loading').textContent).toBe('no')
+    })
+
+    await user.click(screen.getByTestId('upgrade'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated').textContent).toBe('yes')
+    })
+    expect(screen.getByTestId('email').textContent).toBe('upgraded@test.com')
+    expect(screen.getByTestId('guest').textContent).toBe('no')
+    expect(mockUpgradeGuestAccount).toHaveBeenCalledWith('upgraded@test.com', 'StrongPass123!')
   })
 
   it('sets onUnauthorized callback to logout', async () => {

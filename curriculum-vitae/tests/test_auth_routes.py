@@ -142,7 +142,8 @@ class TestGuestAccount:
             headers=headers,
         )
         assert resp.status_code == 200
-        assert "message" in resp.json()
+        assert resp.json()["email"] == "upgraded@example.com"
+        assert resp.json()["is_guest"] is False
 
         me = client.get("/api/auth/me", headers=headers)
         assert me.status_code == 200
@@ -172,8 +173,7 @@ class TestGuestAccount:
             },
             headers=auth_header(token),
         )
-        assert resp.status_code == 200
-        assert "message" in resp.json()
+        assert resp.status_code == 409
 
 
 class TestMe:

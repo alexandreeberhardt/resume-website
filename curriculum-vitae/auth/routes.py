@@ -372,13 +372,14 @@ async def create_guest_account(
     return Token(access_token=access_token)
 
 
-@router.post("/upgrade")
+@router.post("/upgrade", response_model=UserResponse)
 async def upgrade_guest_account(
     upgrade_data: GuestUpgrade,
     background_tasks: BackgroundTasks,
+    response: Response,
     current_user: CurrentUser,
     db: Annotated[Session, Depends(get_db)],
-) -> dict[str, str]:
+) -> User:
     """Upgrade a guest account to a permanent account.
 
     Converts a guest account to a full account by adding email and password.
@@ -390,10 +391,10 @@ async def upgrade_guest_account(
         db: Database session.
 
     Returns:
-        A generic success message.
+        The upgraded user.
 
     Raises:
-        HTTPException: 400 if user is not a guest or email already exists.
+        HTTPException: 400 if user is not a guest, 409 if email already exists.
     """
     # Verify this is a guest account
     if not current_user.is_guest:
@@ -402,13 +403,13 @@ async def upgrade_guest_account(
             detail="Only guest accounts can be upgraded",
         )
 
-    # Use a uniform response to avoid email enumeration
-    generic_message = "If this email is available, your account will be upgraded."
-
     # Check if email already exists
     existing_user = db.query(User).filter(User.email == upgrade_data.email).first()
     if existing_user:
-        return {"message": generic_message}
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+        )
 
     # Upgrade the account (auto-verify since user is already authenticated)
     current_user.email = upgrade_data.email
@@ -421,7 +422,18 @@ async def upgrade_guest_account(
 
     background_tasks.add_task(send_welcome_email, current_user.email)
 
-    return {"message": generic_message}
+    # Refresh auth cookies with updated claims
+    access_token = create_access_token(
+        data={
+            "sub": str(current_user.id),
+            "email": current_user.email,
+            "is_premium": current_user.is_premium,
+            "feedback_completed": bool(current_user.feedback_completed_at),
+        }
+    )
+    _set_auth_cookies(response, access_token)
+
+    return current_user
 
 
 @router.get("/google/login")

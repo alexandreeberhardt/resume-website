@@ -57,7 +57,7 @@ export default function GuestUpgradeModal({ onClose }: { onClose: () => void }) 
       }, 1500)
     } catch (err) {
       if (err instanceof ApiError) {
-        if (err.status === 400) {
+        if (err.status === 400 || err.status === 409) {
           setError(t('auth.errors.emailExists'))
         } else {
           setError(err.detail || t('auth.errors.generic'))

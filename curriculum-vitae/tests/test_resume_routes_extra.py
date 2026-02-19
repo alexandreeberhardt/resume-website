@@ -186,8 +186,7 @@ class TestAuthEdgeCases:
             json={"email": "taken@test.com", "password": VALID_PASSWORD},
             headers=auth_header(guest_token),
         )
-        assert resp.status_code == 200
-        assert "message" in resp.json()
+        assert resp.status_code == 409
 
     def test_upgrade_regular_user_fails(self, client):
         token = create_authenticated_user(client)
@@ -210,7 +209,8 @@ class TestAuthEdgeCases:
             headers=headers,
         )
         assert resp.status_code == 200
-        assert "message" in resp.json()
+        assert resp.json()["email"] == "upgraded@test.com"
+        assert resp.json()["is_guest"] is False
         me = client.get("/api/auth/me", headers=headers)
         assert me.status_code == 200
         assert me.json()["email"] == "upgraded@test.com"

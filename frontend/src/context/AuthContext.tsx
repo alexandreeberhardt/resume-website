@@ -141,8 +141,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Upgrade guest account to permanent account
    */
   const upgradeAccount = async (email: string, password: string): Promise<void> => {
-    const updatedUser = await upgradeGuestAccount(email, password)
-    applyUser(updatedUser as ApiUser)
+    await upgradeGuestAccount(email, password)
+    const me = await getCurrentUser()
+    applyUser(me as ApiUser)
   }
 
   const value: AuthContextType = {
