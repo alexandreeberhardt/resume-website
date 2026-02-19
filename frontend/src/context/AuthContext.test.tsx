@@ -19,6 +19,7 @@ const mockLoginUser = vi.fn()
 const mockRegisterUser = vi.fn()
 const mockCreateGuestAccount = vi.fn()
 const mockUpgradeGuestAccount = vi.fn()
+const mockChangeEmailForUnverified = vi.fn()
 const mockGetCurrentUser = vi.fn()
 const mockLogoutUser = vi.fn()
 
@@ -27,6 +28,7 @@ vi.mock('../api/auth', () => ({
   registerUser: (...args: unknown[]) => mockRegisterUser(...args),
   createGuestAccount: () => mockCreateGuestAccount(),
   upgradeGuestAccount: (...args: unknown[]) => mockUpgradeGuestAccount(...args),
+  changeEmailForUnverified: (...args: unknown[]) => mockChangeEmailForUnverified(...args),
   getCurrentUser: () => mockGetCurrentUser(),
   logoutUser: () => mockLogoutUser(),
 }))
@@ -75,6 +77,12 @@ function TestConsumer() {
         onClick={() => auth.upgradeAccount('upgraded@test.com', 'StrongPass123!')}
       >
         Upgrade
+      </button>
+      <button
+        data-testid="change-email"
+        onClick={() => auth.changeEmail('changed@test.com', 'StrongPass123!')}
+      >
+        Change Email
       </button>
     </div>
   )
@@ -253,6 +261,41 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('email').textContent).toBe('upgraded@test.com')
     expect(screen.getByTestId('guest').textContent).toBe('no')
     expect(mockUpgradeGuestAccount).toHaveBeenCalledWith('upgraded@test.com', 'StrongPass123!')
+  })
+
+  it('changeEmail refreshes user state from /me', async () => {
+    mockChangeEmailForUnverified.mockResolvedValue({
+      id: 99,
+      email: 'changed@test.com',
+      is_guest: false,
+      is_verified: false,
+      feedback_completed_at: null,
+    })
+    mockGetCurrentUser
+      .mockRejectedValueOnce(new Error('initial unauth'))
+      .mockResolvedValueOnce({
+        id: 99,
+        email: 'changed@test.com',
+        is_guest: false,
+        is_verified: false,
+        feedback_completed_at: null,
+      })
+
+    renderWithAuthProvider(<TestConsumer />)
+    await waitFor(() => {
+      expect(screen.getByTestId('loading').textContent).toBe('no')
+    })
+
+    await user.click(screen.getByTestId('change-email'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated').textContent).toBe('yes')
+    })
+    expect(screen.getByTestId('email').textContent).toBe('changed@test.com')
+    expect(mockChangeEmailForUnverified).toHaveBeenCalledWith(
+      'changed@test.com',
+      'StrongPass123!',
+    )
   })
 
   it('sets onUnauthorized callback to logout', async () => {

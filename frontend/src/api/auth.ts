@@ -141,6 +141,13 @@ export async function resendVerification(email: string): Promise<{ message: stri
 }
 
 /**
+ * Change email + password for an unverified account
+ */
+export async function changeEmailForUnverified(email: string, password: string): Promise<User> {
+  return api.post<User>('/auth/change-email', { email, password })
+}
+
+/**
  * Submit feedback and receive bonus limits
  */
 export interface FeedbackData {

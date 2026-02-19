@@ -48,6 +48,12 @@
       "success": "Account created!",
       "successMessage": "Signing you in..."
     },
+    "changeEmail": {
+      "title": "Change email address",
+      "subtitle": "Update your email and password before verification",
+      "button": "Change email",
+      "success": "Email updated"
+    },
     "passwordRequirements": "Password requirements",
     "passwordChecks": {
       "length": "At least 12 characters",

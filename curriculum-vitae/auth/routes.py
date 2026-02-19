@@ -444,6 +444,66 @@ async def upgrade_guest_account(
     return current_user
 
 
+@router.post("/change-email", response_model=UserResponse)
+async def change_unverified_email(
+    change_data: GuestUpgrade,
+    background_tasks: BackgroundTasks,
+    response: Response,
+    current_user: CurrentUser,
+    db: Annotated[Session, Depends(get_db)],
+) -> User:
+    """Change email + password for unverified accounts.
+
+    Allows correcting an email mistake before verification.
+    """
+    if current_user.is_guest:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Guest accounts must be upgraded first",
+        )
+    if current_user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email is already verified",
+        )
+
+    existing_user = db.query(User).filter(User.email == change_data.email).first()
+    if existing_user and existing_user.id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already in use",
+        )
+
+    current_user.email = change_data.email
+    current_user.password_hash = get_password_hash(change_data.password)
+    current_user.is_verified = False
+
+    db.commit()
+    db.refresh(current_user)
+
+    verification_token = create_access_token(
+        data={
+            "sub": str(current_user.id),
+            "email": current_user.email,
+            "type": "email_verification",
+        },
+        expires_delta=timedelta(hours=VERIFICATION_TOKEN_EXPIRE_HOURS),
+    )
+    background_tasks.add_task(send_verification_email, current_user.email, verification_token)
+
+    access_token = create_access_token(
+        data={
+            "sub": str(current_user.id),
+            "email": current_user.email,
+            "is_premium": current_user.is_premium,
+            "feedback_completed": bool(current_user.feedback_completed_at),
+        }
+    )
+    _set_auth_cookies(response, access_token)
+
+    return current_user
+
+
 @router.get("/google/login")
 async def google_login() -> RedirectResponse:
     """Redirect to Google OAuth2 login page.

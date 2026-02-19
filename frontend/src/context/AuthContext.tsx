@@ -8,6 +8,7 @@ import {
   registerUser,
   createGuestAccount,
   upgradeGuestAccount,
+  changeEmailForUnverified,
   getCurrentUser,
   logoutUser,
 } from '../api/auth'
@@ -28,6 +29,7 @@ interface AuthContextType extends AuthState {
   isGuest: boolean
   loginAsGuest: () => Promise<void>
   upgradeAccount: (email: string, password: string) => Promise<void>
+  changeEmail: (email: string, password: string) => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null)
@@ -146,6 +148,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     applyUser(me as ApiUser)
   }
 
+  const changeEmail = async (email: string, password: string): Promise<void> => {
+    await changeEmailForUnverified(email, password)
+    const me = await getCurrentUser()
+    applyUser(me as ApiUser)
+  }
+
   const value: AuthContextType = {
     user,
     token,
@@ -157,6 +165,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isGuest,
     loginAsGuest,
     upgradeAccount,
+    changeEmail,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

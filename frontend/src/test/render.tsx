@@ -20,6 +20,7 @@ const defaultAuthValue: AuthContextType = {
   logout: () => {},
   loginAsGuest: async () => {},
   upgradeAccount: async () => {},
+  changeEmail: async () => {},
 }
 
 interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {

@@ -48,6 +48,12 @@
       "success": "¡Cuenta creada!",
       "successMessage": "Iniciando sesión..."
     },
+    "changeEmail": {
+      "title": "Cambiar dirección de email",
+      "subtitle": "Actualiza tu email y contraseña antes de la verificación",
+      "button": "Cambiar email",
+      "success": "Email actualizado"
+    },
     "passwordRequirements": "Requisitos de contraseña",
     "passwordChecks": {
       "length": "Al menos 12 caracteres",

@@ -10,6 +10,7 @@ import {
   deleteUserAccount,
   createGuestAccount,
   upgradeGuestAccount,
+  changeEmailForUnverified,
   loginWithGoogle,
 } from './auth'
 
@@ -125,6 +126,23 @@ describe('upgradeGuestAccount', () => {
     const result = await upgradeGuestAccount('new@test.com', 'StrongPass1!')
 
     expect(api.post).toHaveBeenCalledWith('/auth/upgrade', {
+      email: 'new@test.com',
+      password: 'StrongPass1!',
+    })
+    expect(result).toEqual(mockUser)
+  })
+})
+
+describe('changeEmailForUnverified', () => {
+  afterEach(() => vi.clearAllMocks())
+
+  it('calls POST /auth/change-email with email and password', async () => {
+    const mockUser = { id: 1, email: 'new@test.com', is_guest: false }
+    vi.mocked(api.post).mockResolvedValue(mockUser)
+
+    const result = await changeEmailForUnverified('new@test.com', 'StrongPass1!')
+
+    expect(api.post).toHaveBeenCalledWith('/auth/change-email', {
       email: 'new@test.com',
       password: 'StrongPass1!',
     })

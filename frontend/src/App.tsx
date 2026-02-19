@@ -31,6 +31,7 @@ import {
   User,
   Gift,
   UserPlus,
+  Mail,
 } from 'lucide-react'
 import {
   ResumeData,
@@ -62,7 +63,9 @@ import GuestUpgradeModal from './components/GuestUpgradeModal'
 import { FeedbackModal } from './components/FeedbackBanner'
 import FeatureCard from './components/FeatureCard'
 import ResumeCard from './components/ResumeCard'
+import ChangeEmailModal from './components/ChangeEmailModal'
 import { useAuth } from './context/AuthContext'
+import { resendVerification } from './api/auth'
 import { Link } from 'react-router-dom'
 
 function App() {
@@ -74,12 +77,15 @@ function App() {
   const [isLimitError, setIsLimitError] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [showChangeEmailModal, setShowChangeEmailModal] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
   const [hasImported, setHasImported] = useState(false)
   const [editorStep, setEditorStep] = useState(0)
   const [showMobilePreview, setShowMobilePreview] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSent, setResendSent] = useState(false)
 
   const { showLanding, setShowLanding, showResumesPage, setShowResumesPage } = useViewNavigation()
 
@@ -196,6 +202,83 @@ function App() {
   // Show auth page if not authenticated
   if (!isAuthenticated) {
     return <AuthPage onContinueWithoutAuth={loginAsGuest} />
+  }
+
+  if (user && user.isVerified === false) {
+    const handleResendVerification = async () => {
+      setResendLoading(true)
+      try {
+        await resendVerification(user.email)
+        setResendSent(true)
+      } finally {
+        setResendLoading(false)
+      }
+    }
+
+    return (
+      <div className="min-h-screen bg-surface-50 flex flex-col">
+        <header className="w-full border-b border-primary-100 bg-surface-0/80 backdrop-blur-xl">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
+              <span className="text-lg font-semibold text-primary-900">
+                {t('landing.appName')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSwitcher />
+              <button
+                onClick={logout}
+                className="btn-ghost text-sm"
+                data-testid="logout-unverified"
+              >
+                <LogOut className="w-4 h-4" />
+                {t('common.logout')}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 flex items-center justify-center px-4 py-8">
+          <div className="w-full max-w-md bg-surface-0 rounded-2xl border border-primary-200/40 shadow-xl p-6 text-center animate-fade-in">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-4">
+              <Mail className="w-6 h-6 text-blue-600" />
+            </div>
+            <h1 className="text-xl font-semibold text-primary-900 mb-2">
+              {t('auth.verifyEmail.checkEmail')}
+            </h1>
+            <p className="text-sm text-primary-600 mb-1">
+              {t('auth.verifyEmail.checkEmailMessage')}
+            </p>
+            <p className="text-sm font-medium text-primary-900 mb-6">{user.email}</p>
+
+            {resendSent ? (
+              <p className="text-sm text-success-600 mb-4">
+                {t('auth.verifyEmail.resendSuccess')}
+              </p>
+            ) : (
+              <button
+                onClick={handleResendVerification}
+                disabled={resendLoading}
+                className="btn-secondary w-full"
+              >
+                {resendLoading ? t('common.loading') : t('auth.verifyEmail.resend')}
+              </button>
+            )}
+            <button
+              onClick={() => setShowChangeEmailModal(true)}
+              className="mt-3 w-full btn-ghost"
+            >
+              {t('auth.changeEmail.button')}
+            </button>
+          </div>
+        </main>
+        {showChangeEmailModal && (
+          <ChangeEmailModal onClose={() => setShowChangeEmailModal(false)} />
+        )}
+      </div>
+    )
   }
 
   // Landing Page

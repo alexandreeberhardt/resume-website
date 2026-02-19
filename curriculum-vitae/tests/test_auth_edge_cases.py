@@ -186,6 +186,34 @@ class TestGuestAccountEdgeCases:
         )
         assert resp.status_code == 422
 
+    def test_change_email_for_unverified_user(self, client):
+        resp = client.post("/api/auth/guest")
+        token = resp.json()["access_token"]
+
+        client.post(
+            "/api/auth/upgrade",
+            json={"email": "first@example.com", "password": VALID_PASSWORD},
+            headers=auth_header(token),
+        )
+
+        resp = client.post(
+            "/api/auth/change-email",
+            json={"email": "second@example.com", "password": VALID_PASSWORD},
+            headers=auth_header(token),
+        )
+        assert resp.status_code == 200
+        assert resp.json()["email"] == "second@example.com"
+        assert resp.json()["is_verified"] is False
+
+    def test_change_email_rejects_verified_user(self, client):
+        token = create_authenticated_user(client)
+        resp = client.post(
+            "/api/auth/change-email",
+            json={"email": "new@example.com", "password": VALID_PASSWORD},
+            headers=auth_header(token),
+        )
+        assert resp.status_code == 400
+
 
 class TestGDPRExport:
     def test_export_empty_user(self, client):

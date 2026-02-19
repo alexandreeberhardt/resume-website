@@ -48,6 +48,12 @@
       "success": "Compte créé !",
       "successMessage": "Connexion en cours..."
     },
+    "changeEmail": {
+      "title": "Changer d'adresse email",
+      "subtitle": "Mettez à jour votre email et votre mot de passe avant la vérification",
+      "button": "Changer d'adresse email",
+      "success": "Email mis à jour"
+    },
     "passwordRequirements": "Exigences du mot de passe",
     "passwordChecks": {
       "length": "Au moins 12 caractères",

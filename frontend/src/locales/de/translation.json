@@ -48,6 +48,12 @@
       "success": "Konto erstellt!",
       "successMessage": "Anmeldung läuft..."
     },
+    "changeEmail": {
+      "title": "E-Mail-Adresse ändern",
+      "subtitle": "Aktualisieren Sie Ihre E-Mail und Ihr Passwort vor der Verifizierung",
+      "button": "E-Mail ändern",
+      "success": "E-Mail aktualisiert"
+    },
     "passwordRequirements": "Passwortanforderungen",
     "passwordChecks": {
       "length": "Mindestens 12 Zeichen",
