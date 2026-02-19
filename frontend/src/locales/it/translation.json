@@ -102,6 +102,10 @@
     "and": "e i",
     "termsConsent": "Accetto le condizioni di utilizzo del servizio"
   },
+  "editor": {
+    "resetForm": "Reimposta modulo",
+    "resetConfirm": "Questo cancellerà tutti i campi e creerà un nuovo curriculum. Continuare?"
+  },
   "resumes": {
     "myResumes": "I miei curriculum",
     "pageSubtitle": "Gestisci e accedi a tutti i tuoi curriculum",

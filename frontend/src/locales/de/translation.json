@@ -102,6 +102,10 @@
     "and": "und die",
     "termsConsent": "Ich akzeptiere die Nutzungsbedingungen des Dienstes"
   },
+  "editor": {
+    "resetForm": "Formular zurücksetzen",
+    "resetConfirm": "Dies löscht alle Felder und erstellt einen neuen Lebenslauf. Fortfahren?"
+  },
   "resumes": {
     "myResumes": "Meine Lebensläufe",
     "pageSubtitle": "Verwalten Sie alle Ihre Lebensläufe",

@@ -32,6 +32,7 @@ import {
   Gift,
   UserPlus,
   Mail,
+  Trash2,
 } from 'lucide-react'
 import {
   ResumeData,
@@ -125,6 +126,18 @@ function App() {
       // Ignore storage errors
     }
   }, [data, setShowLanding, setShowResumesPage, user])
+
+  const handleResetForm = () => {
+    if (!confirm(t('editor.resetConfirm'))) return
+    resumeManager.handleNewResume()
+    if (draftKey) {
+      try {
+        localStorage.removeItem(draftKey)
+      } catch {
+        // Ignore storage errors
+      }
+    }
+  }
 
   useEffect(() => {
     if (!isLimitError || !error || isGuest) return
@@ -670,6 +683,12 @@ function App() {
               <span className="hidden lg:inline">{t('common.save')}</span>
             </button>
 
+            {/* Reset */}
+            <button onClick={handleResetForm} className="btn-ghost">
+              <Trash2 className="w-4 h-4" />
+              <span className="hidden lg:inline">{t('editor.resetForm')}</span>
+            </button>
+
             {/* Hidden file input for import */}
             <input
               type="file"
@@ -790,6 +809,18 @@ function App() {
                   <Save className="w-4 h-4 text-primary-500" />
                 )}
                 {t('common.save')}
+              </button>
+
+              {/* Reset */}
+              <button
+                onClick={() => {
+                  handleResetForm()
+                  setShowMobileMenu(false)
+                }}
+                className="w-full px-2 py-2.5 text-left text-sm text-primary-700 hover:bg-primary-50 rounded-lg flex items-center gap-3 transition-colors"
+              >
+                <Trash2 className="w-4 h-4 text-primary-500" />
+                {t('editor.resetForm')}
               </button>
 
               <input

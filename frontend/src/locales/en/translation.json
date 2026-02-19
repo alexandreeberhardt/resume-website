@@ -114,6 +114,10 @@
     "acceptTerms": "I accept the",
     "and": "and the"
   },
+  "editor": {
+    "resetForm": "Reset form",
+    "resetConfirm": "This will clear all fields and start a new resume. Continue?"
+  },
   "resumes": {
     "myResumes": "My Resumes",
     "pageSubtitle": "Manage and access all your resumes",

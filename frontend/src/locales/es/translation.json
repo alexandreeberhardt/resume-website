@@ -102,6 +102,10 @@
     "and": "y los",
     "termsConsent": "Acepto las condiciones de uso del servicio"
   },
+  "editor": {
+    "resetForm": "Restablecer formulario",
+    "resetConfirm": "Esto borrará todos los campos y creará un nuevo currículum. ¿Continuar?"
+  },
   "resumes": {
     "myResumes": "Mis currículums",
     "pageSubtitle": "Gestiona y accede a todos tus currículums",

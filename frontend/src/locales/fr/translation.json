@@ -115,6 +115,10 @@
     "and": "et les",
     "termsConsent": "J'accepte les conditions d'utilisation du service"
   },
+  "editor": {
+    "resetForm": "Réinitialiser le formulaire",
+    "resetConfirm": "Cela effacera tous les champs et créera un nouveau CV. Continuer ?"
+  },
   "resumes": {
     "myResumes": "Mes CV",
     "pageSubtitle": "Gérez et accédez à tous vos CV",

@@ -102,6 +102,10 @@
     "and": "e os",
     "termsConsent": "Aceito as condições de utilização do serviço"
   },
+  "editor": {
+    "resetForm": "Repor formulário",
+    "resetConfirm": "Isto irá apagar todos os campos e criar um novo currículo. Continuar?"
+  },
   "resumes": {
     "myResumes": "Os meus currículos",
     "pageSubtitle": "Gerir e aceder a todos os seus currículos",
