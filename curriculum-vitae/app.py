@@ -534,7 +534,7 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     watermark_text = (
         r"\shortstack{"
         + main_text
-        + r"\\{\small "
+        + r"\\{\normalsize "
         + source_text
         + r"}}"
     )
@@ -544,7 +544,7 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
         f"\\SetWatermarkText{{{watermark_text}}}\n"
         "\\SetWatermarkScale{1.6}\n"
         "\\SetWatermarkAngle{45}\n"
-        "\\SetWatermarkLightness{0.93}\n"
+        "\\SetWatermarkLightness{0.92}\n"
         "% PREVIEW_WATERMARK_END\n"
     )
 
