@@ -8,19 +8,15 @@ os.environ.setdefault("DATABASE_URL", "sqlite://")
 
 
 from auth.routes import (
+    OAUTH_CODE_EXPIRE_SECONDS,
     _cleanup_expired_codes,
     _exchange_oauth_code,
-    _oauth_code_store,
     _store_oauth_code,
 )
 
 
 class TestOAuthCodeStore:
-    """Detailed tests for the OAuth temporary code exchange mechanism."""
-
-    def setup_method(self):
-        """Clear the store before each test."""
-        _oauth_code_store.clear()
+    """Tests for the OAuth temporary code exchange mechanism."""
 
     def test_store_returns_unique_codes(self):
         code1 = _store_oauth_code("token1")
@@ -35,28 +31,19 @@ class TestOAuthCodeStore:
     def test_code_is_one_time_use(self):
         code = _store_oauth_code("jwt-abc")
         _exchange_oauth_code(code)
-        # Second exchange should fail
+        # Second exchange must fail — GETDEL consumed the key
         assert _exchange_oauth_code(code) is None
 
     def test_invalid_code_returns_none(self):
         assert _exchange_oauth_code("nonexistent") is None
 
-    def test_expired_code_returns_none(self):
-        """Simulate an expired code."""
+    def test_expired_code_returns_none(self, _mock_redis):
+        """Codes with an elapsed TTL must not be retrievable."""
         code = "test-expired-code"
-        _oauth_code_store[code] = ("jwt-token", time.time() - 10)
+        # Store with a 1 ms TTL, then wait for Redis to evict it
+        _mock_redis.set(f"oauth_code:{code}", "jwt-token", px=1)
+        time.sleep(0.05)
         assert _exchange_oauth_code(code) is None
-
-    def test_cleanup_removes_expired(self):
-        _oauth_code_store["expired1"] = ("token1", time.time() - 100)
-        _oauth_code_store["expired2"] = ("token2", time.time() - 50)
-        _oauth_code_store["valid"] = ("token3", time.time() + 100)
-
-        _cleanup_expired_codes()
-
-        assert "expired1" not in _oauth_code_store
-        assert "expired2" not in _oauth_code_store
-        assert "valid" in _oauth_code_store
 
     def test_multiple_codes_independent(self):
         code1 = _store_oauth_code("token-a")
@@ -65,13 +52,17 @@ class TestOAuthCodeStore:
         assert _exchange_oauth_code(code1) == "token-a"
         assert _exchange_oauth_code(code2) == "token-b"
 
-    def test_store_triggers_cleanup(self):
-        """_store_oauth_code calls _cleanup_expired_codes internally."""
-        _oauth_code_store["old"] = ("token", time.time() - 200)
+    def test_cleanup_is_noop(self):
+        """_cleanup_expired_codes is a no-op with Redis TTL — must not raise."""
+        _store_oauth_code("some-token")
+        _cleanup_expired_codes()  # should not raise
 
-        _store_oauth_code("new-token")
-
-        assert "old" not in _oauth_code_store
+    def test_code_ttl_is_applied(self, _mock_redis):
+        """Stored codes must have a TTL matching OAUTH_CODE_EXPIRE_SECONDS."""
+        code = _store_oauth_code("jwt-ttl-test")
+        ttl = _mock_redis.ttl(f"oauth_code:{code}")
+        # TTL should be within [1, OAUTH_CODE_EXPIRE_SECONDS]
+        assert 1 <= ttl <= OAUTH_CODE_EXPIRE_SECONDS
 
 
 class TestExtractS3Key:

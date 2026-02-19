@@ -8,11 +8,13 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-for-unit-tests-only"
 os.environ["DATABASE_URL"] = "sqlite://"  # won't be used, but prevents ValueError
 os.environ["ZEPTOMAIL_API_KEY"] = ""  # disable real email sending in tests
 
+import fakeredis
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import JSON, StaticPool, create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
+import auth.routes as auth_routes_module
 from app import app
 from auth.routes import _reset_rate_limit_state
 from database.db_config import get_db
@@ -44,6 +46,18 @@ _TestSession = sessionmaker(bind=_engine)
 
 
 @pytest.fixture(autouse=True)
+def _mock_redis(monkeypatch):
+    """Replace the Redis client with an in-memory FakeRedis for every test.
+
+    Yields the FakeRedis instance so individual tests can inspect or pre-seed
+    Redis state (e.g. set keys with specific TTLs) by requesting this fixture.
+    """
+    fake = fakeredis.FakeRedis(decode_responses=True)
+    monkeypatch.setattr(auth_routes_module, "_redis_client", fake)
+    yield fake
+
+
+@pytest.fixture(autouse=True)
 def _mock_email():
     """Prevent any real email sending during tests."""
     with unittest.mock.patch("core.email.send_email"):
@@ -51,8 +65,12 @@ def _mock_email():
 
 
 @pytest.fixture(autouse=True)
-def _reset_auth_rate_limiter():
-    """Ensure auth rate limiter state is isolated between tests."""
+def _reset_auth_rate_limiter(_mock_redis):
+    """Ensure auth rate limiter state is isolated between tests.
+
+    Depends on _mock_redis so the fake client is always in place before the
+    rate-limit keys are cleared.
+    """
     _reset_rate_limit_state()
     yield
     _reset_rate_limit_state()

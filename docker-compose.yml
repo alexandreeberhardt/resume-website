@@ -1,4 +1,19 @@
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: cv-redis
+    restart: unless-stopped
+    # SECURITY: No ports exposed to host - only accessible via internal Docker network
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   db:
     image: postgres:15-alpine
     container_name: cv-postgres
@@ -34,11 +49,14 @@ services:
       - COOKIE_SAMESITE=lax
       # SECURITY: No default values - .env MUST define these variables
       - DATABASE_URL=postgresql://${POSTGRES_USER:?POSTGRES_USER required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}@db:5432/${POSTGRES_DB:?POSTGRES_DB required}
+      - REDIS_URL=redis://redis:6379
     dns:
       - 8.8.8.8
       - 1.1.1.1
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
@@ -50,3 +68,5 @@ services:
 volumes:
   postgres_data:
     name: cv_postgres_data
+  redis_data:
+    name: cv_redis_data

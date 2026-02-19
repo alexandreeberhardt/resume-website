@@ -91,14 +91,14 @@ class TestOAuthCodeExchange:
         resp = client.post("/api/auth/google/exchange", params={"code": code})
         assert resp.status_code == 400
 
-    def test_exchange_expired_code(self, client):
+    def test_exchange_expired_code(self, client, _mock_redis):
         """Expired codes should fail."""
+        code = "test-expired-code"
+        # Store with a 1 ms TTL, then wait for Redis to evict it
+        _mock_redis.set(f"oauth_code:{code}", "jwt-token", px=1)
         import time
 
-        from auth.routes import _oauth_code_store
-
-        code = "test-expired-code"
-        _oauth_code_store[code] = ("jwt-token", time.time() - 1)  # Already expired
+        time.sleep(0.05)
 
         resp = client.post("/api/auth/google/exchange", params={"code": code})
         assert resp.status_code == 400

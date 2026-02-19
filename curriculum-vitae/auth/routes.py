@@ -5,13 +5,12 @@ import os
 import secrets
 import time
 import uuid
-from collections import deque
 from datetime import UTC, datetime, timedelta
-from threading import Lock
 from typing import Annotated
 from urllib.parse import urlencode
 
 import httpx
+import redis
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -63,13 +62,19 @@ GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
 # OAuth state token expiration (5 minutes)
 OAUTH_STATE_EXPIRE_MINUTES = 5
 
-# SECURITY: Temporary code store for OAuth token exchange
-# In production, consider using Redis for multi-instance deployments
-_oauth_code_store: dict[str, tuple[str, float]] = {}
-OAUTH_CODE_EXPIRE_SECONDS = 60  # Code expires in 1 minute
+# Shared Redis client — single connection pool, reused across requests.
+# Lazy connection: the first actual command triggers the TCP handshake.
+_redis_client: redis.Redis = redis.Redis.from_url(
+    os.environ.get("REDIS_URL", "redis://localhost:6379"),
+    decode_responses=True,
+    socket_connect_timeout=5,
+    socket_timeout=5,
+)
 
-# Auth endpoint rate limiting (in-memory, per process).
-# For multi-instance deployments, use a shared store (e.g., Redis).
+# OAuth temporary code TTL (seconds). Redis handles expiration automatically.
+OAUTH_CODE_EXPIRE_SECONDS = 60
+
+# Auth endpoint rate limiting via Redis sliding window (shared across all workers).
 RATE_LIMIT_CONFIG = {
     "register": (
         int(os.environ.get("AUTH_REGISTER_MAX_REQUESTS", "15")),
@@ -88,8 +93,6 @@ RATE_LIMIT_CONFIG = {
         int(os.environ.get("AUTH_RESEND_WINDOW_SECONDS", "900")),
     ),
 }
-_rate_limit_store: dict[str, deque[float]] = {}
-_rate_limit_lock = Lock()
 
 
 def _get_client_ip(request: Request) -> str:
@@ -103,40 +106,56 @@ def _get_client_ip(request: Request) -> str:
 
 
 def _enforce_rate_limit(request: Request, action: str) -> None:
-    """Enforce per-IP request limits for sensitive auth endpoints."""
+    """Enforce per-IP request limits using a Redis sliding window.
+
+    Uses a sorted set (ZSET) keyed by ``rate_limit:{action}:{ip}``.
+    Members are unique per request; scores are Unix timestamps so expired
+    entries can be pruned with ZREMRANGEBYSCORE.  All writes are batched in
+    a single pipeline round-trip; the post-add count is then checked and the
+    entry removed if the limit was exceeded.
+    """
     if action not in RATE_LIMIT_CONFIG:
         return
 
     max_requests, window_seconds = RATE_LIMIT_CONFIG[action]
     client_ip = _get_client_ip(request)
-    key = f"{action}:{client_ip}"
+    key = f"rate_limit:{action}:{client_ip}"
     now = time.time()
     cutoff = now - window_seconds
+    member = f"{now}:{secrets.token_hex(8)}"  # unique per request
 
-    with _rate_limit_lock:
-        timestamps = _rate_limit_store.get(key)
-        if timestamps is None:
-            timestamps = deque()
-            _rate_limit_store[key] = timestamps
+    pipe = _redis_client.pipeline()
+    pipe.zremrangebyscore(key, "-inf", cutoff)  # prune expired entries
+    pipe.zadd(key, {member: now})               # record this request
+    pipe.zcard(key)                              # count after adding
+    pipe.expire(key, window_seconds)             # auto-delete idle keys
+    results = pipe.execute()
+    count = results[2]
 
-        while timestamps and timestamps[0] <= cutoff:
-            timestamps.popleft()
-
-        if len(timestamps) >= max_requests:
-            retry_after = max(1, int(window_seconds - (now - timestamps[0])) + 1)
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Too many authentication attempts. Please try again later.",
-                headers={"Retry-After": str(retry_after)},
-            )
-
-        timestamps.append(now)
+    if count > max_requests:
+        # Remove the entry we just added and reject the request.
+        _redis_client.zrem(key, member)
+        oldest = _redis_client.zrange(key, 0, 0, withscores=True)
+        if oldest:
+            retry_after = max(1, int(window_seconds - (now - oldest[0][1])) + 1)
+        else:
+            retry_after = window_seconds
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many authentication attempts. Please try again later.",
+            headers={"Retry-After": str(retry_after)},
+        )
 
 
 def _reset_rate_limit_state() -> None:
-    """Reset in-memory limiter state (used by tests)."""
-    with _rate_limit_lock:
-        _rate_limit_store.clear()
+    """Delete all rate-limit keys in Redis (used by tests)."""
+    cursor = 0
+    while True:
+        cursor, keys = _redis_client.scan(cursor, match="rate_limit:*", count=100)
+        if keys:
+            _redis_client.delete(*keys)
+        if cursor == 0:
+            break
 
 
 def _set_auth_cookies(response: Response, jwt_token: str) -> None:
@@ -170,30 +189,24 @@ def _clear_auth_cookies(response: Response) -> None:
 
 
 def _cleanup_expired_codes() -> None:
-    """Remove expired OAuth codes from the store."""
-    now = time.time()
-    expired = [code for code, (_, exp) in _oauth_code_store.items() if now > exp]
-    for code in expired:
-        _oauth_code_store.pop(code, None)
+    """No-op: Redis TTL handles expiration automatically."""
 
 
 def _store_oauth_code(jwt_token: str) -> str:
-    """Store JWT token and return a temporary code for exchange."""
-    _cleanup_expired_codes()
+    """Store JWT token in Redis with TTL and return a single-use code."""
     code = secrets.token_urlsafe(32)
-    _oauth_code_store[code] = (jwt_token, time.time() + OAUTH_CODE_EXPIRE_SECONDS)
+    _redis_client.set(f"oauth_code:{code}", jwt_token, ex=OAUTH_CODE_EXPIRE_SECONDS)
     return code
 
 
 def _exchange_oauth_code(code: str) -> str | None:
-    """Exchange temporary code for JWT token. Returns None if invalid/expired."""
-    _cleanup_expired_codes()
-    if code not in _oauth_code_store:
-        return None
-    jwt_token, expiry = _oauth_code_store.pop(code)
-    if time.time() > expiry:
-        return None
-    return jwt_token
+    """Atomically retrieve and delete the JWT token for a temporary code.
+
+    Returns the JWT token string, or None if the code is invalid or expired.
+    GETDEL is atomic: the key is consumed in a single operation, preventing
+    replay attacks even under concurrent requests.
+    """
+    return _redis_client.getdel(f"oauth_code:{code}")
 
 
 VERIFICATION_TOKEN_EXPIRE_HOURS = 24
