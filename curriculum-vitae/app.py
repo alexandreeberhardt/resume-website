@@ -513,7 +513,31 @@ def _apply_preview_watermark(tex_content: str, lang: str) -> str:
     if "% PREVIEW_WATERMARK_BEGIN" in tex_content:
         return tex_content
 
-    watermark_text = r"Aper\c{c}u" if lang == "fr" else "Preview"
+    watermark_text_by_lang = {
+        "en": "Preview",
+        "fr": r"Aper\c{c}u",
+        "es": "Vista previa",
+        "pt": "Pre-visualizacao",
+        "it": "Anteprima",
+        "de": "Vorschau",
+    }
+    main_text = watermark_text_by_lang.get(lang, "Preview")
+    source_text_by_lang = {
+        "en": "from sivee.pro",
+        "fr": "par sivee.pro",
+        "es": "de sivee.pro",
+        "pt": "de sivee.pro",
+        "it": "da sivee.pro",
+        "de": "von sivee.pro",
+    }
+    source_text = source_text_by_lang.get(lang, "from sivee.pro")
+    watermark_text = (
+        r"\parbox{4cm}{\centering "
+        + main_text
+        + r"\\{\fontsize{8}{10}\selectfont "
+        + source_text
+        + r"}}"
+    )
     snippet = (
         "\n% PREVIEW_WATERMARK_BEGIN\n"
         "\\usepackage{draftwatermark}\n"
