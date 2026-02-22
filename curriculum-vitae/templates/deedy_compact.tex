@@ -1,0 +1,196 @@
+\documentclass[9pt,a4paper]{article}
+
+% --- Page layout ---
+\usepackage[left=0.4cm, right=0.4cm, top=0.4cm, bottom=0.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[default]{lato}
+
+% --- Packages ---
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{paracol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+
+% --- Colors ---
+\definecolor{headercolor}{HTML}{222222}
+\definecolor{accentcolor}{HTML}{CC3333}
+\definecolor{sidecolor}{HTML}{F0F0F0}
+\definecolor{greytext}{HTML}{666666}
+\definecolor{darktext}{HTML}{111111}
+
+% --- Config (compact) ---
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{0.95}
+\setlist[itemize]{leftmargin=1.1em, topsep=0pt, itemsep=0pt, parsep=0pt, partopsep=0pt}
+\hypersetup{colorlinks=true, urlcolor=accentcolor, linkcolor=accentcolor}
+\setlength{\columnsep}{0cm}
+\columnratio{0.36}
+
+\begin{document}
+
+% === DARK HEADER (full-width) ===
+\setlength{\fboxsep}{0pt}%
+\noindent\hspace*{-0.4cm}\colorbox{headercolor}{%
+  \begin{minipage}[c][1.8cm]{\dimexpr\linewidth+0.8cm\relax}
+    \color{white}
+    \hspace{0.5cm}%
+    \begin{minipage}[c][1.8cm]{0.50\linewidth}
+      {\fontsize{22}{26}\selectfont\bfseries\VAR{personal.name | escape_latex}}%
+      \BLOCK{if personal.title}\\[0.1em]{\color{gray}\VAR{personal.title | escape_latex}}\BLOCK{endif}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c][1.8cm]{0.38\linewidth}
+      \raggedleft\footnotesize\color{gray}
+      \BLOCK{if personal.email}\faEnvelope\ \href{mailto:\VAR{personal.email}}{\color{gray}\VAR{personal.email | escape_latex}}\\[0.15em]\BLOCK{endif}
+      \BLOCK{if personal.phone}\faPhone\ \VAR{personal.phone | escape_latex}\\[0.15em]\BLOCK{endif}
+      \BLOCK{if personal.location}\faMapMarker*\ \VAR{personal.location | escape_latex}\\[0.15em]\BLOCK{endif}
+      \BLOCK{for link in personal.links}
+      \BLOCK{if link.url and link.username}
+      \faLink\ \href{\VAR{link.url | escape_latex}}{\color{gray}\VAR{link.username | escape_latex}}\BLOCK{if not loop.last}\\[0.15em]\BLOCK{endif}
+      \BLOCK{endif}
+      \BLOCK{endfor}
+    \end{minipage}
+    \hspace{0.3cm}
+  \end{minipage}%
+}\hspace*{-0.4cm}
+
+% === LIGHT GRAY BACKGROUND FOR LEFT COLUMN ===
+\begin{tikzpicture}[remember picture, overlay]
+  \fill[sidecolor] ([yshift=-1.8cm]current page.north west)
+    rectangle ([xshift=0.36\paperwidth] current page.south west);
+\end{tikzpicture}
+
+\vspace{0.35cm}
+
+\begin{paracol}{2}
+
+%=========================
+% LEFT COLUMN
+%=========================
+\color{darktext}
+
+\BLOCK{for section in sections}
+\BLOCK{if section.isVisible and section.has_content and section.type in ['education', 'skills', 'languages']}
+
+\vspace{0.2em}
+{\bfseries\color{accentcolor}\VAR{section.title | escape_latex}}\\[-0.3em]
+{\color{accentcolor}\rule{\linewidth}{0.8pt}}
+\vspace{0.1em}
+
+\BLOCK{if section.type == 'education'}
+\BLOCK{for edu in section.content}
+{\footnotesize\textbf{\VAR{edu.school | escape_latex}}}\hfill {\footnotesize\color{greytext}\VAR{edu.dates | escape_latex}}
+\BLOCK{if edu.degree}\\{\footnotesize\textit{\VAR{edu.degree | escape_latex}}}\BLOCK{endif}
+\BLOCK{if edu.subtitle}\\{\footnotesize\VAR{edu.subtitle | escape_latex}}\BLOCK{endif}
+\BLOCK{if edu.description}\\{\footnotesize\VAR{edu.description | escape_latex}}\BLOCK{endif}
+\par\vspace{0.25em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'skills'}
+\BLOCK{for cat in section.content}
+\BLOCK{if cat.skills}
+{\footnotesize\textbf{\VAR{cat.category | escape_latex}:}} {\footnotesize\VAR{cat.skills | escape_latex}}\\[0.15em]
+\BLOCK{endif}
+\BLOCK{endfor}
+\par\vspace{0.05em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'languages'}
+{\footnotesize\VAR{section.content | escape_latex}}
+\par\vspace{0.25em}
+\BLOCK{endif}
+
+\BLOCK{endif}
+\BLOCK{endfor}
+
+\switchcolumn
+
+%=========================
+% RIGHT COLUMN
+%=========================
+\hspace*{0.25cm}%
+\begin{minipage}[t]{\dimexpr\linewidth-0.25cm\relax}
+
+\BLOCK{for section in sections}
+\BLOCK{if section.isVisible and section.has_content and section.type not in ['education', 'skills', 'languages']}
+
+\vspace{0.2em}
+{\bfseries\color{accentcolor}\VAR{section.title | escape_latex}}\\[-0.3em]
+{\color{accentcolor}\rule{\linewidth}{0.8pt}}
+\vspace{0.1em}
+
+\BLOCK{if section.type == 'summary'}
+{\footnotesize\VAR{section.content | escape_latex}}
+\par\vspace{0.25em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'experiences'}
+\BLOCK{for exp in section.content}
+{\footnotesize\textbf{\VAR{exp.title | escape_latex}}}, {\footnotesize\textit{\VAR{exp.company | escape_latex}}}\hfill {\footnotesize\color{greytext}\VAR{exp.dates | escape_latex}}
+\BLOCK{if exp.highlights}
+\begin{itemize}
+  \BLOCK{for item in exp.highlights}
+  \item {\footnotesize\VAR{item | escape_latex}}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.25em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'projects'}
+\BLOCK{for proj in section.content}
+{\footnotesize\textbf{\VAR{proj.name | escape_latex}}} \hfill {\footnotesize\color{greytext}\VAR{proj.year | escape_latex}}
+\BLOCK{if proj.highlights}
+\begin{itemize}
+  \BLOCK{for item in proj.highlights}
+  \item {\footnotesize\VAR{item | escape_latex}}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.25em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'leadership'}
+\BLOCK{for lead in section.content}
+{\footnotesize\textbf{\VAR{lead.role | escape_latex}}}\BLOCK{if lead.place}, {\footnotesize\textit{\VAR{lead.place | escape_latex}}}\BLOCK{endif}\hfill {\footnotesize\color{greytext}\VAR{lead.dates | escape_latex}}
+\BLOCK{if lead.highlights}
+\begin{itemize}
+  \BLOCK{for item in lead.highlights}
+  \item {\footnotesize\VAR{item | escape_latex}}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.25em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'custom'}
+\BLOCK{for item in section.content}
+{\footnotesize\textbf{\VAR{item.title | escape_latex}}}\BLOCK{if item.subtitle} --- {\footnotesize\textit{\VAR{item.subtitle | escape_latex}}}\BLOCK{endif}\BLOCK{if item.dates} \hfill {\footnotesize\color{greytext}\VAR{item.dates | escape_latex}}\BLOCK{endif}
+\BLOCK{if item.highlights}
+\begin{itemize}
+  \BLOCK{for hl in item.highlights}
+  \item {\footnotesize\VAR{hl | escape_latex}}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.25em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{endif}
+\BLOCK{endfor}
+
+\end{minipage}
+
+\end{paracol}
+
+\end{document}

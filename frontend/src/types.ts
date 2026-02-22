@@ -175,6 +175,18 @@ export type TemplateId =
   | 'double'
   | 'double_compact'
   | 'double_large'
+  | 'sidebar'
+  | 'sidebar_compact'
+  | 'sidebar_large'
+  | 'banking'
+  | 'banking_compact'
+  | 'banking_large'
+  | 'minimal'
+  | 'minimal_compact'
+  | 'minimal_large'
+  | 'deedy'
+  | 'deedy_compact'
+  | 'deedy_large'
 
 export interface TemplateOption {
   id: TemplateId
@@ -243,6 +255,22 @@ export const AVAILABLE_TEMPLATES: TemplateOption[] = [
   { id: 'double', name: 'Double', description: 'Style moderne deux colonnes avec initiales' },
   { id: 'double_compact', name: 'Double Compact', description: 'Double avec espacement réduit' },
   { id: 'double_large', name: 'Double Large', description: 'Double avec espacement augmenté' },
+  // Sidebar
+  { id: 'sidebar', name: 'Sidebar', description: 'Barre latérale colorée marine, contenu principal à droite' },
+  { id: 'sidebar_compact', name: 'Sidebar Compact', description: 'Sidebar avec espacement réduit' },
+  { id: 'sidebar_large', name: 'Sidebar Large', description: 'Sidebar avec espacement augmenté' },
+  // Banking
+  { id: 'banking', name: 'Banking', description: 'En-tête coloré style moderncv, design corporate' },
+  { id: 'banking_compact', name: 'Banking Compact', description: 'Banking avec espacement réduit' },
+  { id: 'banking_large', name: 'Banking Large', description: 'Banking avec espacement augmenté' },
+  // Minimal
+  { id: 'minimal', name: 'Minimal', description: 'Ultra-épuré, sans graphique, 100% compatible ATS' },
+  { id: 'minimal_compact', name: 'Minimal Compact', description: 'Minimal avec espacement réduit' },
+  { id: 'minimal_large', name: 'Minimal Large', description: 'Minimal avec espacement augmenté' },
+  // Deedy
+  { id: 'deedy', name: 'Deedy', description: 'En-tête sombre, deux colonnes asymétriques, style tech' },
+  { id: 'deedy_compact', name: 'Deedy Compact', description: 'Deedy avec espacement réduit' },
+  { id: 'deedy_large', name: 'Deedy Large', description: 'Deedy avec espacement augmenté' },
 ]
 
 // === Structure principale du CV ===

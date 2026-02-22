@@ -58,6 +58,18 @@ VALID_TEMPLATES = {
     "double",
     "double_compact",
     "double_large",
+    "sidebar",
+    "sidebar_compact",
+    "sidebar_large",
+    "banking",
+    "banking_compact",
+    "banking_large",
+    "minimal",
+    "minimal_compact",
+    "minimal_large",
+    "deedy",
+    "deedy_compact",
+    "deedy_large",
 }
 
 

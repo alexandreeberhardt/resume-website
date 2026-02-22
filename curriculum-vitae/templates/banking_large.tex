@@ -1,0 +1,161 @@
+\documentclass[10pt,a4paper]{article}
+
+% --- Page layout ---
+\usepackage[left=1.5cm, right=1.5cm, top=0.7cm, bottom=1.0cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[sc]{mathpazo}
+\linespread{1.1}
+
+% --- Packages ---
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+
+% --- Colors ---
+\definecolor{accentcolor}{HTML}{2E74B5}
+\definecolor{greytext}{HTML}{555555}
+\definecolor{darktext}{HTML}{111111}
+
+% --- Config (large) ---
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlist[itemize]{leftmargin=1.6em, topsep=3pt, itemsep=2pt, parsep=0pt, partopsep=0pt}
+\hypersetup{colorlinks=true, urlcolor=accentcolor, linkcolor=accentcolor}
+
+% --- Section command ---
+\newcommand{\cvsection}[1]{%
+  \vspace{0.8em}%
+  {\color{accentcolor}\large\bfseries #1}\\[-0.4em]%
+  {\color{accentcolor}\rule{\linewidth}{1.2pt}}%
+  \vspace{0.3em}%
+}
+
+\begin{document}
+
+% === HEADER ===
+\setlength{\fboxsep}{0pt}%
+\noindent\colorbox{accentcolor}{%
+  \begin{minipage}[c][2.0cm]{\linewidth}
+    \color{white}
+    \hspace{0.6cm}%
+    \begin{minipage}[c][2.0cm]{0.54\linewidth}
+      {\fontsize{26}{31}\selectfont\bfseries\VAR{personal.name | escape_latex}}%
+      \BLOCK{if personal.title}\\[0.15em]{\large\VAR{personal.title | escape_latex}}\BLOCK{endif}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[c][2.0cm]{0.38\linewidth}
+      \raggedleft\small
+      \BLOCK{if personal.email}\faEnvelope\ \href{mailto:\VAR{personal.email}}{\color{white}\VAR{personal.email | escape_latex}}\\[0.2em]\BLOCK{endif}
+      \BLOCK{if personal.phone}\faPhone\ \VAR{personal.phone | escape_latex}\\[0.2em]\BLOCK{endif}
+      \BLOCK{if personal.location}\faMapMarker*\ \VAR{personal.location | escape_latex}\\[0.2em]\BLOCK{endif}
+      \BLOCK{for link in personal.links}
+      \BLOCK{if link.url and link.username}
+      \faLink\ \href{\VAR{link.url | escape_latex}}{\color{white}\VAR{link.username | escape_latex}}\BLOCK{if not loop.last}\\[0.2em]\BLOCK{endif}
+      \BLOCK{endif}
+      \BLOCK{endfor}
+    \end{minipage}
+    \hspace{0.4cm}
+  \end{minipage}%
+}
+
+\vspace{0.5em}
+
+% === SECTIONS ===
+\BLOCK{for section in sections}
+\BLOCK{if section.isVisible and section.has_content}
+
+\cvsection{\VAR{section.title | escape_latex}}
+
+\BLOCK{if section.type == 'summary'}
+\VAR{section.content | escape_latex}
+\par\vspace{0.4em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'education'}
+\BLOCK{for edu in section.content}
+\textbf{\VAR{edu.school | escape_latex}}\BLOCK{if edu.degree} --- \textit{\VAR{edu.degree | escape_latex}}\BLOCK{endif}\hfill {\color{greytext}\VAR{edu.dates | escape_latex}}
+\BLOCK{if edu.subtitle}\\[0.15em]\textit{\VAR{edu.subtitle | escape_latex}}\BLOCK{endif}
+\BLOCK{if edu.description}\\[0.15em]{\small\VAR{edu.description | escape_latex}}\BLOCK{endif}
+\par\vspace{0.5em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'experiences'}
+\BLOCK{for exp in section.content}
+\textbf{\VAR{exp.title | escape_latex}}, \textit{\VAR{exp.company | escape_latex}}\hfill {\color{greytext}\VAR{exp.dates | escape_latex}}
+\BLOCK{if exp.highlights}
+\begin{itemize}
+  \BLOCK{for item in exp.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.5em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'projects'}
+\BLOCK{for proj in section.content}
+\textbf{\VAR{proj.name | escape_latex}} \hfill {\color{greytext}\VAR{proj.year | escape_latex}}
+\BLOCK{if proj.highlights}
+\begin{itemize}
+  \BLOCK{for item in proj.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.5em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'skills'}
+\BLOCK{for cat in section.content}
+\BLOCK{if cat.skills}
+\textbf{\VAR{cat.category | escape_latex}:} \VAR{cat.skills | escape_latex}
+\BLOCK{if not loop.last}\\[0.3em]\BLOCK{endif}
+\BLOCK{endif}
+\BLOCK{endfor}
+\par\vspace{0.5em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'leadership'}
+\BLOCK{for lead in section.content}
+\textbf{\VAR{lead.role | escape_latex}}\BLOCK{if lead.place} --- \textit{\VAR{lead.place | escape_latex}}\BLOCK{endif}
+\hfill {\color{greytext}\VAR{lead.dates | escape_latex}}
+\BLOCK{if lead.highlights}
+\begin{itemize}
+  \BLOCK{for item in lead.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.5em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'languages'}
+\VAR{section.content | escape_latex}
+\par\vspace{0.5em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'custom'}
+\BLOCK{for item in section.content}
+\textbf{\VAR{item.title | escape_latex}}\BLOCK{if item.subtitle} --- \textit{\VAR{item.subtitle | escape_latex}}\BLOCK{endif}\BLOCK{if item.dates} \hfill {\color{greytext}\VAR{item.dates | escape_latex}}\BLOCK{endif}
+\BLOCK{if item.highlights}
+\begin{itemize}
+  \BLOCK{for hl in item.highlights}
+  \item \VAR{hl | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.5em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{endif}
+\BLOCK{endfor}
+
+\end{document}

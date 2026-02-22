@@ -1,0 +1,134 @@
+\documentclass[10pt,a4paper]{article}
+
+% --- Page layout ---
+\usepackage[left=1.5cm, right=1.5cm, top=1.2cm, bottom=1.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% --- Packages ---
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+% --- Config ---
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlist[itemize]{leftmargin=1.5em, topsep=2pt, itemsep=1pt, parsep=0pt, partopsep=0pt}
+\hypersetup{colorlinks=false, hidelinks}
+
+% --- Section style ---
+\titleformat{\section}{\bfseries\uppercase}{}{0em}{}[\vspace{-0.5em}\rule{\linewidth}{0.4pt}]
+\titlespacing*{\section}{0pt}{0.8em}{0.4em}
+
+\begin{document}
+
+% === HEADER ===
+\begin{center}
+  {\LARGE\bfseries\VAR{personal.name | escape_latex}}\\[0.3em]
+  \BLOCK{if personal.title}{\normalsize\VAR{personal.title | escape_latex}}\\[0.2em]\BLOCK{endif}
+  {\small%
+  \BLOCK{if personal.location}\VAR{personal.location | escape_latex}\BLOCK{endif}%
+  \BLOCK{if personal.email} $\cdot$ \href{mailto:\VAR{personal.email}}{\VAR{personal.email | escape_latex}}\BLOCK{endif}%
+  \BLOCK{if personal.phone} $\cdot$ \VAR{personal.phone | escape_latex}\BLOCK{endif}%
+  \BLOCK{for link in personal.links}\BLOCK{if link.url and link.username} $\cdot$ \href{\VAR{link.url | escape_latex}}{\VAR{link.username | escape_latex}}\BLOCK{endif}\BLOCK{endfor}%
+  }
+\end{center}
+
+% === SECTIONS ===
+\BLOCK{for section in sections}
+\BLOCK{if section.isVisible and section.has_content}
+
+\section*{\VAR{section.title | escape_latex}}
+
+\BLOCK{if section.type == 'summary'}
+\VAR{section.content | escape_latex}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'education'}
+\BLOCK{for edu in section.content}
+\textbf{\VAR{edu.school | escape_latex}}\BLOCK{if edu.degree} -- \VAR{edu.degree | escape_latex}\BLOCK{endif}
+\hfill \VAR{edu.dates | escape_latex}
+\BLOCK{if edu.subtitle}\\[0.1em]\VAR{edu.subtitle | escape_latex}\BLOCK{endif}
+\BLOCK{if edu.description}\\[0.1em]{\small\VAR{edu.description | escape_latex}}\BLOCK{endif}
+\par\vspace{0.35em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'experiences'}
+\BLOCK{for exp in section.content}
+\textbf{\VAR{exp.title | escape_latex}} -- \VAR{exp.company | escape_latex}
+\hfill \VAR{exp.dates | escape_latex}
+\BLOCK{if exp.highlights}
+\begin{itemize}
+  \BLOCK{for item in exp.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.35em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'projects'}
+\BLOCK{for proj in section.content}
+\textbf{\VAR{proj.name | escape_latex}} \hfill \VAR{proj.year | escape_latex}
+\BLOCK{if proj.highlights}
+\begin{itemize}
+  \BLOCK{for item in proj.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.35em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'skills'}
+\BLOCK{for cat in section.content}
+\BLOCK{if cat.skills}
+\textbf{\VAR{cat.category | escape_latex}:} \VAR{cat.skills | escape_latex}
+\BLOCK{if not loop.last}\\[0.15em]\BLOCK{endif}
+\BLOCK{endif}
+\BLOCK{endfor}
+\par\vspace{0.35em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'leadership'}
+\BLOCK{for lead in section.content}
+\textbf{\VAR{lead.role | escape_latex}}\BLOCK{if lead.place} -- \VAR{lead.place | escape_latex}\BLOCK{endif}
+\hfill \VAR{lead.dates | escape_latex}
+\BLOCK{if lead.highlights}
+\begin{itemize}
+  \BLOCK{for item in lead.highlights}
+  \item \VAR{item | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.35em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'languages'}
+\VAR{section.content | escape_latex}
+\par\vspace{0.35em}
+\BLOCK{endif}
+
+\BLOCK{if section.type == 'custom'}
+\BLOCK{for item in section.content}
+\textbf{\VAR{item.title | escape_latex}}\BLOCK{if item.subtitle} -- \VAR{item.subtitle | escape_latex}\BLOCK{endif}\BLOCK{if item.dates} \hfill \VAR{item.dates | escape_latex}\BLOCK{endif}
+\BLOCK{if item.highlights}
+\begin{itemize}
+  \BLOCK{for hl in item.highlights}
+  \item \VAR{hl | escape_latex}
+  \BLOCK{endfor}
+\end{itemize}
+\BLOCK{endif}
+\par\vspace{0.35em}
+\BLOCK{endfor}
+\BLOCK{endif}
+
+\BLOCK{endif}
+\BLOCK{endfor}
+
+\end{document}
