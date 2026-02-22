@@ -200,6 +200,10 @@ function App() {
     { id: 'michel', name: 'Michel', imgBase: '/exemples/Luke_Michel' },
     { id: 'stephane', name: 'Stephane', imgBase: '/exemples/Luke_Stephane' },
     { id: 'aurianne', name: 'Aurianne', imgBase: '/exemples/Homer_Aurianne' },
+    { id: 'sidebar', name: 'Sidebar', imgBase: '/exemples/sidebar' },
+    { id: 'banking', name: 'Banking', imgBase: '/exemples/banking' },
+    { id: 'minimal', name: 'Minimal', imgBase: '/exemples/minimal' },
+    { id: 'deedy', name: 'Deedy', imgBase: '/exemples/deedy' },
   ]
 
   const getTemplateImage = (imgBase: string, size: string) => {
@@ -1197,6 +1201,22 @@ function App() {
                             const target = e.target as HTMLImageElement
                             if (target.src !== fallbackSrc) {
                               target.src = fallbackSrc
+                            } else {
+                              target.style.display = 'none'
+                              const parent = target.parentElement
+                              if (parent) {
+                                parent.style.minHeight = '120px'
+                                parent.style.background =
+                                  'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'
+                                parent.style.display = 'flex'
+                                parent.style.alignItems = 'center'
+                                parent.style.justifyContent = 'center'
+                                const label = document.createElement('span')
+                                label.textContent = template.name
+                                label.style.cssText =
+                                  'font-size:11px;color:#94a3b8;font-weight:500;'
+                                parent.appendChild(label)
+                              }
                             }
                           }}
                         />
@@ -1415,6 +1435,22 @@ function App() {
                             const target = e.target as HTMLImageElement
                             if (target.src !== fallbackSrc) {
                               target.src = fallbackSrc
+                            } else {
+                              target.style.display = 'none'
+                              const parent = target.parentElement
+                              if (parent) {
+                                parent.style.minHeight = '100px'
+                                parent.style.background =
+                                  'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)'
+                                parent.style.display = 'flex'
+                                parent.style.alignItems = 'center'
+                                parent.style.justifyContent = 'center'
+                                const label = document.createElement('span')
+                                label.textContent = template.name
+                                label.style.cssText =
+                                  'font-size:10px;color:#94a3b8;font-weight:500;'
+                                parent.appendChild(label)
+                              }
                             }
                           }}
                         />
