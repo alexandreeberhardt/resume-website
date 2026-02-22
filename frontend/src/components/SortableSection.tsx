@@ -2,16 +2,16 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useTranslation } from 'react-i18next'
 import {
-  GripVertical,
+  DotsSixVertical,
   Eye,
-  EyeOff,
-  Trash2,
-  ChevronDown,
-  ChevronUp,
-  Pencil,
+  EyeSlash,
+  Trash,
+  CaretDown,
+  CaretUp,
+  PencilSimple,
   Check,
   X,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import { useState } from 'react'
 import {
   CVSection,
@@ -158,7 +158,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
           className="p-1 sm:p-1.5 text-primary-300 hover:text-primary-500 rounded-lg
                      hover:bg-primary-50 cursor-grab active:cursor-grabbing transition-colors touch-manipulation"
         >
-          <GripVertical className="w-5 h-5" />
+          <DotsSixVertical className="w-5 h-5" />
         </button>
 
         {/* Title */}
@@ -200,7 +200,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
                 onClick={() => setIsEditingTitle(true)}
                 className="p-1 text-primary-300 hover:text-primary-500 rounded transition-colors flex-shrink-0"
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <PencilSimple className="w-3.5 h-3.5" />
               </button>
               {!isDefaultTitle(section.type, section.title) && (
                 <span className="badge hidden sm:inline-flex">
@@ -222,7 +222,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
             }`}
             title={section.isVisible ? t('sections.hideInPdf') : t('sections.showInPdf')}
           >
-            {section.isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            {section.isVisible ? <Eye className="w-4 h-4" /> : <EyeSlash className="w-4 h-4" />}
           </button>
 
           <button
@@ -231,7 +231,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
                        rounded-lg transition-colors"
             title={t('sections.deleteSection')}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash className="w-4 h-4" />
           </button>
 
           <button
@@ -239,7 +239,7 @@ export default function SortableSection({ section, onUpdate, onDelete }: Sortabl
             className="p-1.5 sm:p-2 text-primary-400 hover:text-primary-600 hover:bg-primary-50
                        rounded-lg transition-colors"
           >
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? <CaretUp className="w-4 h-4" /> : <CaretDown className="w-4 h-4" />}
           </button>
         </div>
       </div>

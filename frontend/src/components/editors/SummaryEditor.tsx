@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { User } from 'lucide-react'
+import { User } from '@phosphor-icons/react'
 
 interface SummaryEditorProps {
   value: string

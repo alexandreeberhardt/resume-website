@@ -4,14 +4,14 @@ import {
   X,
   GraduationCap,
   Briefcase,
-  FolderKanban,
+  Kanban,
   Wrench,
-  Users,
-  Languages,
+  UsersThree,
+  Translate,
   FileText,
   User,
   Check,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import { SectionType } from '../types'
 
 interface AddSectionModalProps {
@@ -23,10 +23,10 @@ const sectionIcons: Record<SectionType, React.ReactNode> = {
   summary: <User className="w-5 h-5" />,
   education: <GraduationCap className="w-5 h-5" />,
   experiences: <Briefcase className="w-5 h-5" />,
-  projects: <FolderKanban className="w-5 h-5" />,
+  projects: <Kanban className="w-5 h-5" />,
   skills: <Wrench className="w-5 h-5" />,
-  leadership: <Users className="w-5 h-5" />,
-  languages: <Languages className="w-5 h-5" />,
+  leadership: <UsersThree className="w-5 h-5" />,
+  languages: <Translate className="w-5 h-5" />,
   custom: <FileText className="w-5 h-5" />,
 }
 

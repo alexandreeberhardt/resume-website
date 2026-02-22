@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
-import { Loader2, CheckCircle, AlertCircle, Mail } from 'lucide-react'
+import { SpinnerGap, CheckCircle, WarningCircle, EnvelopeSimple } from '@phosphor-icons/react'
 import { verifyEmail } from '../api/auth'
 import { ApiError } from '../api/client'
 import ThemeToggle from '../components/ThemeToggle'
@@ -65,7 +65,7 @@ export default function VerifyEmailPage() {
             {state === 'loading' && (
               <div className="py-4 animate-fade-in">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-200 rounded-xl mb-4">
-                  <Loader2 className="w-6 h-6 text-primary-600 dark:text-primary-400 animate-spin" />
+                  <SpinnerGap className="w-6 h-6 text-primary-600 dark:text-primary-400 animate-spin" />
                 </div>
                 <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
                   {t('auth.verifyEmail.verifying')}
@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
             {state === 'error' && (
               <div className="py-4 animate-fade-in">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-error-100 dark:bg-error-500/20 rounded-xl mb-4">
-                  <AlertCircle className="w-6 h-6 text-error-600 dark:text-error-400" />
+                  <WarningCircle className="w-6 h-6 text-error-600 dark:text-error-400" />
                 </div>
                 <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
                   {t('auth.verifyEmail.errorTitle')}
@@ -109,7 +109,7 @@ export default function VerifyEmailPage() {
                     {t('auth.forgotPassword.backToLogin')}
                   </Link>
                   <p className="text-xs text-primary-400 dark:text-primary-500 flex items-center justify-center gap-1">
-                    <Mail className="w-3.5 h-3.5" />
+                    <EnvelopeSimple className="w-3.5 h-3.5" />
                     {t('auth.verifyEmail.expiredHint')}
                   </p>
                 </div>

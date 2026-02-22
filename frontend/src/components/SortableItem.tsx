@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical } from 'lucide-react'
+import { DotsSixVertical } from '@phosphor-icons/react'
 import { ReactNode } from 'react'
 
 interface SortableItemProps {
@@ -32,7 +32,7 @@ export default function SortableItem({ id, children }: SortableItemProps) {
                    touch-manipulation z-10"
         type="button"
       >
-        <GripVertical className="w-4 h-4" />
+        <DotsSixVertical className="w-4 h-4" />
       </button>
       {children}
     </div>

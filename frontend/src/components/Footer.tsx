@@ -2,7 +2,7 @@
  * Footer component with legal links
  */
 import { useTranslation } from 'react-i18next'
-import { FileText } from 'lucide-react'
+import { FileText } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {

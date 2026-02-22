@@ -2,7 +2,7 @@
  * Mentions Légales / Legal Notice page
  */
 import { useTranslation } from 'react-i18next'
-import { FileText, ArrowLeft } from 'lucide-react'
+import { FileText, ArrowLeft } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 import LanguageSwitcher from '../components/LanguageSwitcher'

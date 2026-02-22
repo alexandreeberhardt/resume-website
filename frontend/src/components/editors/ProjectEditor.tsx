@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Plus, Trash2, X, FolderKanban } from 'lucide-react'
+import { Plus, Trash, X, Kanban } from '@phosphor-icons/react'
 import { ProjectItem, createEmptyProject } from '../../types'
 import { useItemSortable } from '../../hooks/useItemSortable'
 import SortableItem from '../SortableItem'
@@ -60,7 +60,7 @@ export default function ProjectEditor({ items, onChange }: ProjectEditorProps) {
                              hover:bg-error-50 rounded-lg transition-colors"
                   title={t('editors.projects.deleteProject')}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </button>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-5 pr-8 sm:pr-10">
@@ -137,7 +137,7 @@ export default function ProjectEditor({ items, onChange }: ProjectEditorProps) {
                    text-primary-500 hover:border-primary-400 hover:text-primary-700
                    hover:bg-primary-50/50 transition-all flex items-center justify-center gap-2"
       >
-        <FolderKanban className="w-5 h-5" />
+        <Kanban className="w-5 h-5" />
         {t('editors.projects.addProject')}
       </button>
     </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,34 +7,34 @@
 /* ===== Theme Variables ===== */
 :root {
   /* Brand colors */
-  --color-brand: #2563eb;
-  --color-brand-hover: #1d4ed8;
-  --color-brand-active: #1e40af;
+  --color-brand: #0f766e;
+  --color-brand-hover: #0d6b64;
+  --color-brand-active: #0b5f59;
 
   /* Primary palette - Light theme */
-  --color-primary-50: #f8fafc;
-  --color-primary-100: #f1f5f9;
-  --color-primary-200: #e2e8f0;
-  --color-primary-300: #cbd5e1;
-  --color-primary-400: #94a3b8;
-  --color-primary-500: #64748b;
-  --color-primary-600: #475569;
-  --color-primary-700: #334155;
-  --color-primary-800: #1e293b;
-  --color-primary-900: #0f172a;
-  --color-primary-950: #020617;
+  --color-primary-50: #f8faf8;
+  --color-primary-100: #edf2ef;
+  --color-primary-200: #dde6e1;
+  --color-primary-300: #c4d1ca;
+  --color-primary-400: #94a79d;
+  --color-primary-500: #657a70;
+  --color-primary-600: #4c6359;
+  --color-primary-700: #364d44;
+  --color-primary-800: #23372f;
+  --color-primary-900: #14241d;
+  --color-primary-950: #0a1510;
 
   /* Accent - Warm amber */
-  --color-accent-50: #fffbeb;
-  --color-accent-100: #fef3c7;
-  --color-accent-200: #fde68a;
-  --color-accent-300: #fcd34d;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #d97706;
-  --color-accent-700: #b45309;
-  --color-accent-800: #92400e;
-  --color-accent-900: #78350f;
+  --color-accent-50: #f0fdfa;
+  --color-accent-100: #ccfbf1;
+  --color-accent-200: #99f6e4;
+  --color-accent-300: #5eead4;
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #14b8a6;
+  --color-accent-600: #0d9488;
+  --color-accent-700: #0f766e;
+  --color-accent-800: #115e59;
+  --color-accent-900: #134e4a;
 
   /* Success states */
   --color-success-50: #f0fdf4;
@@ -57,42 +57,42 @@
 
   /* Surface colors - Light theme */
   --color-surface-0: #ffffff;
-  --color-surface-50: #fafafa;
-  --color-surface-100: #f5f5f5;
-  --color-surface-200: #e5e5e5;
+  --color-surface-50: #f2f6f3;
+  --color-surface-100: #e7efe9;
+  --color-surface-200: #d9e5de;
 }
 
 /* ===== Dark Theme Variables ===== */
 .dark {
   /* Brand colors - slightly adjusted for dark mode */
-  --color-brand: #3b82f6;
-  --color-brand-hover: #2563eb;
-  --color-brand-active: #1d4ed8;
+  --color-brand: #2dd4bf;
+  --color-brand-hover: #5eead4;
+  --color-brand-active: #14b8a6;
 
   /* Primary palette - Inverted for dark theme */
-  --color-primary-50: #020617;
-  --color-primary-100: #0f172a;
-  --color-primary-200: #1e293b;
-  --color-primary-300: #334155;
-  --color-primary-400: #475569;
-  --color-primary-500: #64748b;
-  --color-primary-600: #94a3b8;
-  --color-primary-700: #cbd5e1;
-  --color-primary-800: #e2e8f0;
-  --color-primary-900: #f1f5f9;
-  --color-primary-950: #f8fafc;
+  --color-primary-50: #0a1510;
+  --color-primary-100: #14241d;
+  --color-primary-200: #1f352b;
+  --color-primary-300: #2d493d;
+  --color-primary-400: #47685a;
+  --color-primary-500: #628676;
+  --color-primary-600: #8db3a1;
+  --color-primary-700: #b7d0c2;
+  --color-primary-800: #d6e5dc;
+  --color-primary-900: #e8f2ec;
+  --color-primary-950: #f3f8f5;
 
   /* Accent - Adjusted for dark mode visibility */
-  --color-accent-50: #451a03;
-  --color-accent-100: #78350f;
-  --color-accent-200: #92400e;
-  --color-accent-300: #b45309;
-  --color-accent-400: #d97706;
-  --color-accent-500: #f59e0b;
-  --color-accent-600: #fbbf24;
-  --color-accent-700: #fcd34d;
-  --color-accent-800: #fde68a;
-  --color-accent-900: #fef3c7;
+  --color-accent-50: #042f2e;
+  --color-accent-100: #115e59;
+  --color-accent-200: #0f766e;
+  --color-accent-300: #0d9488;
+  --color-accent-400: #14b8a6;
+  --color-accent-500: #2dd4bf;
+  --color-accent-600: #5eead4;
+  --color-accent-700: #99f6e4;
+  --color-accent-800: #ccfbf1;
+  --color-accent-900: #f0fdfa;
 
   /* Success states - Adjusted for dark mode */
   --color-success-50: #052e16;
@@ -114,10 +114,10 @@
   --color-error-800: #fecaca;
 
   /* Surface colors - Dark theme */
-  --color-surface-0: #0f172a;
-  --color-surface-50: #1e293b;
-  --color-surface-100: #334155;
-  --color-surface-200: #475569;
+  --color-surface-0: #14241d;
+  --color-surface-50: #1f352b;
+  --color-surface-100: #2d493d;
+  --color-surface-200: #47685a;
 }
 
 @layer base {
@@ -128,7 +128,11 @@
   }
 
   body {
-    @apply bg-surface-50 text-primary-900 font-sans transition-colors duration-200;
+    @apply bg-surface-50 text-primary-900 font-sans transition-colors duration-300;
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.16), transparent 26%),
+      radial-gradient(circle at 85% 0%, rgba(15, 118, 110, 0.12), transparent 24%);
+    min-height: 100dvh;
   }
 
   ::selection {
@@ -140,10 +144,10 @@
   /* Button base styles */
   .btn {
     @apply inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5
-           font-medium text-sm rounded-xl transition-all duration-200
+           font-semibold tracking-tight text-sm rounded-2xl transition-all duration-300
            focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed
-           active:scale-[0.98];
+           active:scale-[0.98] active:-translate-y-[1px];
     /* Ensure minimum touch target size */
     min-height: 44px;
   }
@@ -155,17 +159,17 @@
   }
 
   .btn-primary {
-    @apply btn bg-primary-900 text-primary-50
+    @apply btn bg-primary-900 text-primary-50 border border-primary-800
            hover:bg-primary-800 active:bg-primary-950
            focus-visible:ring-primary-900
-           shadow-sm hover:shadow-md;
+           shadow-[0_14px_30px_-18px_rgba(10,21,16,0.66)] hover:shadow-[0_20px_36px_-16px_rgba(10,21,16,0.75)];
   }
 
   .btn-secondary {
     @apply btn bg-surface-0 text-primary-700 border border-primary-200
            hover:bg-primary-50 hover:border-primary-300 active:bg-primary-100
            focus-visible:ring-primary-500
-           shadow-sm;
+           shadow-[0_6px_24px_-18px_rgba(10,21,16,0.35)];
   }
 
   .btn-accent {
@@ -176,15 +180,15 @@
   }
 
   .btn-brand {
-    @apply btn bg-brand text-white
+    @apply btn bg-brand text-white border border-teal-500/80
            hover:bg-brand-hover active:bg-brand-active
            focus-visible:ring-brand
-           shadow-sm hover:shadow-md;
+           shadow-[0_16px_30px_-18px_rgba(15,118,110,0.9)] hover:shadow-[0_24px_44px_-18px_rgba(15,118,110,0.95)];
   }
 
   .btn-ghost {
-    @apply btn bg-transparent text-primary-600
-           hover:bg-primary-100 active:bg-primary-200
+    @apply btn bg-transparent text-primary-600 border border-transparent
+           hover:bg-primary-100 hover:border-primary-200 active:bg-primary-200
            focus-visible:ring-primary-500;
   }
 
@@ -197,11 +201,12 @@
   /* Input styles */
   .input {
     @apply w-full px-3.5 py-3 text-base sm:text-sm
-           bg-surface-0 border border-primary-200 rounded-xl
+           bg-surface-0 border border-primary-200 rounded-2xl
            text-primary-900 placeholder:text-primary-400
-           transition-all duration-200
+           transition-all duration-300
            hover:border-primary-300
-           focus:outline-none focus:border-brand focus:ring-4 focus:ring-primary-100;
+           focus:outline-none focus:border-brand focus:ring-4 focus:ring-primary-100
+           shadow-[inset_0_1px_0_rgba(255,255,255,0.1)];
     /* Prevent zoom on iOS when focusing inputs */
     font-size: 16px;
   }
@@ -228,36 +233,39 @@
 
   /* Card styles */
   .card {
-    @apply bg-surface-0 rounded-2xl shadow-soft border border-primary-100;
+    @apply bg-surface-0 rounded-[1.65rem] border border-primary-200
+           shadow-[0_24px_40px_-22px_rgba(10,21,16,0.25),inset_0_1px_0_rgba(255,255,255,0.55)];
   }
 
   .card-elevated {
-    @apply bg-surface-0 rounded-2xl shadow-medium border border-primary-100;
+    @apply bg-surface-0 rounded-[1.9rem] border border-primary-200
+           shadow-[0_30px_48px_-24px_rgba(10,21,16,0.36),inset_0_1px_0_rgba(255,255,255,0.62)];
   }
 
   /* Glass effect */
   .glass {
-    @apply backdrop-blur-xl border border-primary-200;
+    @apply backdrop-blur-xl border border-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)];
   }
 
   .glass-subtle {
-    @apply backdrop-blur-md border border-primary-200;
+    @apply backdrop-blur-md border border-primary-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)];
   }
 
   /* Modal styles */
   .modal-overlay {
-    @apply fixed inset-0 z-50 flex items-center justify-center bg-primary-950/60 backdrop-blur-sm p-4;
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-primary-950 backdrop-blur-md p-4;
   }
 
   .modal-content {
-    @apply bg-surface-0 rounded-2xl shadow-elevated border border-primary-100/50 overflow-hidden;
+    @apply bg-surface-0 rounded-[1.75rem] shadow-elevated border border-primary-100 overflow-hidden
+           shadow-[0_36px_60px_-26px_rgba(10,21,16,0.45),inset_0_1px_0_rgba(255,255,255,0.42)];
   }
 
   /* Badge styles */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5
-           text-xs font-medium rounded-lg
-           bg-primary-100 text-primary-600;
+           text-xs font-semibold rounded-xl
+           bg-primary-100 text-primary-700;
   }
 
   .badge-accent {
@@ -300,6 +308,13 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .bg-mesh {
+    background:
+      radial-gradient(circle at 0% 0%, rgba(20, 184, 166, 0.18), transparent 28%),
+      radial-gradient(circle at 90% 10%, rgba(15, 118, 110, 0.12), transparent 32%),
+      linear-gradient(160deg, rgba(248, 250, 248, 0.95) 0%, rgba(242, 246, 243, 0.92) 100%);
   }
 }
 

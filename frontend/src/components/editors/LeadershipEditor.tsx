@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Plus, Trash2, X, Users } from 'lucide-react'
+import { Plus, Trash, X, UsersThree } from '@phosphor-icons/react'
 import { LeadershipItem, createEmptyLeadership } from '../../types'
 import { useItemSortable } from '../../hooks/useItemSortable'
 import SortableItem from '../SortableItem'
@@ -60,7 +60,7 @@ export default function LeadershipEditor({ items, onChange }: LeadershipEditorPr
                              hover:bg-error-50 rounded-lg transition-colors"
                   title={t('editors.leadership.deleteLeadership')}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </button>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-5 pr-8 sm:pr-10">
@@ -147,7 +147,7 @@ export default function LeadershipEditor({ items, onChange }: LeadershipEditorPr
                    text-primary-500 hover:border-primary-400 hover:text-primary-700
                    hover:bg-primary-50/50 transition-all flex items-center justify-center gap-2"
       >
-        <Users className="w-5 h-5" />
+        <UsersThree className="w-5 h-5" />
         {t('editors.leadership.addLeadership')}
       </button>
     </div>

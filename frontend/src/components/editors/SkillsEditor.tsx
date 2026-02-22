@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Plus, Trash2, Lightbulb } from 'lucide-react'
+import { Plus, Trash, Lightbulb } from '@phosphor-icons/react'
 import { SkillsItem, SkillCategory, createEmptySkillCategory } from '../../types'
 import { useItemSortable } from '../../hooks/useItemSortable'
 import SortableItem from '../SortableItem'
@@ -42,7 +42,7 @@ export default function SkillsEditor({ data, onChange }: SkillsEditorProps) {
                              hover:bg-error-50 rounded-lg transition-colors"
                   title={t('editors.skills.deleteCategory')}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </button>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pr-8 sm:pr-10">

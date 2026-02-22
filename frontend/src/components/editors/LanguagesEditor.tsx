@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Languages } from 'lucide-react'
+import { Translate } from '@phosphor-icons/react'
 
 interface LanguagesEditorProps {
   value: string
@@ -12,7 +12,7 @@ export default function LanguagesEditor({ value, onChange }: LanguagesEditorProp
   return (
     <div className="form-group">
       <label className="label flex items-center gap-2">
-        <Languages className="w-4 h-4 text-primary-500" />
+        <Translate className="w-4 h-4 text-primary-500" />
         {t('editors.languagesSpoken.label')}
       </label>
       <input

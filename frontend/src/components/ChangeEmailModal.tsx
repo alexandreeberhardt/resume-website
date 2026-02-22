@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Mail, Lock, Loader2, AlertCircle, CheckCircle, Eye, EyeOff, Check, X } from 'lucide-react'
+import { EnvelopeSimple, Lock, SpinnerGap, WarningCircle, CheckCircle, Eye, EyeSlash, Check, X } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { ApiError } from '../api/client'
 
@@ -109,7 +109,7 @@ export default function ChangeEmailModal({ onClose }: { onClose: () => void }) {
           {error && (
             <div className="mb-5 p-3 bg-error-50 border border-error-200 rounded-xl flex items-center gap-3 animate-shake">
               <div className="w-8 h-8 bg-error-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-4 h-4 text-error-600" />
+                <WarningCircle className="w-4 h-4 text-error-600" />
               </div>
               <p className="text-sm text-error-700 flex-1 min-w-0">{error}</p>
             </div>
@@ -131,7 +131,7 @@ export default function ChangeEmailModal({ onClose }: { onClose: () => void }) {
                   required
                   autoComplete="email"
                 />
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
+                <EnvelopeSimple className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
               </div>
             </div>
 
@@ -156,7 +156,7 @@ export default function ChangeEmailModal({ onClose }: { onClose: () => void }) {
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-primary-400 hover:text-primary-600"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function ChangeEmailModal({ onClose }: { onClose: () => void }) {
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-primary-400 hover:text-primary-600"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="w-4 h-4" />
+                    <EyeSlash className="w-4 h-4" />
                   ) : (
                     <Eye className="w-4 h-4" />
                   )}
@@ -225,7 +225,7 @@ export default function ChangeEmailModal({ onClose }: { onClose: () => void }) {
             <button type="submit" disabled={!allChecksValid || loading} className="btn-brand w-full">
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <SpinnerGap className="w-4 h-4 animate-spin" />
                   {t('auth.registering')}
                 </>
               ) : (

@@ -5,17 +5,17 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import {
-  Loader2,
+  SpinnerGap,
   Lock,
-  KeyRound,
-  AlertCircle,
+  Key,
+  WarningCircle,
   CheckCircle,
   Eye,
-  EyeOff,
+  EyeSlash,
   FileText,
   Check,
   X,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import { resetPassword } from '../api/auth'
 import { ApiError } from '../api/client'
 import ThemeToggle from '../components/ThemeToggle'
@@ -72,7 +72,7 @@ export default function ResetPassword() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-100 p-4">
         <div className="text-center space-y-4">
-          <AlertCircle className="w-12 h-12 text-error-500 mx-auto" />
+          <WarningCircle className="w-12 h-12 text-error-500 mx-auto" />
           <p className="text-primary-700 dark:text-primary-300">
             {t('auth.resetPassword.invalidLink')}
           </p>
@@ -110,7 +110,7 @@ export default function ResetPassword() {
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-100 dark:bg-primary-200 rounded-xl mb-4">
-                  <KeyRound className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                  <Key className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
                 <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
                   {t('auth.resetPassword.title')}
@@ -135,7 +135,7 @@ export default function ResetPassword() {
                   {error && (
                     <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
                       <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+                        <WarningCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
                       </div>
                       <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">
                         {error}
@@ -167,7 +167,7 @@ export default function ResetPassword() {
                           className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
                         >
                           {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
+                            <EyeSlash className="w-4 h-4" />
                           ) : (
                             <Eye className="w-4 h-4" />
                           )}
@@ -225,7 +225,7 @@ export default function ResetPassword() {
                           className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
                         >
                           {showPassword ? (
-                            <EyeOff className="w-4 h-4" />
+                            <EyeSlash className="w-4 h-4" />
                           ) : (
                             <Eye className="w-4 h-4" />
                           )}
@@ -247,7 +247,7 @@ export default function ResetPassword() {
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <SpinnerGap className="w-4 h-4 animate-spin" />
                           <span>{t('auth.resetPassword.resetting')}</span>
                         </>
                       ) : (
