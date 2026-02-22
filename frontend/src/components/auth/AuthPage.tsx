@@ -41,40 +41,37 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
   }
 
   return (
-    <div className="min-h-[100dvh] flex overflow-hidden bg-mesh">
+    <div className="h-screen flex overflow-hidden">
       {/* Left Panel - Branding (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[58%] relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-[#eef2f7]">
         {/* Studio lighting radial */}
         <div
-          className="absolute inset-0 opacity-80"
+          className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse 90% 55% at 40% 40%, rgba(255,255,255,0.72) 0%, transparent 74%)',
+              'radial-gradient(ellipse 90% 50% at 50% 45%, rgba(255,255,255,0.75) 0%, transparent 70%)',
           }}
         />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col h-full p-10 xl:p-14 w-full">
+        <div className="relative z-10 flex flex-col h-full p-8 xl:p-10 w-full">
           {/* Logo */}
-          <div className="flex items-center gap-2.5 mb-6">
+          <div className="flex items-center gap-2.5 mb-4">
             <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
-            <span className="text-2xl font-extrabold text-primary-900 tracking-tight">sivee.pro</span>
+            <span className="text-2xl font-bold text-slate-900 tracking-tight">sivee.pro</span>
           </div>
 
           {/* Hero text */}
-          <h1 className="text-4xl xl:text-5xl font-extrabold tracking-tight text-primary-900 leading-[1.02] max-w-[18ch] mb-6">
+          <h1 className="text-2xl xl:text-3xl 2xl:text-4xl font-extrabold text-slate-900 leading-tight mb-4 text-center">
             {t('auth.brandingTitle') || 'Fini Word et Canva. Voici le CV qui se met en page tout seul.'}
           </h1>
-          <p className="text-base text-primary-600 max-w-[44ch] leading-relaxed mb-8">
-            {t('landing.heroSubtitle')}
-          </p>
 
           {/* Floating CVs - side by side with overlap */}
-          <div className="flex-1 relative min-h-0 flex items-center justify-start">
-            <div className="relative w-full max-w-[560px] xl:max-w-[640px] aspect-[4/3]">
+          <div className="flex-1 relative min-h-0 flex items-center justify-center">
+            <div className="relative w-full max-w-[500px] xl:max-w-[560px] aspect-[4/3]">
               {/* CV 1 - left, tilted back */}
               <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-[5deg] rounded-2xl overflow-hidden z-10 w-[54%] border border-white/45"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-[6deg] rounded-lg overflow-hidden z-10 w-[52%]"
                 style={{
                   boxShadow:
                     '0 25px 50px -12px rgba(15, 23, 42, 0.25), 0 12px 24px -8px rgba(15, 23, 42, 0.12)',
@@ -89,7 +86,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
 
               {/* CV 2 - right, tilted opposite, overlapping */}
               <div
-                className="absolute right-0 top-1/2 -translate-y-[45%] rotate-[4deg] rounded-2xl overflow-hidden z-20 w-[54%] border border-white/55"
+                className="absolute right-0 top-1/2 -translate-y-[45%] rotate-[5deg] rounded-lg overflow-hidden z-20 w-[52%]"
                 style={{
                   boxShadow:
                     '0 30px 60px -15px rgba(15, 23, 42, 0.30), 0 15px 30px -10px rgba(15, 23, 42, 0.15)',
@@ -105,15 +102,15 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
           </div>
 
           {/* Bottom features */}
-          <div className="flex items-end justify-between pt-4 gap-8 border-t border-primary-200/70">
+          <div className="flex items-end justify-between pt-4 gap-6">
             <div className="flex flex-col gap-3">
               {[
                 t('auth.feature1') || 'Des modèles approuvés par les recruteurs.',
                 t('auth.feature2') || 'Déposez votre ancien CV, Sivee s\'occupe du reste.',
               ].map((text) => (
                 <div key={text} className="flex items-start gap-2.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-brand flex-shrink-0 mt-1.5" />
-                  <span className="text-sm xl:text-base font-semibold text-primary-700 leading-snug">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1.5" />
+                  <span className="text-sm xl:text-base font-semibold text-slate-600 leading-snug">
                     {text}
                   </span>
                 </div>
@@ -125,7 +122,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
       </div>
 
       {/* Right Panel - Auth Form */}
-      <div className="flex-1 flex flex-col bg-surface-50/55 dark:bg-surface-100/85 relative overflow-y-auto backdrop-blur-sm">
+      <div className="flex-1 flex flex-col bg-surface-50 dark:bg-surface-100 relative overflow-y-auto">
         {/* Subtle background pattern */}
         <div
           className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]"
@@ -136,7 +133,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         />
 
         {/* Mobile Header */}
-        <header className="lg:hidden relative z-10 bg-surface-0/65 dark:bg-surface-100/80 backdrop-blur-xl border-b border-primary-100/60 dark:border-primary-800/50">
+        <header className="lg:hidden relative z-10 bg-surface-0/80 dark:bg-surface-100/80 backdrop-blur-md border-b border-primary-100/50 dark:border-primary-800/50">
           <div className="px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img src="/logo.png" alt="Sivee" className="w-9 h-9" />
@@ -158,10 +155,10 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
         </div>
 
         {/* Form Container */}
-        <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-10 relative z-10">
-          <div className="w-full max-w-[440px]">
+        <main className="flex-1 flex items-center justify-center px-4 py-4 sm:py-6 relative z-10">
+          <div className="w-full max-w-[400px]">
             {/* Glass card container */}
-            <div className="bg-surface-0/88 dark:bg-surface-200/88 backdrop-blur-2xl rounded-[1.8rem] border border-white/30 dark:border-primary-700/40 shadow-[0_30px_50px_-24px_rgba(10,21,16,0.42)] p-6 sm:p-7">
+            <div className="bg-surface-0/90 dark:bg-surface-200/90 backdrop-blur-xl rounded-2xl border border-primary-200/30 dark:border-primary-700/30 shadow-xl shadow-primary-900/5 dark:shadow-primary-950/20 p-5 sm:p-6">
               {/* Animated content */}
               <div key={mode} className="animate-fade-in">
                 {mode === 'login' ? (
