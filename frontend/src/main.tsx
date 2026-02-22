@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { IconContext } from '@phosphor-icons/react'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import ScrollToTop from './components/ScrollToTop'
@@ -15,33 +16,35 @@ import './i18n'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ScrollToTop />
-      <AuthProvider>
-        <Routes>
-          {/* Legal pages - French URLs */}
-          <Route path="/mentions-legales" element={<LegalNotice />} />
-          <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
-          <Route path="/cgu" element={<TermsOfService />} />
+    <IconContext.Provider value={{ size: 18, weight: 'regular' }}>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ScrollToTop />
+        <AuthProvider>
+          <Routes>
+            {/* Legal pages - French URLs */}
+            <Route path="/mentions-legales" element={<LegalNotice />} />
+            <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+            <Route path="/cgu" element={<TermsOfService />} />
 
-          {/* Legal pages - English URLs */}
-          <Route path="/legal-notice" element={<LegalNotice />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
+            {/* Legal pages - English URLs */}
+            <Route path="/legal-notice" element={<LegalNotice />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
 
-          {/* Account page */}
-          <Route path="/account" element={<Account />} />
+            {/* Account page */}
+            <Route path="/account" element={<Account />} />
 
-          {/* Password reset */}
-          <Route path="/reset-password" element={<ResetPassword />} />
+            {/* Password reset */}
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Email verification */}
-          <Route path="/verify-email" element={<VerifyEmailPage />} />
+            {/* Email verification */}
+            <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-          {/* Main app */}
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+            {/* Main app */}
+            <Route path="/*" element={<App />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </IconContext.Provider>
   </React.StrictMode>,
 )

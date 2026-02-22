@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { RefreshCw, AlertCircle, Eye, EyeOff, X, Maximize2 } from 'lucide-react'
+import { ArrowsClockwise, WarningCircle, Eye, EyeSlash, X, ArrowsOutSimple } from '@phosphor-icons/react'
 import { ResumeData } from '../types'
 import { getCsrfToken } from '../api/client'
 
@@ -165,14 +165,14 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
             className="p-1.5 text-primary-400 hover:text-primary-600 hover:bg-primary-100 rounded-lg transition-colors disabled:opacity-50"
             title={t('preview.refresh')}
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <ArrowsClockwise className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={() => setIsCollapsed(true)}
             className="p-1.5 text-primary-400 hover:text-primary-600 hover:bg-primary-100 rounded-lg transition-colors"
             title={t('preview.hide')}
           >
-            <EyeOff className="w-4 h-4" />
+            <EyeSlash className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -231,7 +231,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
           {pdfUrl && !loading && !isMobile && (
             <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
               <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center gap-2 shadow-md border border-primary-100/50 transform scale-95 group-hover:scale-100 transition-transform">
-                <Maximize2 className="w-4 h-4 text-primary-600" />
+                <ArrowsOutSimple className="w-4 h-4 text-primary-600" />
                 <span className="text-xs font-medium text-primary-600">
                   {t('preview.fullscreen')}
                 </span>
@@ -253,7 +253,7 @@ export default function CVPreview({ data, debounceMs = 1000 }: CVPreviewProps) {
           {error && !loading && (
             <div className="absolute inset-x-0 bottom-0 bg-error-50/95 backdrop-blur-sm border-t border-error-100 p-2.5">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-3.5 h-3.5 text-error-500 flex-shrink-0" />
+                <WarningCircle className="w-3.5 h-3.5 text-error-500 flex-shrink-0" />
                 <p className="text-xs text-error-600 truncate">{error}</p>
               </div>
             </div>

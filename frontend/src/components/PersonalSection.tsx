@@ -2,15 +2,15 @@ import { useTranslation } from 'react-i18next'
 import {
   User,
   MapPin,
-  Mail,
+  EnvelopeSimple,
   Phone,
   Link,
   Plus,
-  Trash2,
-  Linkedin,
+  Trash,
+  LinkedinLogo,
   Globe,
-  ExternalLink,
-} from 'lucide-react'
+  ArrowSquareOut,
+} from '@phosphor-icons/react'
 import { PersonalInfo, ProfessionalLink, PlatformType, createEmptyLink } from '../types'
 
 interface PersonalSectionProps {
@@ -19,7 +19,7 @@ interface PersonalSectionProps {
 }
 
 const PLATFORM_OPTIONS: { value: PlatformType; icon: React.ReactNode }[] = [
-  { value: 'linkedin', icon: <Linkedin className="w-4 h-4" /> },
+  { value: 'linkedin', icon: <LinkedinLogo className="w-4 h-4" /> },
   {
     value: 'github',
     icon: (
@@ -28,7 +28,7 @@ const PLATFORM_OPTIONS: { value: PlatformType; icon: React.ReactNode }[] = [
       </svg>
     ),
   },
-  { value: 'portfolio', icon: <ExternalLink className="w-4 h-4" /> },
+  { value: 'portfolio', icon: <ArrowSquareOut className="w-4 h-4" /> },
   {
     value: 'behance',
     icon: (
@@ -134,7 +134,7 @@ export default function PersonalSection({ data, onChange }: PersonalSectionProps
               placeholder={t('personal.emailPlaceholder')}
               className="input pl-10"
             />
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
+            <EnvelopeSimple className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400" />
           </div>
         </div>
 
@@ -223,7 +223,7 @@ export default function PersonalSection({ data, onChange }: PersonalSectionProps
                 className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 title={t('common.delete')}
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash className="w-4 h-4" />
               </button>
             </div>
           ))}

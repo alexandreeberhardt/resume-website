@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Mail, Lock, LogIn, AlertCircle, Eye, EyeOff, RefreshCw } from 'lucide-react'
+import { SpinnerGap, EnvelopeSimple, Lock, SignIn, WarningCircle, Eye, EyeSlash, ArrowsClockwise } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
 import { ApiError } from '../../api/client'
 import { loginWithGoogle, resendVerification } from '../../api/auth'
@@ -66,7 +66,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
       {/* Header */}
       <div className="text-center mb-5">
         <div className="inline-flex items-center justify-center w-9 h-9 bg-primary-100 dark:bg-primary-200 rounded-xl mb-3">
-          <LogIn className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+          <SignIn className="w-4 h-4 text-primary-600 dark:text-primary-400" />
         </div>
         <h2 className="text-lg sm:text-xl font-semibold text-primary-900 dark:text-white mb-1 tracking-tight">
           {t('auth.login.title')}
@@ -79,7 +79,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
         <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl animate-shake">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-              <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+              <WarningCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
             </div>
             <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
           </div>
@@ -96,7 +96,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
                   disabled={resendLoading}
                   className="flex items-center gap-1.5 text-xs font-medium text-error-600 dark:text-error-400 hover:text-error-800 dark:hover:text-error-200 transition-colors"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${resendLoading ? 'animate-spin' : ''}`} />
+                  <ArrowsClockwise className={`w-3.5 h-3.5 ${resendLoading ? 'animate-spin' : ''}`} />
                   {t('auth.verifyEmail.resend')}
                 </button>
               )}
@@ -162,7 +162,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
               required
               autoComplete="email"
             />
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
+            <EnvelopeSimple className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
           </div>
         </div>
 
@@ -188,7 +188,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function Login({ onSwitchToRegister, onSwitchToForgotPassword }: 
         <button type="submit" disabled={loading} className="btn-brand w-full py-2.5 mt-1">
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <SpinnerGap className="w-4 h-4 animate-spin" />
               <span>{t('auth.loggingIn')}</span>
             </>
           ) : (

@@ -2,7 +2,7 @@
  * Conditions Générales d'Utilisation / Terms of Service page
  */
 import { useTranslation } from 'react-i18next'
-import { FileText, ArrowLeft } from 'lucide-react'
+import { FileText, ArrowLeft } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 import LanguageSwitcher from '../components/LanguageSwitcher'
@@ -305,7 +305,7 @@ export default function TermsOfService() {
                   10. ToS Modifications
                 </h2>
                 <p className="text-primary-700">
-                  The publisher reserves the right to modify these ToS at any time. Users will be
+                  The publisher reserves the right to modify these ToS at any time. UsersThree will be
                   informed of significant changes.
                 </p>
               </section>

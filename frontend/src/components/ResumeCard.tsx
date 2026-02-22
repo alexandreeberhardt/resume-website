@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FileText, Pencil, Trash2, Check } from 'lucide-react'
+import { FileText, PencilSimple, Trash, Check } from '@phosphor-icons/react'
 import { SavedResume } from '../types'
 import { isMobileDevice } from '../utils/deviceDetection'
 import { getCsrfToken } from '../api/client'
@@ -77,18 +77,18 @@ export default function ResumeCard({
 
   return (
     <div
-      className={`group bg-surface-0 rounded-2xl border overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
+      className={`group bg-surface-0/92 rounded-[1.6rem] border overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-0.5 ${
         isActive
-          ? 'border-brand ring-2 ring-brand/20'
-          : 'border-primary-100 hover:border-primary-200'
+          ? 'border-brand ring-2 ring-brand/20 shadow-[0_20px_38px_-24px_rgba(15,118,110,0.55)]'
+          : 'border-primary-200/75 hover:border-primary-300 shadow-[0_18px_34px_-28px_rgba(10,21,16,0.35)]'
       }`}
       onClick={onOpen}
     >
       {/* Preview */}
-      <div className="relative aspect-[210/297] bg-primary-50 overflow-hidden">
+      <div className="relative aspect-[210/297] bg-primary-50/75 overflow-hidden">
         {loading ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-2 border-primary-200 border-t-brand animate-spin" />
+            <div className="w-9 h-9 rounded-full border-2 border-primary-200 border-t-brand animate-spin" />
           </div>
         ) : previewUrl && !isMobile ? (
           <object
@@ -107,8 +107,8 @@ export default function ResumeCard({
         )}
 
         {/* Hover overlay */}
-        <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-primary-100">
+        <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <div className="bg-white/92 backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/40">
             <span className="text-sm font-medium text-primary-700">
               {t('resumes.open') || 'Ouvrir'}
             </span>
@@ -126,7 +126,7 @@ export default function ResumeCard({
             className="p-2 bg-white/90 hover:bg-primary-50 text-primary-400 hover:text-primary-700 rounded-lg transition-all shadow-sm"
             title={t('resumes.rename') || 'Renommer'}
           >
-            <Pencil className="w-4 h-4" />
+            <PencilSimple className="w-4 h-4" />
           </button>
           <button
             onClick={(e) => {
@@ -135,20 +135,20 @@ export default function ResumeCard({
             }}
             className="p-2 bg-white/90 hover:bg-error-50 text-primary-400 hover:text-error-600 rounded-lg transition-all shadow-sm"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash className="w-4 h-4" />
           </button>
         </div>
 
         {/* Active indicator */}
         {isActive && (
-          <div className="absolute top-2 left-2 px-2 py-1 bg-brand text-white text-xs font-medium rounded-md">
+          <div className="absolute top-2 left-2 px-2 py-1 bg-brand text-white text-xs font-semibold rounded-lg">
             {t('resumes.current') || 'Actuel'}
           </div>
         )}
       </div>
 
       {/* Info */}
-      <div className="p-4">
+      <div className="p-4 sm:p-5">
         {isEditing ? (
           <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
             <input
@@ -180,10 +180,10 @@ export default function ResumeCard({
             </button>
           </div>
         ) : (
-          <h3 className="font-medium text-primary-900 truncate">{displayName}</h3>
+          <h3 className="font-semibold text-primary-900 truncate tracking-tight">{displayName}</h3>
         )}
         <div className="flex items-center justify-between mt-1.5">
-          <span className="text-xs text-primary-400 capitalize">{templateId}</span>
+          <span className="text-xs text-primary-500 capitalize">{templateId}</span>
           {resume.created_at && (
             <span className="text-xs text-primary-400">
               {new Date(resume.created_at).toLocaleDateString()}

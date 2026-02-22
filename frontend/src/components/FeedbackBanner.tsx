@@ -4,7 +4,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X, MessageSquare, Loader2, CheckCircle, AlertCircle, Gift } from 'lucide-react'
+import { X, ChatCircleText, SpinnerGap, CheckCircle, WarningCircle, Gift } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { submitFeedback } from '../api/auth'
 import { ApiError } from '../api/client'
@@ -32,7 +32,7 @@ export default function FeedbackBanner() {
             <h3 className="font-semibold text-primary-900 mb-1">{t('feedback.bannerTitle')}</h3>
             <p className="text-sm text-primary-500 mb-4">{t('feedback.bannerDesc')}</p>
             <button onClick={() => setShowModal(true)} className="btn-brand text-sm">
-              <MessageSquare className="w-4 h-4" />
+              <ChatCircleText className="w-4 h-4" />
               {t('feedback.bannerCta')}
             </button>
           </div>
@@ -204,7 +204,7 @@ export function FeedbackModal({
         <div className="px-6 py-4 border-b border-primary-100/50 dark:border-primary-700/50 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-brand/10 dark:bg-brand/20 rounded-xl flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-brand" />
+              <ChatCircleText className="w-5 h-5 text-brand" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-primary-900 dark:text-white">
@@ -230,7 +230,7 @@ export function FeedbackModal({
             {error && (
               <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
                 <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+                  <WarningCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
                 </div>
                 <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
               </div>
@@ -500,7 +500,7 @@ export function FeedbackModal({
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <SpinnerGap className="w-4 h-4 animate-spin" />
                 <span>{t('feedback.submitting')}</span>
               </>
             ) : (

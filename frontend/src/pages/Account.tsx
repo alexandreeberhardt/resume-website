@@ -7,13 +7,13 @@ import {
   FileText,
   ArrowLeft,
   User,
-  Download,
-  Trash2,
-  Loader2,
-  AlertTriangle,
+  DownloadSimple,
+  Trash,
+  SpinnerGap,
+  Warning,
   CheckCircle,
-  LogOut,
-} from 'lucide-react'
+  SignOut,
+} from '@phosphor-icons/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ThemeToggle from '../components/ThemeToggle'
@@ -124,7 +124,7 @@ export default function Account() {
         {/* Error message */}
         {error && (
           <div className="mb-6 p-4 bg-error-50 border border-error-200 rounded-xl flex items-center gap-3 animate-fade-in">
-            <AlertTriangle className="w-5 h-5 text-error-600" />
+            <Warning className="w-5 h-5 text-error-600" />
             <p className="text-sm text-error-700">{error}</p>
           </div>
         )}
@@ -147,7 +147,7 @@ export default function Account() {
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-primary-200 text-primary-700 hover:bg-primary-50 dark:border-primary-700 dark:text-primary-300 dark:hover:bg-primary-800 transition-colors font-medium text-sm"
           >
-            <LogOut className="w-4 h-4" />
+            <SignOut className="w-4 h-4" />
             {t('common.logout')}
           </button>
         </div>
@@ -161,7 +161,7 @@ export default function Account() {
           <div className="card p-6">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Download className="w-5 h-5 text-brand" />
+                <DownloadSimple className="w-5 h-5 text-brand" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-primary-900 mb-1">{t('account.exportData')}</h3>
@@ -173,12 +173,12 @@ export default function Account() {
                 >
                   {exportLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <SpinnerGap className="w-4 h-4 animate-spin" />
                       {t('account.exporting')}
                     </>
                   ) : (
                     <>
-                      <Download className="w-4 h-4" />
+                      <DownloadSimple className="w-4 h-4" />
                       {t('account.downloadData')}
                     </>
                   )}
@@ -191,7 +191,7 @@ export default function Account() {
           <div className="card p-6 border-error-200">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-error-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-5 h-5 text-error-600" />
+                <Trash className="w-5 h-5 text-error-600" />
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-error-700 mb-1">{t('account.deleteAccount')}</h3>
@@ -242,12 +242,12 @@ export default function Account() {
                       >
                         {deleteLoading ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <SpinnerGap className="w-4 h-4 animate-spin" />
                             {t('account.deleting')}
                           </>
                         ) : (
                           <>
-                            <Trash2 className="w-4 h-4" />
+                            <Trash className="w-4 h-4" />
                             {t('account.confirmDelete')}
                           </>
                         )}

@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Mail } from 'lucide-react'
+import { EnvelopeSimple } from '@phosphor-icons/react'
 import Login from './Login'
 import Register from './Register'
 import ForgotPassword from './ForgotPassword'
@@ -174,7 +174,7 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
                 ) : mode === 'check-email' ? (
                   <div className="w-full text-center py-2 animate-fade-in">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl mb-4">
-                      <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <EnvelopeSimple className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <h2 className="text-xl font-semibold text-primary-900 dark:text-white mb-2">
                       {t('auth.verifyEmail.checkEmail')}
@@ -251,4 +251,3 @@ export default function AuthPage({ onContinueWithoutAuth }: AuthPageProps) {
     </div>
   )
 }
-

@@ -3,7 +3,7 @@
  */
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Mail, KeyRound, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react'
+import { SpinnerGap, EnvelopeSimple, Key, WarningCircle, CheckCircle, ArrowLeft } from '@phosphor-icons/react'
 import { forgotPassword } from '../../api/auth'
 
 interface ForgotPasswordProps {
@@ -38,7 +38,7 @@ export default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)
       {/* Header */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-100 dark:bg-primary-200 rounded-xl mb-4">
-          <KeyRound className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+          <Key className="w-5 h-5 text-primary-600 dark:text-primary-400" />
         </div>
         <h2 className="text-xl sm:text-2xl font-semibold text-primary-900 dark:text-white mb-1.5 tracking-tight">
           {t('auth.forgotPassword.title')}
@@ -69,7 +69,7 @@ export default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)
           {error && (
             <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
               <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+                <WarningCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
               </div>
               <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
             </div>
@@ -92,14 +92,14 @@ export default function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps)
                   required
                   autoComplete="email"
                 />
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
+                <EnvelopeSimple className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
               </div>
             </div>
 
             <button type="submit" disabled={loading} className="btn-brand w-full py-3 mt-2">
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <SpinnerGap className="w-4 h-4 animate-spin" />
                   <span>{t('auth.forgotPassword.sending')}</span>
                 </>
               ) : (

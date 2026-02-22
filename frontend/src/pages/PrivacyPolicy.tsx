@@ -2,7 +2,7 @@
  * Politique de Confidentialité / Privacy Policy page
  */
 import { useTranslation } from 'react-i18next'
-import { FileText, ArrowLeft } from 'lucide-react'
+import { FileText, ArrowLeft } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 import LanguageSwitcher from '../components/LanguageSwitcher'
@@ -299,7 +299,7 @@ export default function PrivacyPolicy() {
                 <p className="text-primary-700">Your data is used to:</p>
                 <ul className="list-disc list-inside text-primary-700 space-y-2">
                   <li>Create and manage your user account</li>
-                  <li>Save and generate your resumes</li>
+                  <li>FloppyDisk and generate your resumes</li>
                   <li>Improve the service (anonymized usage analysis)</li>
                   <li>Ensure service security</li>
                 </ul>

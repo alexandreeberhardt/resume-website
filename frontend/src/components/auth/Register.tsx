@@ -4,16 +4,16 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Loader2,
-  Mail,
+  SpinnerGap,
+  EnvelopeSimple,
   Lock,
   UserPlus,
-  AlertCircle,
+  WarningCircle,
   CheckCircle,
   Eye,
-  EyeOff,
+  EyeSlash,
   Check,
-} from 'lucide-react'
+} from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { ApiError } from '../../api/client'
@@ -100,7 +100,7 @@ export default function Register({ onSwitchToLogin, onRegistered }: RegisterProp
       {error && (
         <div className="mb-5 p-3 bg-error-50 dark:bg-error-100/20 border border-error-200 dark:border-error-500/30 rounded-xl flex items-center gap-3 animate-shake">
           <div className="w-8 h-8 bg-error-100 dark:bg-error-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-            <AlertCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
+            <WarningCircle className="w-4 h-4 text-error-600 dark:text-error-500" />
           </div>
           <p className="text-sm text-error-700 dark:text-error-400 flex-1 min-w-0">{error}</p>
         </div>
@@ -164,7 +164,7 @@ export default function Register({ onSwitchToLogin, onRegistered }: RegisterProp
               required
               autoComplete="email"
             />
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
+            <EnvelopeSimple className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-400 dark:text-primary-500" />
           </div>
         </div>
 
@@ -191,7 +191,7 @@ export default function Register({ onSwitchToLogin, onRegistered }: RegisterProp
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
 
@@ -253,12 +253,12 @@ export default function Register({ onSwitchToLogin, onRegistered }: RegisterProp
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-primary-400 dark:text-primary-500 hover:text-primary-600 dark:hover:text-primary-300 transition-colors"
             >
-              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showConfirmPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           {confirmPassword && !passwordsMatch && (
             <p className="mt-1.5 text-xs text-error-600 dark:text-error-400 flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5" />
+              <WarningCircle className="w-3.5 h-3.5" />
               {t('auth.errors.passwordMismatch')}
             </p>
           )}
@@ -332,7 +332,7 @@ export default function Register({ onSwitchToLogin, onRegistered }: RegisterProp
         >
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <SpinnerGap className="w-4 h-4 animate-spin" />
               <span>{t('auth.registering')}</span>
             </>
           ) : (
