@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-fonts-extra \
     texlive-latex-recommended \
     texlive-publishers \
+    texlive-pictures \
     lmodern \
     latexmk \
     curl \
